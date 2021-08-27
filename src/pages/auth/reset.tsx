@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { Button, FormGroup, Input, Spinner } from 'reactstrap';
+// import { Button, FormGroup, Input, Spinner } from 'reactstrap';
 import AuthContainer from '../../components/AuthContainer';
 import ErrorText from '../../components/ErrorText';
 import { auth } from '../../config/firebase';
@@ -67,7 +67,7 @@ const ResetPasswordPage: React.FunctionComponent<IPageProps & RouteComponentProp
     const passwordResetRequest = () => {
         if (password !== confirm)
         {
-            setError('Make sure your passwords are matching');
+            setError('패스워드가 같은지 확인해주새요');
             return;
         }
 
@@ -87,52 +87,53 @@ const ResetPasswordPage: React.FunctionComponent<IPageProps & RouteComponentProp
     }
 
     return (
-        <AuthContainer header="Reset Password">
-            {verifying ?
-                <Spinner color="info" />
-            :
-                <>
-                    {verified ?
-                        <>
-                            <p>Please enter a strong password.</p>
-                            <FormGroup>
-                                <Input 
-                                    autoComplete="new-password"
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    placeholder="Enter Password"
-                                    onChange={event => setPassword(event.target.value)}
-                                    value={password}
-                                />
-                            </FormGroup>
-                            <FormGroup>
-                                <Input 
-                                    autoComplete="new-password"
-                                    type="password"
-                                    name="confirm"
-                                    id="confirm"
-                                    placeholder="Confirm Password"
-                                    onChange={event => setConfirm(event.target.value)}
-                                    value={confirm}
-                                />
-                            </FormGroup>
-                            <Button
-                                disabled={changing}
-                                color="success"
-                                block
-                                onClick={() => passwordResetRequest()}
-                            >
-                                Reset Password
-                            </Button>
-                            <ErrorText error={error} />
-                        </>
-                    :
-                        <p>Invalid link.</p>
-                    }
-                </>
-            }
-        </AuthContainer>
+        // <AuthContainer header="Reset Password">
+        //     {verifying ?
+        //         <Spinner color="info" />
+        //     :
+        //         <>
+        //             {verified ?
+        //                 <>
+        //                     <p>Please enter a strong password.</p>
+        //                     <FormGroup>
+        //                         <Input 
+        //                             autoComplete="new-password"
+        //                             type="password"
+        //                             name="password"
+        //                             id="password"
+        //                             placeholder="Enter Password"
+        //                             onChange={event => setPassword(event.target.value)}
+        //                             value={password}
+        //                         />
+        //                     </FormGroup>
+        //                     <FormGroup>
+        //                         <Input 
+        //                             autoComplete="new-password"
+        //                             type="password"
+        //                             name="confirm"
+        //                             id="confirm"
+        //                             placeholder="Confirm Password"
+        //                             onChange={event => setConfirm(event.target.value)}
+        //                             value={confirm}
+        //                         />
+        //                     </FormGroup>
+        //                     <Button
+        //                         disabled={changing}
+        //                         color="success"
+        //                         block
+        //                         onClick={() => passwordResetRequest()}
+        //                     >
+        //                         Reset Password
+        //                     </Button>
+        //                     <ErrorText error={error} />
+        //                 </>
+        //             :
+        //                 <p>Invalid link.</p>
+        //             }
+        //         </>
+        //     }
+        // </AuthContainer>
+        <></>
     );
 }
 

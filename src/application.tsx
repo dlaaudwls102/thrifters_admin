@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, RouteComponentProps, Switch } from 'react-router-dom';
-import { Spinner } from 'reactstrap';
+
 import AuthRoute from './components/AuthRoute';
 import { auth } from './config/firebase';
 import logging from './config/logging';
@@ -26,8 +26,6 @@ const Application: React.FunctionComponent<IApplicationProps> = props => {
         })
     }, []);
 
-    if (loading)
-        return <Spinner color="info" />
 
     return (
         <div>
