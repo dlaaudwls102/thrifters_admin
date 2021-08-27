@@ -1,10 +1,11 @@
 import { relative } from 'path';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Application from './application';
 import Videhome_ConfirmedOrder from './Videhome_confirmedOrder';
 import Videhome_requests from './Videhome_requests';
 import Videhome_CustomerList from './Videhome_customerList';
+import { auth } from './config/firebase';
 
 
 export interface UserState{
@@ -30,6 +31,7 @@ export default class App extends React.Component<{}, UserState>{
   public render(){
 
     const onClickHeaderBtn=(path : number)=>{
+      
       this.setState({
         page: path,
       });

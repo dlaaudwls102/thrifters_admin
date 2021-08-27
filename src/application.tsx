@@ -28,7 +28,7 @@ const Application: React.FunctionComponent<IApplicationProps> = props => {
 
 
     return (
-        <div>
+        <div className="logins fade">
             <BrowserRouter>
                 <Switch>
                     {routes.map((route, index) => 

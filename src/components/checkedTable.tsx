@@ -317,7 +317,6 @@ export default function CheckedTable() {
 
   const showModal = () =>{
     const filtered = orderHistory.filter(order => (order.confirmed_Time) == selected[0]);
-    console.log(filtered[0], "before filtered")
     setSelectedOrder(filtered[0]);
     setCound(filtered[0]);
     setOnOff(true);
@@ -345,7 +344,6 @@ export default function CheckedTable() {
     selectedOrder["confirmed_By"] = user;
     selectedOrder["rating"] = rating;
     const timestamp = Date.now(); // This would be the timestamp you want to format
-    console.log("time confirmed: ",new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp));
     selectedOrder['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
 
     //sent to confirmed orders
@@ -356,7 +354,6 @@ export default function CheckedTable() {
     
     //finding user's info's order and deleting, and updating it with confirmed order
 
-    console.log("received", userSelected);
 
     var totalWeight = Number(userSelected.totalWeight) + Number(weight);
     var totalAdditional = Number(userSelected.totalAdditional) + Number(additional);

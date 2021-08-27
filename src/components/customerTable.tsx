@@ -317,7 +317,6 @@ export default function CustomerTable() {
 
   const showModal = () =>{
     const filtered = orderHistory.filter(order => (order.userId) == selected[0]);
-    console.log(filtered[0], "before filtered")
     setSelectedOrder(filtered[0]);
     setCound(filtered[0]);
     setOnOff(true);
@@ -345,7 +344,6 @@ export default function CustomerTable() {
     selectedOrder["averageWeights"] = user;
     selectedOrder["rating"] = rating;
     const timestamp = Date.now(); // This would be the timestamp you want to format
-    console.log("time confirmed: ",new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp));
     selectedOrder['userId'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
 
     //sent to confirmed orders
@@ -355,8 +353,6 @@ export default function CustomerTable() {
     console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
     
     //finding user's info's order and deleting, and updating it with confirmed order
-
-    console.log("received", userSelected);
 
     var totalphone = Number(userSelected.totalphone) + Number(phone);
     var totaladdress = Number(userSelected.totaladdress) + Number(address);
@@ -395,15 +391,12 @@ export default function CustomerTable() {
     .get()
     .then(querySnapshot => {
       const documents = querySnapshot.docs.map(doc => doc.data())
-        console.log(documents, "doc");
         var list:Data[] = [];
         documents.forEach((doc:any) => {
             // setOrderHistory([...doc])
-            console.log(doc)
             list.push(doc);
         })
         setOrderHistory(list);
-        console.log(list)
       // do something with documents
     })
 },[])
