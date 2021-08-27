@@ -1,0 +1,635 @@
+.App {
+  text-align: center;
+  
+}
+
+.Apps {
+  position: relative;
+  flex-direction: column;
+  justify-content: space-evenl;
+  text-align: center;
+  min-height: 700px;
+  min-width: 100%;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  align-items: center;
+  font-family: 'TmoneyRoundWindExtraBold';
+
+
+}
+.Apps p{
+  color: #07381B;
+  font-weight: 600;
+  font-size: 30px;
+}
+.left{
+  position: flex;
+  float: left;
+  width: 22.5%;
+  min-width:100%;
+  height: 93%;
+  font-family: 'TmoneyRoundWindExtraBold';
+}
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+.background{
+  position: absolute;
+  width: 20%;
+  top: 50%;
+  left: 40%;
+  opacity: 0.6;
+  z-index: -1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+.middles{
+  position: flex;
+  float: left;
+  height: 93%;
+  overflow-y: scroll;
+ 
+  min-width:100%;
+  font-family: 'TmoneyRoundWindExtraBold';
+}
+
+
+.right{
+  position: flex;
+  float: left;
+  width: 22.5%;
+  min-width:100%;
+  min-height: 350px;
+  flex-direction: column;
+  font-family: 'TmoneyRoundWindExtraBold';
+}
+.wrapper{
+  width:100%;
+  height:100%;
+  display: flex;
+  justify-content: center;
+  font-family: 'TmoneyRoundWindExtraBold';
+}
+.header_top img{
+  position: relative;
+  width: 100%;
+
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.img-top-nav{
+  position: relative;
+  left: -10px;
+  width: 110px;
+  
+}
+.img-logo{
+  width: 40%;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  opacity: 1;
+  padding: 1px;
+}
+.img-logo-login{
+  width: 30%;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  opacity: 1;
+  padding: 40px 0 0 0;
+}
+.img-top-icon{
+  width: 35px;
+}
+
+.App .Body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:  #ccc;
+  font-weight: inherit;
+  font-size: 20px;
+  animation-name: example;
+  animation-duration: 4s;
+  overflow: hidden;
+ width: 100%;
+ height: 100%;
+}
+.App .Body .Header_center {
+  position: relative;
+  width: auto;
+  height: auto;
+  margin: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.App .Body .Header_center:hover .img-logo {
+  opacity: 0.3;
+}
+
+.middle {
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.App .Body .Header_center:hover .middle {
+  opacity: 1;
+}
+
+
+/* fading option */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+.topnav {
+  background-color: #FBAA13;
+  overflow: hidden;
+  border-color: #07381B;
+  outline: 2px solid #07381B;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-family: 'TmoneyRoundWindExtraBold';
+  
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: 	#07381B;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: transform .3s; 
+  width: 24%;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  transform: scale(1.3);
+  color: 	#07381B;
+  opacity: 1;
+  
+}
+
+
+/* Add a color to the active/current link */
+.topnav .pressed {
+  transform: scale(1.3);
+}
+
+.right-text{ 
+  position: absolute;
+  right: 0px;
+
+}
+
+.login {
+  border: solid;
+  color: 	#07381B;
+  margin-bottom: 20px;
+  width: 300px;
+}
+.create_ac {
+  border: solid;
+  color: 	#07381B;
+}
+
+.middle a {
+  color: 	#07381B;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: transform .3s; 
+}
+.middle a :hover {
+  color:white;
+  background-color: 	#07381B;
+  opacity: 1;
+  width: 100%;
+}
+.Footer{
+  display: flex;
+  font-size: 13px;
+  flex-direction: column;
+  justify-content: flex-end;
+
+}
+.Footer div{
+  margin: 5px;
+  left: 0;
+  bottom: 0;
+  justify-content: center;
+}
+
+/* MOBLIE */
+@media (max-width:480px){
+
+  .App {
+    text-align: center;
+  }
+  
+  .Apps {
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+  }
+  .Apps p{
+    color: #07381B;
+    font-weight: 600;
+    font-size: 30px;
+  }
+  .left{
+    position: flex;
+    width: 100%;
+    margin: 0px;
+
+  }
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  .background{
+    position: absolute;
+    width: 20%;
+    top: 50%;
+    left: 40%;
+    opacity: 0.6;
+    z-index: -1;
+  }
+  
+  .middles{
+    position: flex;
+    float: left;
+    width: 100%;
+    margin: 0px;
+  }
+  
+  .right{
+    position: flex;
+    float: left;
+    width: 100%;
+    flex-direction: column;
+    margin: 0px;
+    min-width: 100%;
+  }
+  .wrapper{
+    width:100%;
+    height:100%;
+    display: flex;
+    justify-content: center;
+  }
+  .header_top img{
+    width: 100%;
+    position: fixed;
+    top: 60px;
+    z-index: 3;
+
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .img-top-nav{
+    position: relative;
+    width: 110px;
+  }
+  .img-logo{
+    width: 100%;
+    transition: 2s ease;
+    backface-visibility: hidden;
+    opacity: 1;
+    padding: 1px;
+  }
+  .img-top-icon{
+    width: 35px;
+  }
+  
+  .App .Body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:  #ccc;
+    font-weight: inherit;
+    font-size: 20px;
+    animation-name: example;
+    animation-duration: 4s;
+    animation-delay: 0s;
+    overflow: hidden;
+   width: 100%;
+    position: relative;
+   height: 100%;
+   min-height: 630px;
+    padding-top: 85px;
+  }
+  .App .Body .Header_center {
+    position: relative;
+    width: auto;
+    height: auto;
+    margin: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .App .Body .Header_center:hover .img-logo {
+    opacity: 0.3;
+  }
+  
+  .middle {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  
+  .App .Body .Header_center:hover .middle {
+    opacity: 1;
+  }
+  
+  
+  /* fading option */
+  .fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+  }
+  
+  @-webkit-keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+  }
+  
+  @keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+  }
+  
+  .topnav {
+    background-color: #FBAA13;
+    overflow: hidden;
+    border-color: #07381B;
+    outline: 2px solid #07381B;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    position: fixed;
+    z-index: 3;
+    top: 0;
+  }
+  
+  /* Style the links inside the navigation bar */
+  .topnav a {
+    float: left;
+    color: 	#07381B;
+    text-align: center;
+    padding: 14px 12px;
+    text-decoration: none;
+    font-size: 10px;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: transform .3s; 
+    width: 23%;
+    transform: scale(1);
+  }
+  
+  /* Change the color of links on hover */
+  .topnav a:hover {
+    transform: scale(1.3);
+    color: 	#07381B;
+    opacity: 1;
+    
+  }
+  
+  
+  /* Add a color to the active/current link */
+  .topnav .pressed {
+    transform: scale(1.3);
+  }
+  
+  .right-text{ 
+    position: absolute;
+    right: 0px;
+  
+  }
+  
+  .login {
+    border: solid;
+    border-radius: 1rem;
+    color: 	#07381B;
+    margin-bottom: 20px;
+    width: 200px;
+    margin: auto;
+    font-family: 'TmoneyRoundWindExtraBold';
+    justify-content: center;
+    align-items: center;
+  }
+  .create_ac {
+    border: solid;
+    color: 	#07381B;
+  }
+  
+  .middle a {
+    color: 	#07381B;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    opacity: 0.9;
+    transition: transform .3s; 
+  }
+  .middle a :hover {
+    color:white;
+    background-color: 	#07381B;
+    opacity: 1;
+    width: 100%;
+  }
+  .Footer{
+    display: flex;
+    font-size: 13px;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /* border-top: solid 1px black; */
+  }
+  .Footer div{
+    margin: 10px;
+    left: 0;
+    bottom: 0;
+    justify-content: center;
+    margin: 0 40px 0 40px;
+    font-size: 10.5px;
+  }
+}
+
+.weight_img{
+  width: 30%;
+  top: 50%;
+  left: 40%;
+}
+
+.buttons{
+  font-family: 'Cafe24Oneprettynight'
+}                
+
+.map_container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: 'TmoneyRoundWindExtraBold';
+  z-index: 1;
+}
+
+
+
+
+
+
+/* FONTS */
+@font-face {
+  font-family: 'TmoneyRoundWindExtraBold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/TmoneyRoundWindExtraBold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: '양진체';
+  src: url('https://cdn.jsdelivr.net/gh/supernovice-lab/font@0.9/yangjin.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SEBANG_Gothic_Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Wemakeprice-Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.0/Wemakeprice-Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cafe24Oneprettynight';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Oneprettynight.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SDSamliphopangche_Outline';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/SDSamliphopangche_Outline.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Binggrae';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Binggrae.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'BRRA_R';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_seven@1.2/BRRA_R.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'IM_Hyemin-Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/IM_Hyemin-Bold.woff2') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'yg-jalnan';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
