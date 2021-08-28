@@ -29,9 +29,7 @@ interface Data {
   phone: string;
   date:string;
 }
-interface please{
-  userId:string;
-}
+
 
 function createData(
   date: string,
@@ -322,7 +320,6 @@ export default function OrderTable() {
     setSelectedOrder(filtered[0]);
     setCound(filtered[0]);
     setOnOff(true);
-
   }
   const handleChange = (prop : string) => (event: any) => {
       
@@ -383,7 +380,7 @@ export default function OrderTable() {
     orders: orderHistory.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
   })
     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
-    
+    alert("신청확인 완료되었습니다.")
   }
 
   // Gaterhing data
