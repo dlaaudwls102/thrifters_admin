@@ -21,6 +21,8 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
 import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles } from '@material-ui/core';
 import firebase from "firebase/app";
+import SearchIcon from '@material-ui/icons/Search';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 interface Data {
   time: string;
@@ -42,8 +44,8 @@ function createData(
   return { date, time, name, address, phone};
 }
 
-const rows = [
-  createData('2021-08-25', "03:20", "신영관" , "경기도 고양시 일산동구", "(010) 6476 - 1181"),
+const rows:Data[] = [
+
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -172,42 +174,7 @@ interface EnhancedTableToolbarProps {
   numSelected: number;
 }
 
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const classes = useToolbarStyles();
-  const { numSelected } = props;
 
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-      style={{padding:"10px 0"}}
-    >
-      {numSelected > 0 ? (
-        <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} 개 선택
-        </Typography>
-      ) : (
-        <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-          신청현황
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -217,6 +184,8 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       width: '100%',
       marginBottom: theme.spacing(3),
+      boxShadow:"none",
+      border:"none"
     },
     table: {
       minWidth: 300,
@@ -243,15 +212,17 @@ export default function OrderTable() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
   //newData
-  const [orderHistory,setOrderHistory] = React.useState([createData('2021-08-25', "03:20", "신영관" , "경기도 고양시 일산동구", "(010) 6476 - 1181")]);
+  const [orderHistory,setOrderHistory] = React.useState<Data[]>([]);
+  const [orderHisortNon, setOrderHistoryNon] = React.useState<Data[]>([]);
   const [orderUser,setOrderUser] = React.useState<any>();
   const [selectedOrder,setSelectedOrder] = React.useState<any>();
   const [cound,setCound] = React.useState<any>();
   const [userSelected, setUserSelected] = React.useState<any>();
   const [userOrderSelected, setUserOrderSelected] = React.useState<any>();
+  const [change,setChange]  = React.useState<any>(false);
 
   //newInput data
   const [weight, setWeight] = React.useState<number>();
@@ -275,6 +246,47 @@ export default function OrderTable() {
     }
     setSelected([]);
   };
+
+  const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+    const classes = useToolbarStyles();
+    const { numSelected } = props;
+  
+    return (
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: numSelected > 0,
+        })}
+        style={{padding:"10px 0"}}
+      >
+        {numSelected > 0 ? (
+          <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} color="inherit" variant="subtitle1" component="div">
+            {numSelected} 개 선택
+          </Typography>
+        ) : (
+          <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
+            신청현황
+          </Typography>
+        )}
+        {numSelected > 0 ? (
+          <Tooltip title="Delete">
+           <IconButton aria-label="delete" onClick={()=>{showModal()}}>
+                <AttachMoneyIcon />
+              </IconButton>
+          </Tooltip>
+        ) : (
+          // <Tooltip title="Filter list">
+          //   <IconButton aria-label="filter list">
+          //     <FilterListIcon />
+          //   </IconButton>
+          // </Tooltip>
+          <></>
+        )}
+      </Toolbar>
+    );
+  };
+
+
+
 
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
@@ -311,12 +323,12 @@ export default function OrderTable() {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, orderHistory.length - page * rowsPerPage);
+  // const emptyRows = rowsPerPage - Math.min(rowsPerPage, orderHistory.length - page * rowsPerPage);
 
   // MADE FUNCTIONS
 
   const showModal = () =>{
-    const filtered = orderHistory.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+    const filtered = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
     setSelectedOrder(filtered[0]);
     setCound(filtered[0]);
     setOnOff(true);
@@ -352,7 +364,8 @@ export default function OrderTable() {
     console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
     
     //finding user's info's order and deleting, and updating it with confirmed order
-
+    console.log(userSelected, "selected");
+if(userSelected.userId !== "non_user"){
     var totalWeight = Number(userSelected.totalWeight) + Number(weight);
     var totalAdditional = Number(userSelected.totalAdditional) + Number(additional);
     var numberOrd = userSelected.numberOfOrders;
@@ -369,7 +382,7 @@ export default function OrderTable() {
 
     db.collection('user').doc(selectedOrder.userId).update({
       orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
-      averageWeights : (totalWeight/numberOrd).toFixed(2),
+      averageWeights : Number(((totalWeight*200)+totalAdditional)/numberOrd).toFixed(2),
       totalWeight: Number(totalWeight),
       totalAdditional: Number(totalAdditional)
     })
@@ -377,31 +390,87 @@ export default function OrderTable() {
   
     //delete from admin user order
   db.collection("orders").doc("user").update({
-    orders: orderHistory.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+    orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
   })
     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
     alert("신청확인 완료되었습니다.")
+}
+else{
+  console.log(userOrderSelected, "orderSelected")
+    var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
+    var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
+        found_time[0].confirmed = "확인"
+        found_time[0].weight = weight;
+        found_time[0].additional = additional;
+    
+    db.collection('user').doc('non_user').update({
+      orders : userOrderSelected!.filter((post:any) => post.name !== selectedOrder.name)
+    })
+    console.log("[" + Date.now() + "]" + "DONE deleting current User order")
+
+    db.collection('user').doc("non_user").update({
+      count: firebase.firestore.FieldValue.increment(-1),
+      orders : firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+    })
+    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
+  
+    //delete from admin user order
+  db.collection("orders").doc("non_user").update({
+    orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+  })
+    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
+    alert("신청확인 완료되었습니다.")
+
+}
   }
 
   // Gaterhing data
   useEffect(()=>{
-        
     db.collection('orders').doc("user").get().then((doc)=>{
-            setOrderHistory(doc.data()!.orders);
-            setOrderUser(doc.data()!.orders);
+        setOrderHistory([...doc.data()!.orders]);
+        setOrderUser([...doc.data()!.orders]);
         })
+    setChange(true);
 },[])
+useEffect(()=>{
+      // if(!change){
+      //  if(orderHistory!=[]){
+      //   db.collection('orders').doc("non_user").get().then((doc)=>{
+      //     setOrderHistory([...doc.data()!.orders]);
+      //     setOrderUser([...doc.data()!.orders]);
+      //   })
+      // }
+      //   console.log("hi")
+      // }
+},[change])
+
+
   useEffect(()=>{
       if(selected && orderUser ){
+        console.log(selected, orderUser)
         const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
-
+            console.log(filtered[0],"filtered");
+        if (filtered[0].userId == "non_user"){
+              db.collection('user').doc("non_user").get().then((doc)=>{
+                doc.data()!.orders.forEach((showing:any) =>{
+                  if(filtered[0].phone === showing.phone){
+                    console.log(showing, "setUserSleceted");
+                    setUserSelected(showing);
+                    console.log(doc.data()!.orders, "setUseOrderSleceted");
+                    setUserOrderSelected(doc.data()!.orders);
+                  }
+                })
+              })
+            }
+            else{
             db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
-    
               setUserSelected(doc.data()!)
               setUserOrderSelected(doc.data()!.orders)
+              console.log(doc.data()!, doc.data()!.orders, "hasdasd")
           })
+        }
       }
-  },[selected])
+  },[... selected])
   return (
     <div className={classes.root}>
     <img className="img-logo-login" src="./videhome_logo.png"></img>
@@ -421,10 +490,10 @@ export default function OrderTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={orderHistory.length}
+              rowCount={orderHistory!.length}
             />
             <TableBody>
-              {stableSort(orderHistory, getComparator(order, orderBy))
+              {stableSort(orderHistory!, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.date + ", " + row.time + ", " + row.name);
@@ -457,11 +526,11 @@ export default function OrderTable() {
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
+              {/* {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={5} />
                 </TableRow>
-              )}
+              )} */}
             </TableBody>
           </Table>
         </TableContainer>
@@ -469,9 +538,9 @@ export default function OrderTable() {
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+        label="축소"
       />
-      <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button>
+      {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
      {(onOff)?
       <div className="modal" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>
         <div>

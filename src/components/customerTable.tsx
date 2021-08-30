@@ -85,7 +85,7 @@ interface HeadCell {
 }
 
 const headCells: HeadCell[] = [
-  { id: 'userId', numeric: false, disablePadding: true, label: '날짜' },
+  { id: 'userId', numeric: false, disablePadding: true, label: '이름' },
   { id: 'averageWeights', numeric: false, disablePadding: false, label: '평균' },
   { id: 'name', numeric: false, disablePadding: false, label: '이메일' },
   { id: 'phone', numeric: true, disablePadding: false, label: '전화번호' },
@@ -199,11 +199,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        // <Tooltip title="Filter list">
+        //   <IconButton aria-label="filter list">
+        //     <FilterListIcon />
+        //   </IconButton>
+        // </Tooltip>
+        <></>
       )}
     </Toolbar>
   );
@@ -217,6 +218,8 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       width: '100%',
       marginBottom: theme.spacing(3),
+      boxShadow:"none",
+      border:"none"
     },
     table: {
       minWidth: 300,
@@ -243,7 +246,7 @@ export default function CustomerTable() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
   //newData
   const [orderHistory,setOrderHistory] = React.useState([  createData('2021-08-25', "03:20", 3 , "01010101", "2131")]);
@@ -466,11 +469,11 @@ export default function CustomerTable() {
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
+              {/* {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={5} />
                 </TableRow>
-              )}
+              )} */}
             </TableBody>
           </Table>
         </TableContainer>
@@ -480,7 +483,7 @@ export default function CustomerTable() {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
-      <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button>
+      {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
      {(onOff)?
       <div className="modal" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>
         <div>

@@ -85,9 +85,9 @@ interface HeadCell {
 }
 
 const headCells: HeadCell[] = [
-  { id: 'confirmed_Time', numeric: false, disablePadding: true, label: '날짜' },
+  { id: 'confirmed_Time', numeric: false, disablePadding: true, label: '시간' },
   { id: 'confirmed_By', numeric: false, disablePadding: false, label: '담당' },
-  { id: 'name', numeric: false, disablePadding: false, label: '손님' },
+  { id: 'name', numeric: false, disablePadding: false, label: '고객' },
   { id: 'weight', numeric: true, disablePadding: false, label: '무게' },
   { id: 'additional', numeric: true, disablePadding: false, label: '추가' },
 ];
@@ -199,11 +199,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        // <Tooltip title="Filter list">
+        //   <IconButton aria-label="filter list">
+        //     <FilterListIcon />
+        //   </IconButton>
+        // </Tooltip>
+        <></>
       )}
     </Toolbar>
   );
@@ -217,6 +218,8 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       width: '100%',
       marginBottom: theme.spacing(3),
+      boxShadow:"none",
+      border:"none"
     },
     table: {
       minWidth: 300,
@@ -243,7 +246,7 @@ export default function CheckedTable() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
   //newData
   const [orderHistory,setOrderHistory] = React.useState([createData('2021-08-25', "03:20", "신영관" , 300, 3000)]);
@@ -454,16 +457,16 @@ export default function CheckedTable() {
                       </TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.confirmed_By}</TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.name}</TableCell>
-                      <TableCell style={{fontSize:"15px", minWidth:"200px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.weight + " KG"}</TableCell>
-                      <TableCell style={{minWidth:"200px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.additional + " 원"}</TableCell>
+                      <TableCell style={{fontSize:"15px", minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.weight + " KG"}</TableCell>
+                      <TableCell style={{minWidth:"100px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.additional + " 원"}</TableCell>
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
+              {/* {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={5} />
                 </TableRow>
-              )}
+              )} */}
             </TableBody>
           </Table>
         </TableContainer>
@@ -473,7 +476,7 @@ export default function CheckedTable() {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
-      <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button>
+      {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
      {(onOff)?
       <div className="modal" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>
         <div>
