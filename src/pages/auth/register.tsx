@@ -133,7 +133,7 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
                                 type="input"
                                 onChange={handleChange("name_")}
                                 label="성함"
-                                inputProps={{ style: { textAlign: 'center',fontSize:"19px"},
+                                inputProps={{ style: { textAlign: 'center',fontSize:"19px", fontFamily: 'Cafe24Oneprettynight'},
                                 'aria-label': 'naked',
                                 startAdornment: (
                                     <InputAdornment position="start">

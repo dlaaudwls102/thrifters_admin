@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import AuthContainer from '../../components/AuthContainer';
 import ErrorText from '../../components/ErrorText';
-import { auth, Providers } from '../../config/firebase';
+import { auth, db, Providers } from '../../config/firebase';
 import logging from '../../config/logging';
 import IPageProps from '../../interfaces/page';
 import firebase from 'firebase';
@@ -23,17 +23,24 @@ const LoginPage: React.FunctionComponent<IPageProps> = props => {
         if (error !== '') setError('');
 
         setAuthenticating(true);
-
-        auth.signInWithEmailAndPassword(email, password)
-        .then(result => {
-            logging.info(result);
-            history.push('/');
+        db.collection('admin').doc(email).get().then((doc)=>{
+            if (doc.exists) {
+                auth.signInWithEmailAndPassword(email, password)
+                .then(result => {
+                    logging.info(result);
+                    history.push('/');
+                })
+                .catch(error => {
+                    logging.error(error);
+                    setAuthenticating(false);
+                    setError(error.message);
+                });
+            } else {
+                setError("관리자 모드입니다. 다시 확인해주세요");
+                // doc.data() will be undefined in this case
+                setAuthenticating(false);
+            }
         })
-        .catch(error => {
-            logging.error(error);
-            setAuthenticating(false);
-            setError(error.message);
-        });
     }
 
     const signInWithSocialMedia = (provider: firebase.auth.AuthProvider) => {
@@ -52,6 +59,19 @@ const LoginPage: React.FunctionComponent<IPageProps> = props => {
             setError(error.message);
         });
     }
+    useEffect(() => {
+        auth.onAuthStateChanged(user => {
+            if (user)
+            {
+                logging.info('User detected.');
+                history.push("/")
+            }
+            else
+            {
+                logging.info('No user detected');
+            }
+        })
+    }, []);
 
     return (
         <div>

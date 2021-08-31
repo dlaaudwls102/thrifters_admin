@@ -268,11 +268,18 @@ export default function OrderTable() {
           </Typography>
         )}
         {numSelected > 0 ? (
-          <Tooltip title="Delete">
-           <IconButton aria-label="delete" onClick={()=>{showModal()}}>
+          <>
+          <Tooltip title="매입하기">
+            <IconButton aria-label="delete" onClick={()=>{showModal()}}>
                 <AttachMoneyIcon />
-              </IconButton>
+            </IconButton>
           </Tooltip>
+          <Tooltip title="취소하기">
+              <IconButton aria-label="delete" onClick={()=>{turnDown()}}>
+                  <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </>
         ) : (
           // <Tooltip title="Filter list">
           //   <IconButton aria-label="filter list">
@@ -293,19 +300,34 @@ export default function OrderTable() {
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1), name);
+    } 
+    else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
+    } 
+    // else if (selectedIndex === selected.length - 1) {
+    //   newSelected = newSelected.concat(selected.slice(0, -1));
+    // }
+    //  else if (selectedIndex > 0) {
+    //   newSelected = newSelected.concat(
+    //     selected.slice(0, selectedIndex),
+    //     selected.slice(selectedIndex + 1),
+    //   );
+    // }
+    console.log(selected, orderUser,"after")
+    const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
+    console.log(newSelected, "selected");
+    if(selected.length === 0){
+        db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
+          setUserSelected(doc.data()!)
+          setUserOrderSelected(doc.data()!.orders)
+          console.log(doc.data()!, doc.data()!.orders, "hasdasd")
+          setSelected(newSelected);
+          })
+      }
+    if(selected.length >= 1){
+      setSelected(newSelected);
     }
-
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -330,6 +352,32 @@ export default function OrderTable() {
   const showModal = () =>{
     const filtered = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
     setSelectedOrder(filtered[0]);
+    console.log(filtered, "selected Order")
+    if(orderUser){
+      console.log(selected, orderUser,"after")
+      const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
+      console.log(filtered[0],"filtered");
+      if (filtered[0].userId == "non_user"){
+            db.collection('user').doc("non_user").get().then((doc)=>{
+              doc.data()!.orders.forEach((showing:any) =>{
+                if(filtered[0].phone === showing.phone){
+                  console.log(showing, "setUserSleceted");
+                  setUserSelected(showing);
+                  console.log(doc.data()!.orders, "setUseOrderSleceted");
+                  setUserOrderSelected(doc.data()!.orders);
+                }
+              })
+            })
+          }
+          else{
+          db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
+            setUserSelected(doc.data()!)
+            setUserOrderSelected(doc.data()!.orders)
+            console.log(doc.data()!, doc.data()!.orders, "hasdasd")
+        })
+      }
+    }
+        
     setCound(filtered[0]);
     setOnOff(true);
   }
@@ -346,8 +394,62 @@ export default function OrderTable() {
     }
 
   }
+  const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
+  const turnDown = async () =>{
+    setOnOff(false);
+    var reason = prompt("이유를 적어주세요");
+    if (reason != undefined){
+      var confirmDelete = window.confirm("삭제 하시겠습니까?")
+      if (confirmDelete){
+        const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+        filtered.weight = weight;
+        filtered.additional = additional;
+        filtered.confirmed = "취소";
+        filtered["turndown_reason"] = reason;
+        filtered["confirmed_By"] = auth.currentUser?.displayName!;
+        filtered["rating"] = 0;
+        const timestamp = Date.now(); // This would be the timestamp you want to format
+        filtered['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+    
+        //sent to confirmed orders
+        db.collection("orders").doc("confirmed").update({
+          orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
+        })
+        console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
+
+
+        db.collection("orders").doc("user").update({
+          orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+        })
+        console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
+        console.log(userOrderSelected, "userorderSelected")
+        console.log(filtered, "selectedOrder")
+      const filtered2:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+      var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
+      var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
+          found_time[0].confirmed = "취소"
+          found_time[0].weight = reason;
+          found_time[0].additional = reason;
+    
+      db.collection('user').doc(filtered2[0].userId!).update({
+        orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
+      })
+      console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
+
+      db.collection('user').doc(filtered2[0].userId!).update({
+        orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+      })
+      console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
+     setSelected([]); 
+     await delay(1000);
+    }
+      else{
+
+      }
+    } 
+  }
   
-  const finished = (user:string) =>{
+  const finished = async (user:string) =>{
 
     selectedOrder.weight = weight;
     selectedOrder.additional = additional;
@@ -364,7 +466,7 @@ export default function OrderTable() {
     console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
     
     //finding user's info's order and deleting, and updating it with confirmed order
-    console.log(userSelected, "selected");
+ 
 if(userSelected.userId !== "non_user"){
     var totalWeight = Number(userSelected.totalWeight) + Number(weight);
     var totalAdditional = Number(userSelected.totalAdditional) + Number(additional);
@@ -378,7 +480,7 @@ if(userSelected.userId !== "non_user"){
     db.collection('user').doc(selectedOrder.userId).update({
       orders : userOrderSelected!.filter((post:any) => post.date !== selectedOrder.date)
     })
-    console.log("[" + Date.now() + "]" + "DONE deleting current User order")
+    console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
 
     db.collection('user').doc(selectedOrder.userId).update({
       orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
@@ -386,17 +488,21 @@ if(userSelected.userId !== "non_user"){
       totalWeight: Number(totalWeight),
       totalAdditional: Number(totalAdditional)
     })
-    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
+    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
   
     //delete from admin user order
   db.collection("orders").doc("user").update({
     orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
   })
-    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
+    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
     alert("신청확인 완료되었습니다.")
+    setSelected([]); 
+    await delay(1500);
+    setOnOff(false);
+    await delay(1500);
 }
 else{
-  console.log(userOrderSelected, "orderSelected")
+
     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
         found_time[0].confirmed = "확인"
@@ -420,19 +526,50 @@ else{
   })
     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
     alert("신청확인 완료되었습니다.")
-
+    setSelected([]); 
+    await delay(1000);
 }
   }
 
-  // Gaterhing data
+  // Gathering data
+  // useEffect(()=>{
+  //   console.log(selected, orderUser,"before")
+  //     if(orderUser && selected){
+  //       console.log(selected, orderUser,"after")
+  //       const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
+  //       console.log(filtered[0],"filtered");
+  //       if (filtered[0].userId == "non_user"){
+  //             db.collection('user').doc("non_user").get().then((doc)=>{
+  //               doc.data()!.orders.forEach((showing:any) =>{
+  //                 if(filtered[0].phone === showing.phone){
+  //                   console.log(showing, "setUserSleceted");
+  //                   setUserSelected(showing);
+  //                   console.log(doc.data()!.orders, "setUseOrderSleceted");
+  //                   setUserOrderSelected(doc.data()!.orders);
+  //                 }
+  //               })
+  //             })
+  //           }
+  //           else{
+  //         db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
+  //             setUserSelected(doc.data()!)
+  //             setUserOrderSelected(doc.data()!.orders)
+  //             console.log(doc.data()!, doc.data()!.orders, "hasdasd")
+  //         })
+  //       }
+  //     }
+  // },[selected])
   useEffect(()=>{
+    //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
     db.collection('orders').doc("user").get().then((doc)=>{
         setOrderHistory([...doc.data()!.orders]);
         setOrderUser([...doc.data()!.orders]);
+        console.log(doc.data()!.orders, "orderUser")
         })
-    setChange(true);
-},[])
+    // setChange(true);
+},[...selected])
 useEffect(()=>{
+      //처음 돌면서 현재 오더 안에 서 모든 비회원 document 를 OrderHistory 및 USER 에 PUSH
       // if(!change){
       //  if(orderHistory!=[]){
       //   db.collection('orders').doc("non_user").get().then((doc)=>{
@@ -443,34 +580,6 @@ useEffect(()=>{
       //   console.log("hi")
       // }
 },[change])
-
-
-  useEffect(()=>{
-      if(selected && orderUser ){
-        console.log(selected, orderUser)
-        const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
-            console.log(filtered[0],"filtered");
-        if (filtered[0].userId == "non_user"){
-              db.collection('user').doc("non_user").get().then((doc)=>{
-                doc.data()!.orders.forEach((showing:any) =>{
-                  if(filtered[0].phone === showing.phone){
-                    console.log(showing, "setUserSleceted");
-                    setUserSelected(showing);
-                    console.log(doc.data()!.orders, "setUseOrderSleceted");
-                    setUserOrderSelected(doc.data()!.orders);
-                  }
-                })
-              })
-            }
-            else{
-            db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
-              setUserSelected(doc.data()!)
-              setUserOrderSelected(doc.data()!.orders)
-              console.log(doc.data()!, doc.data()!.orders, "hasdasd")
-          })
-        }
-      }
-  },[... selected])
   return (
     <div className={classes.root}>
     <img className="img-logo-login" src="./videhome_logo.png"></img>
