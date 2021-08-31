@@ -205,7 +205,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function OrderTable() {
+export default function Non_OrderTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('date');
@@ -264,7 +264,7 @@ export default function OrderTable() {
           </Typography>
         ) : (
           <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-            회원 신청현황
+            비회원 신청현황
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -301,9 +301,11 @@ export default function OrderTable() {
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected.slice(1), name);
+      setOnOff(false);
     } 
     else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
+      setOnOff(false);
     } 
     // else if (selectedIndex === selected.length - 1) {
     //   newSelected = newSelected.concat(selected.slice(0, -1));
@@ -418,7 +420,7 @@ export default function OrderTable() {
         console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
 
 
-        db.collection("orders").doc("user").update({
+        db.collection("orders").doc("non_user").update({
           orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
         })
         console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
@@ -431,23 +433,25 @@ export default function OrderTable() {
           found_time[0].weight = reason;
           found_time[0].additional = reason;
     
-      db.collection('user').doc(filtered2[0].userId!).update({
-        orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
+      db.collection('user').doc("non_user").update({
+        orders : userOrderSelected!.filter((post:any) => (post.name + post.date) !== (filtered2[0].name + filtered2[0].date))
       })
       console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
 
-      db.collection('user').doc(filtered2[0].userId!).update({
+      db.collection('user').doc("non_user").update({
         orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
       })
       console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
      setSelected([]); 
-     await delay(1000);
+     await delay(1200);
     }
       else{
 
       }
     } 
   }
+  
+  
   
   const finished = async (user:string) =>{
 
@@ -515,7 +519,6 @@ else{
     console.log("[" + Date.now() + "]" + "DONE deleting current User order")
 
     db.collection('user').doc("non_user").update({
-      count: firebase.firestore.FieldValue.increment(-1),
       orders : firebase.firestore.FieldValue.arrayUnion(found_time[0]),
     })
     console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
@@ -527,7 +530,9 @@ else{
     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
     alert("신청확인 완료되었습니다.")
     setSelected([]); 
-    await delay(1000);
+    await delay(1500);
+    setOnOff(false);
+    await delay(1500);
 }
   }
 
@@ -561,28 +566,15 @@ else{
   // },[selected])
   useEffect(()=>{
     //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
-    db.collection('orders').doc("user").get().then((doc)=>{
+    db.collection('orders').doc("non_user").get().then((doc)=>{
         setOrderHistory([...doc.data()!.orders]);
         setOrderUser([...doc.data()!.orders]);
-        console.log(doc.data()!.orders, "orderUser")
-        })
+      })
     // setChange(true);
 },[...selected])
-useEffect(()=>{
-      //처음 돌면서 현재 오더 안에 서 모든 비회원 document 를 OrderHistory 및 USER 에 PUSH
-      // if(!change){
-      //  if(orderHistory!=[]){
-      //   db.collection('orders').doc("non_user").get().then((doc)=>{
-      //     setOrderHistory([...doc.data()!.orders]);
-      //     setOrderUser([...doc.data()!.orders]);
-      //   })
-      // }
-      //   console.log("hi")
-      // }
-},[change])
+
   return (
     <div className={classes.root}>
-    <img className="img-logo-login" src="./videhome_logo.png"></img>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>

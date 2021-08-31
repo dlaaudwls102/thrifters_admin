@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import OrderTable from './components/orderTable';
 import { auth } from './config/firebase';
 import ErrorComponent from './components/errorComponent';
+import Non_OrderTable from './components/non_orderTable';
 
 
 
 function Videhome_Requests() {    
-  const [show,setShow] = useState(true);  
+  const [show,setShow] = useState(false);  
   useEffect(() => {
       auth.onAuthStateChanged((user:any) => {
           if (user)
@@ -24,10 +25,11 @@ function Videhome_Requests() {
 
     return (
     <div className="Apps fade">
-      {(show === true)? 
-        <div>
+      {(!show === true)? <><ErrorComponent/></>
+      :  <div>
       <div className="left">
         <OrderTable/>
+        <Non_OrderTable/>
         <div className="wrapper">
         </div> 
         </div>
@@ -35,7 +37,7 @@ function Videhome_Requests() {
           <div className="top">
           </div>
         </div>
-        </div>:<><ErrorComponent/></>}
+        </div>}
     </div>
   );
 }

@@ -9,7 +9,7 @@ import ErrorComponent from './components/errorComponent';
 
 
 function Videhome_CustomerList() {    
-    const [show,setShow] = useState(true);  
+  const [show,setShow] = useState(false);  
     useEffect(() => {
         auth.onAuthStateChanged((user:any) => {
             if (user)
