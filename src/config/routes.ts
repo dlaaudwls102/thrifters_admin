@@ -1,8 +1,10 @@
 import IRoute from "../interfaces/route";
 import ChangePasswordPage from "../pages/auth/change";
+import CustomerInfoPage from "../pages/auth/customer_info";
 import ForgotPasswordPage from "../pages/auth/forgot";
 import LoginPage from "../pages/auth/login";
 import LogoutPage from "../pages/auth/logout";
+import QRReaderPage from "../pages/auth/QRReader";
 import RegisterPage from "../pages/auth/register";
 import ResetPasswordPage from "../pages/auth/reset";
 import HomePage from "../pages/home";
@@ -41,6 +43,20 @@ const routes: IRoute[] = [
         exact: true,
         component: LogoutPage,
         name: 'Logout Page',
+        protected: true
+    },
+    {
+        path: '/QR_Reader',
+        exact: true,
+        component: QRReaderPage,
+        name: 'QRREADER Page',
+        protected: true
+    },
+    {
+        path: '/customer_info',
+        exact: true,
+        component: CustomerInfoPage,
+        name: 'Customer Info Page',
         protected: true
     },
     {

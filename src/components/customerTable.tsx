@@ -366,12 +366,12 @@ export default function CustomerTable() {
         found_time[0].phone = phone;
         found_time[0].address = address;
     
-    db.collection('user').doc(selectedOrder.userId).update({
+    db.collection('user').doc(selectedOrder.uid).update({
       orders : userOrderSelected!.filter((post:any) => post.date !== selectedOrder.date)
     })
     console.log("[" + Date.now() + "]" + "DONE deleting current User order")
 
-    db.collection('user').doc(selectedOrder.userId).update({
+    db.collection('user').doc(selectedOrder.uid).update({
       orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
       averagephones : (totalphone/numberOrd).toFixed(2),
       totalphone: Number(totalphone),

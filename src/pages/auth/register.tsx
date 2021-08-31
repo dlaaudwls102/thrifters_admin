@@ -42,6 +42,16 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
         .then(result => {
             logging.info(result);
             history.push('/login');
+            db.collection('admin').doc(email).set({
+             
+                userId: email,
+                name: name,
+                phone: phone,  
+                orders:[],
+                privacyAgree : false,
+                uid:auth.currentUser?.uid!
+            
+        });
         })
         .catch(error => {
             logging.error(error);
@@ -62,27 +72,6 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
             setRegistering(false);
         });
 
-            auth.currentUser?.updateProfile({
-                displayName: name,
-            }).then(function() {
-                console.log("Display name updated");
-            }).catch(function(error) {
-                console.error(error)
-            });
-        
-        db.collection('admin').doc(email).set({
-             
-                userId: email,
-                name: name,
-                phone: phone,  
-                orders:[],
-                totalWeight: 0,
-                numberOfOrders: 0,
-                averageWeights: 0,
-                privacyAgree : false,
-                rank : 0,
-            
-        });
     }
 
     const handleChange = (prop : string) => (event: any) => {

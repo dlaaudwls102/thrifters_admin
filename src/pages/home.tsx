@@ -1,13 +1,29 @@
-import { Button, TextField } from '@material-ui/core';
+import { Button, makeStyles, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { auth, db } from '../config/firebase';
 import IPageProps from '../interfaces/page';
 
+
+const useStyles = makeStyles({
+    flexGrow: {
+      flex: '1',
+    },
+    button: {
+        fontSize:"13px",
+        backgroundColor: '#fff',
+      borderRadius:"1rem",
+      color: '#fff',
+      '&:hover': {
+        backgroundColor: '#FBAA13',
+        color: '#07381B',
+    },
+  }})
+
 const HomePage: React.FunctionComponent<IPageProps> = props => {
     const [username, setUsername] = useState(auth.currentUser?.displayName);
-
+    const classes = useStyles()
 
     const userList = document.querySelector('.user');
     const setupUser = (data:any) =>{
@@ -83,13 +99,25 @@ const HomePage: React.FunctionComponent<IPageProps> = props => {
                 <div style={{color:"black", fontFamily: 'TmoneyRoundWindExtraBold'}}>
                     <p>안녕하세요, {username} 님</p>     
                 </div>
-                <Button
-                    variant="outlined"
-                    onClick={() => {<Link to='/logout'>here</Link>}}
-                    style={{width:"50%", margin:"auto"}}
-                >
-                    <Link to='/logout' style={{textDecoration:"none", fontFamily:'TmoneyRoundWindExtraBold', color:"black"}}>로그아웃</Link>
-                </Button>
+                
+                <div style={{padding:"0 0 20px 0"}}>
+                    <Button className={classes.button}
+                        variant="outlined"
+
+                        style={{width:"70%",padding:"10px", margin:"auto", }}
+                    >
+                        <Link to='/QR_Reader' style={{textDecoration:"none", fontFamily:'TmoneyRoundWindExtraBold', color:"black"}}>QR 스캔</Link>
+                    </Button>
+                </div>
+                <div>
+                    <Button className={classes.button}
+                        variant="outlined"
+
+                        style={{width:"70%",padding:"10px", margin:"auto"}}
+                    >
+                        <Link to='/logout' style={{textDecoration:"none", fontFamily:'TmoneyRoundWindExtraBold', color:"black"}}>로그아웃</Link>
+                    </Button>
+                </div>
                     
                     </div>}  
             {/* <Card>

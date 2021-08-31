@@ -125,6 +125,21 @@
   opacity: 1;
   padding: 40px 0 0 0;
 }
+.img-logo-logins{
+  position:absolute;
+  width: 35%;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  opacity: 1;
+  left:0;
+  right:0;
+  top: 0;
+  bottom:200px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:auto;
+  margin-bottom:auto;
+}
 .img-top-icon{
   width: 35px;
 }

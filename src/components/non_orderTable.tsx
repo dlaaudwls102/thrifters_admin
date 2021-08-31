@@ -320,7 +320,7 @@ export default function Non_OrderTable() {
     const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
  
     if(selected.length === 0){
-        db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
+        db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
           setUserSelected(doc.data()!)
           setUserOrderSelected(doc.data()!.orders)
         
@@ -372,7 +372,7 @@ export default function Non_OrderTable() {
             })
           }
           else{
-          db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
+          db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
             setUserSelected(doc.data()!)
             setUserOrderSelected(doc.data()!.orders)
 
@@ -480,12 +480,12 @@ if(userSelected.userId !== "non_user"){
         found_time[0].weight = weight;
         found_time[0].additional = additional;
     
-    db.collection('user').doc(selectedOrder.userId).update({
+    db.collection('user').doc(selectedOrder.uid).update({
       orders : userOrderSelected!.filter((post:any) => post.date !== selectedOrder.date)
     })
     console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
 
-    db.collection('user').doc(selectedOrder.userId).update({
+    db.collection('user').doc(selectedOrder.uid).update({
       orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
       averageWeights : Number(((totalWeight*200)+totalAdditional)/numberOrd).toFixed(2),
       totalWeight: Number(totalWeight),
