@@ -316,14 +316,14 @@ export default function Non_OrderTable() {
     //     selected.slice(selectedIndex + 1),
     //   );
     // }
-    console.log(selected, orderUser,"after")
+   
     const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
-    console.log(newSelected, "selected");
+ 
     if(selected.length === 0){
         db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
           setUserSelected(doc.data()!)
           setUserOrderSelected(doc.data()!.orders)
-          console.log(doc.data()!, doc.data()!.orders, "hasdasd")
+        
           setSelected(newSelected);
           })
       }
@@ -354,18 +354,18 @@ export default function Non_OrderTable() {
   const showModal = () =>{
     const filtered = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
     setSelectedOrder(filtered[0]);
-    console.log(filtered, "selected Order")
+
     if(orderUser){
-      console.log(selected, orderUser,"after")
+
       const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
-      console.log(filtered[0],"filtered");
+  
       if (filtered[0].userId == "non_user"){
             db.collection('user').doc("non_user").get().then((doc)=>{
               doc.data()!.orders.forEach((showing:any) =>{
                 if(filtered[0].phone === showing.phone){
-                  console.log(showing, "setUserSleceted");
+            
                   setUserSelected(showing);
-                  console.log(doc.data()!.orders, "setUseOrderSleceted");
+           
                   setUserOrderSelected(doc.data()!.orders);
                 }
               })
@@ -375,7 +375,7 @@ export default function Non_OrderTable() {
           db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
             setUserSelected(doc.data()!)
             setUserOrderSelected(doc.data()!.orders)
-            console.log(doc.data()!, doc.data()!.orders, "hasdasd")
+
         })
       }
     }
@@ -424,8 +424,7 @@ export default function Non_OrderTable() {
           orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
         })
         console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
-        console.log(userOrderSelected, "userorderSelected")
-        console.log(filtered, "selectedOrder")
+   
       const filtered2:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
       var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
       var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
