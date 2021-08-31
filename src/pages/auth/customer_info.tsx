@@ -103,6 +103,7 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
                         setAddress(doc.data()!.address);
                         setPhone(doc.data()!.phone);
                         setName(doc.data()!.name);
+                        setNName(auth.currentUser?.displayName!);
                         setAverageWeights(doc.data()!.averageWeights);
                         setEmail(doc.data()!.userId);
                         setNumberOfOrders(doc.data()!.numberOfOrders);
