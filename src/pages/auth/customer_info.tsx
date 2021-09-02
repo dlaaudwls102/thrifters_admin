@@ -97,29 +97,26 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
 //     }
     
     useEffect(() => {
-        if(data.location?.state.length < 1){
+ 
             db.collection('user').doc(data.location?.state!).get().then((doc)=>{
                 if (doc.exists) {
                         setAddress(doc.data()!.address);
                         setPhone(doc.data()!.phone);
                         setName(doc.data()!.name);
-                        setNName(auth.currentUser?.displayName!);
+                        setNName(doc.data()!.nickname);
                         setAverageWeights(doc.data()!.averageWeights);
                         setEmail(doc.data()!.userId);
                         setNumberOfOrders(doc.data()!.numberOfOrders);
                         setTotalAdditional(doc.data()!.totalAdditional);
                         setTotalWeights(doc.data()!.totalWeights);
-                } else {
+                }   
+                else{
+                    alert("존재하지 않습니다." + " : " + data.location?.state )
                     console.log("data has been passed wrongly")
                     history.push('/QR_Reader')
                 }
             })
-        }
-        else{
-            alert("존재하지 않습니다." + " : " + data.location?.state )
-            console.log("data has been passed wrongly")
-            history.push('/QR_Reader')
-        }
+
     }, []);
 
 
