@@ -97,7 +97,7 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
 //     }
     
     useEffect(() => {
-        console.log(data)
+        if(data.location?.state.length < 1){
             db.collection('user').doc(data.location?.state!).get().then((doc)=>{
                 if (doc.exists) {
                         setAddress(doc.data()!.address);
@@ -114,6 +114,12 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
                     history.push('/QR_Reader')
                 }
             })
+        }
+        else{
+            alert("존재하지 않습니다." + " : " + data.location?.state )
+            console.log("data has been passed wrongly")
+            history.push('/QR_Reader')
+        }
     }, []);
 
 
