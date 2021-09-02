@@ -52,7 +52,7 @@ const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
                 }}
             />
             </div>
-            {(data == "Not Foundd")?<></>
+            {(data == "Not Found")?<></>
             : history.push('/customer_info',data)}
             <div id='pot' style={{border:"solid 7px #07381B", padding:"10px",color:"black", fontFamily: 'TmoneyRoundWindExtraBold'}}><p>{data}</p></div>
             <Button id='pot'
