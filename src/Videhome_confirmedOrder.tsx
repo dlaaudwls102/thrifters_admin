@@ -27,7 +27,7 @@ function Videhome_ConfirmedOrder() {
     <div className="Apps fade">
         {(show === true)? 
         <div>
-            <div className="left">
+            <div className="left" id='pot'>
                 <CheckedTable/>
                 <div className="wrapper">
                 </div> 

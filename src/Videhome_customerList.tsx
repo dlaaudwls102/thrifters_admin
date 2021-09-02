@@ -27,8 +27,8 @@ function Videhome_CustomerList() {
     <div className="Apps fade">
           {(show === true)? 
         <div>
-      <div className="left">
-        <CustomerTable/>
+      <div className="left" id='pot'>
+        <CustomerTable />
         <div className="wrapper">
         </div> 
         </div>

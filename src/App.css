@@ -648,3 +648,66 @@
   font-weight: normal;
   font-style: normal;
 }
+
+/* animation */
+#pot{
+  position: relative;
+  animation: myfirst 1s 1;
+  animation-direction: alternate;
+}
+
+@keyframes myfirst {
+  from {left: -300px;}
+  to {left: 0px;}
+}
+
+/* scanning animation */
+
+HTML SCSSResult Skip Results Iframe
+EDIT ON
+.preloader-scan {
+  position:absolute;
+  width: 35%;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  opacity: 1;
+  left:0;
+  right:0;
+  top: 0;
+  bottom:200px;
+  animation: stop 4s 1;
+}
+  #laser {
+    width: 100%;
+
+    background-color: tomato;
+    height: 1px;
+    position: absolute;
+    top: 20%;
+    width: 110%;
+    left: -5%;
+    z-index: 2;
+    box-shadow: 0 0 4px red;
+    animation: scanning 2s infinite;
+  }
+
+  #diode {
+    animation: beam .01s infinite;
+  }
+
+@keyframes beam {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes scanning {
+  50% {
+    transform: translateY(200px);
+  }
+}
+@keyframes stop {
+  50% {
+    opacity: 0;
+  }
+}

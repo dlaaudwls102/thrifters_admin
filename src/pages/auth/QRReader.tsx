@@ -36,8 +36,11 @@ const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
     return (
         <div>
             <div className="img-logo-loginss">
-                 <img className="img-logo-logins" src="./videhome_logo.png"></img>
-            </div>
+                <div id="diode">
+                    <div id="laser"></div>
+                    </div>
+                </div>
+                <img className="img-logo-logins" src="./videhome_logo.png"></img>
             <div style={{border:"solid 7px #FBAA13",padding:0}}>
             <BarcodeScannerComponent
                 facingMode={"environment"}
@@ -49,10 +52,10 @@ const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
                 }}
             />
             </div>
-            {(data == "Not Found")?<></>
+            {(data == "Not Foundd")?<></>
             : history.push('/customer_info',data)}
-            <div style={{border:"solid 7px #07381B", padding:"10px",color:"black", fontFamily: 'TmoneyRoundWindExtraBold'}}><p>{data}</p></div>
-            <Button
+            <div id='pot' style={{border:"solid 7px #07381B", padding:"10px",color:"black", fontFamily: 'TmoneyRoundWindExtraBold'}}><p>{data}</p></div>
+            <Button id='pot'
             disabled={editON}
                 variant="outlined"
                 onClick={() => goBack()}
@@ -60,6 +63,7 @@ const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
             >
                 뒤로가기
             </Button>
+            
         </div>
     );
 }

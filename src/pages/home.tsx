@@ -95,12 +95,12 @@ const HomePage: React.FunctionComponent<IPageProps> = props => {
             </div>
         </div>
         :
-            <div>
+            <div id='pot' style={{display:"flex", position:"relative", flexDirection:"column"}}>
                 <div style={{color:"black", fontFamily: 'TmoneyRoundWindExtraBold'}}>
                     <p>안녕하세요, {username} 님</p>     
                 </div>
                 
-                <div style={{padding:"0 0 20px 0"}}>
+                <div id='pot' style={{padding:"0 0 20px 0"}}>
                     <Button className={classes.button}
                         variant="outlined"
 
@@ -109,7 +109,7 @@ const HomePage: React.FunctionComponent<IPageProps> = props => {
                         <Link to='/QR_Reader' style={{textDecoration:"none", fontFamily:'TmoneyRoundWindExtraBold', color:"black"}}>QR 스캔</Link>
                     </Button>
                 </div>
-                <div>
+                <div id='pot'>
                     <Button className={classes.button}
                         variant="outlined"
 

@@ -111,6 +111,7 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
                         setTotalWeights(doc.data()!.totalWeights);
                 } else {
                     console.log("data has been passed wrongly")
+                    history.push('/QR_Reader')
                 }
             })
     }, []);

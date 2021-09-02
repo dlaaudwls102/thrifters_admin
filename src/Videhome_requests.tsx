@@ -27,8 +27,8 @@ function Videhome_Requests() {
     <div className="Apps fade">
       {(!show === true)? <><ErrorComponent/></>
       :  <div>
-      <div className="left">
-        <OrderTable/>
+      <div className="left" id='pot'>
+        <OrderTable />
         <Non_OrderTable/>
         <div className="wrapper">
         </div> 
