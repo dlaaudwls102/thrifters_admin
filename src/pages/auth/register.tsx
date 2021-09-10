@@ -1,7 +1,6 @@
 import { FormControl, InputAdornment, TextField, Button } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import AuthContainer from '../../components/AuthContainer';
 import ErrorText from '../../components/ErrorText';
 import { auth, db } from '../../config/firebase';
 import logging from '../../config/logging';
@@ -18,7 +17,7 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
     
     //직원 마스터코드
     const [masterCode, setMasterCode] = useState<string>('');
-    const [checkMasterCode, setCheckMasterCode] = useState<string>('videhome671009*');
+    const [checkMasterCode] = useState<string>('videhome671009*');
 
 
     const history = useHistory();
@@ -76,22 +75,22 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
 
     const handleChange = (prop : string) => (event: any) => {
 
-        if (prop == "email_"){
+        if (prop === "email_"){
             setEmail(event.target.value.toLocaleLowerCase())
         }
-        else  if (prop == "password_"){
+        else  if (prop === "password_"){
             setPassword(event.target.value)
         }
-        else  if (prop == "confirm_"){
+        else  if (prop === "confirm_"){
             setConfirm(event.target.value)
         }
-        else  if (prop == "name_"){
+        else  if (prop === "name_"){
             setName(event.target.value)
         }
-        else  if (prop == "masterCode_"){
+        else  if (prop === "masterCode_"){
             setMasterCode(event.target.value)
         }
-        else  if (prop == "phone_"){
+        else  if (prop === "phone_"){
            
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 11) {
@@ -110,7 +109,7 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
 
     return (
         <div>
-            <img className="img-logo-login" src="./videhome_logo.png"></img>
+            <img className="img-logo-login" src="./videhome_logo.png" alt="" />
             <div style={{ color:"black"}}>
                 <FormControl style={{width:"100%"}} >
                         <TextField

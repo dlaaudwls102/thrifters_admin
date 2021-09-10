@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -19,7 +18,7 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
-import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles } from '@material-ui/core';
+import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles, TablePagination } from '@material-ui/core';
 import firebase from "firebase/app";
 
 interface Data {
@@ -246,7 +245,7 @@ export default function CustomerTable() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(100);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   //newData
   const [orderHistory,setOrderHistory] = React.useState([  createData('2021-08-25', "03:20", 3 , "01010101", "2131")]);
@@ -477,12 +476,18 @@ export default function CustomerTable() {
             </TableBody>
           </Table>
         </TableContainer>
-
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={orderHistory.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={
+              handleChangeRowsPerPage
+          }
       />
+      </Paper>
       {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
      {(onOff)?
       <div className="modal" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>

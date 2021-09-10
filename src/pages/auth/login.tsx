@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import AuthContainer from '../../components/AuthContainer';
 import ErrorText from '../../components/ErrorText';
-import { auth, db, Providers } from '../../config/firebase';
+import { auth, db } from '../../config/firebase';
 import logging from '../../config/logging';
 import IPageProps from '../../interfaces/page';
-import firebase from 'firebase';
-import { SignInWithSocialMedia } from './modules';
 import { FormControl, InputAdornment, TextField, Button } from '@material-ui/core';
-import { useEffect } from 'react';
+// import { SignInWithSocialMedia } from './modules';
 
 const LoginPage: React.FunctionComponent<IPageProps> = props => {
     const [authenticating, setAuthenticating] = useState<boolean>(false);
@@ -23,7 +20,7 @@ const LoginPage: React.FunctionComponent<IPageProps> = props => {
         if (error !== '') setError('');
 
         setAuthenticating(true);
-        db.collection('admin').doc(email).get().then((doc)=>{
+        db.collection('admin').doc(email.toLocaleLowerCase()).get().then((doc)=>{
             if (doc.exists) {
                 auth.signInWithEmailAndPassword(email, password)
                 .then(result => {
@@ -43,22 +40,6 @@ const LoginPage: React.FunctionComponent<IPageProps> = props => {
         })
     }
 
-    const signInWithSocialMedia = (provider: firebase.auth.AuthProvider) => {
-        if (error !== '') setError('');
-
-        setAuthenticating(true);
-
-        SignInWithSocialMedia(provider)
-        .then(result => {
-            logging.info(result);
-            history.push('/');
-        })
-        .catch(error => {
-            logging.error(error);
-            setAuthenticating(false);
-            setError(error.message);
-        });
-    }
     useEffect(() => {
         auth.onAuthStateChanged(user => {
             if (user)
@@ -73,9 +54,27 @@ const LoginPage: React.FunctionComponent<IPageProps> = props => {
         })
     }, []);
 
+    // const signInWithSocialMedia = (provider: firebase.auth.AuthProvider) => {
+    //     if (error !== '') setError('');
+
+    //     setAuthenticating(true);
+
+    //     SignInWithSocialMedia(provider)
+    //     .then(result => {
+    //         logging.info(result);
+    //         history.push('/');
+    //     })
+    //     .catch(error => {
+    //         logging.error(error);
+    //         setAuthenticating(false);
+    //         setError(error.message);
+    //     });
+    // }
+
+
     return (
         <div>
-              <img className="img-logo-login" src="./videhome_logo.png"></img>
+              <img className="img-logo-login" src="./videhome_logo.png" alt=""/>
             <div style={{ color:"black"}}>
                 <FormControl style={{width:"100%"}} >
                         <TextField

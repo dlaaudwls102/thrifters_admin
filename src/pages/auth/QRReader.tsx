@@ -1,37 +1,17 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import AuthContainer from '../../components/AuthContainer';
-import ErrorText from '../../components/ErrorText';
-import { auth, db, Providers } from '../../config/firebase';
-import logging from '../../config/logging';
+import { useHistory } from 'react-router-dom';
 import IPageProps from '../../interfaces/page';
-import firebase from 'firebase';
-import { SignInWithSocialMedia } from './modules';
-import { FormControl, InputAdornment, TextField, Button } from '@material-ui/core';
-import { useEffect } from 'react';
+import { Button } from '@material-ui/core';
 import BarcodeScannerComponent from "react-qr-barcode-scanner";
 
 const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
-    const [authenticating, setAuthenticating] = useState<boolean>(false);
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
-    const [result, setResult]= useState<string>('');
     const [data, setData] = React.useState<any>("Not Found");
-    
-    const [editON,setEditON] = useState<boolean>(false);
-    const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
+    const [editON] = useState<boolean>(false);
 
-    const startEdit = () =>{
-        setEditON(!editON);
-    }
     const goBack = () =>{
        history.push('/')
     }
     const history = useHistory();
-    const goTo = (uid:string) =>{
-        history.push('/customer_info',uid);
-    }
 
     return (
         <div>

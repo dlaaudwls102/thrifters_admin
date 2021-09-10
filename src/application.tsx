@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import AuthRoute from './components/AuthRoute';
+import TopNav from './components/topnav';
 import { auth } from './config/firebase';
 import logging from './config/logging';
 import routes from './config/routes';
@@ -28,8 +29,9 @@ const Application: React.FunctionComponent<IApplicationProps> = props => {
 
 
     return (
-        <div className="logins fade">
+        <div className="logins fade" style={{width:"100%"}}>
             <BrowserRouter>
+                    <TopNav/>
                 <Switch>
                     {routes.map((route, index) => 
                         <Route

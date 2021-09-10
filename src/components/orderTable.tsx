@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -19,10 +18,11 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
-import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles } from '@material-ui/core';
+import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles, TablePagination } from '@material-ui/core';
 import firebase from "firebase/app";
 import SearchIcon from '@material-ui/icons/Search';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import {useHistory} from 'react-router-dom';
 
 interface Data {
   time: string;
@@ -212,7 +212,8 @@ export default function OrderTable() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(100);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [totalHistory, setTotalHistory] = React.useState<Data[]>();
 
   //newData
   const [orderHistory,setOrderHistory] = React.useState<Data[]>([]);
@@ -224,6 +225,8 @@ export default function OrderTable() {
   const [userOrderSelected, setUserOrderSelected] = React.useState<any>();
   const [change,setChange]  = React.useState<any>(false);
 
+  //history
+  const history = useHistory();
   //newInput data
   const [weight, setWeight] = React.useState<number>();
   const [additional, setAdditional] = React.useState<any>();
@@ -270,7 +273,7 @@ export default function OrderTable() {
         {numSelected > 0 ? (
           <>
           <Tooltip title="매입하기">
-            <IconButton aria-label="delete" onClick={()=>{showModal()}}>
+            <IconButton aria-label="delete" onClick={()=>{confirmApplication()}}>
                 <AttachMoneyIcon />
             </IconButton>
           </Tooltip>
@@ -281,11 +284,6 @@ export default function OrderTable() {
             </Tooltip>
           </>
         ) : (
-          // <Tooltip title="Filter list">
-          //   <IconButton aria-label="filter list">
-          //     <FilterListIcon />
-          //   </IconButton>
-          // </Tooltip>
           <></>
         )}
       </Toolbar>
@@ -305,15 +303,6 @@ export default function OrderTable() {
     else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } 
-    // else if (selectedIndex === selected.length - 1) {
-    //   newSelected = newSelected.concat(selected.slice(0, -1));
-    // }
-    //  else if (selectedIndex > 0) {
-    //   newSelected = newSelected.concat(
-    //     selected.slice(0, selectedIndex),
-    //     selected.slice(selectedIndex + 1),
-    //   );
-    // }
 
     const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
 
@@ -339,9 +328,6 @@ export default function OrderTable() {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
@@ -349,52 +335,51 @@ export default function OrderTable() {
 
   // MADE FUNCTIONS
 
-  const showModal = () =>{
-    const filtered = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
-    setSelectedOrder(filtered[0]);
+  const confirmApplication = async () =>{
+
+      var confirmDelete = window.confirm("매입 하시겠습니까?")
+      if (confirmDelete){
+        const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+        filtered[0]["confirmed"] = "확인";
+        filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+        filtered[0]["rating"] = 0;
    
-    if(orderUser){
-
-      const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
-
-      if (filtered[0].userId == "non_user"){
-            db.collection('user').doc("non_user").get().then((doc)=>{
-              doc.data()!.orders.forEach((showing:any) =>{
-                if(filtered[0].phone === showing.phone){
-            
-                  setUserSelected(showing);
-        
-                  setUserOrderSelected(doc.data()!.orders);
-                }
-              })
-            })
-          }
-          else{
-          db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
-            setUserSelected(doc.data()!)
-            setUserOrderSelected(doc.data()!.orders)
-
+        const timestamp = Date.now(); // This would be the timestamp you want to format
+        filtered[0]['checked_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+    
+        //sent to confirmed orders
+        db.collection("orders").doc("user").update({
+          orders:  totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
         })
-      }
-    }
-        
-    setCound(filtered[0]);
-    setOnOff(true);
-  }
-  const handleChange = (prop : string) => (event: any) => {
-      
-    if (prop === "weight_"){
-      setWeight(event.target.value)
-    }
-    else if (prop === "additional_"){
-      setAdditional(event.target.value)
-    }
-    else if (prop === "rating_"){
-      setRating(event.target.value)
-    }
+        db.collection("orders").doc("user").update({
+          orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
+        })
+        console.log("[" + Date.now() + "]" + "DONE Deleting adding new altered data to order -> user")
 
+      const filtered2:any = totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+      var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
+      var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
+          found_time[0].confirmed = "확인"
+     
+      db.collection('user').doc(filtered2[0].uid!).update({
+        orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
+      })
+      console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
+
+      db.collection('user').doc(filtered2[0].uid!).update({
+        orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+      })
+      console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
+     setSelected([]); 
+     alert("신청 확인하였습니다")
+     await delay(500);
+     history.push("/finalize");
+    }
+    else{
+      setSelected([]); 
+    }
   }
-  const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
+
   const turnDown = async () =>{
     setOnOff(false);
     var reason = prompt("이유를 적어주세요");
@@ -402,14 +387,14 @@ export default function OrderTable() {
       var confirmDelete = window.confirm("삭제 하시겠습니까?")
       if (confirmDelete){
         const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
-        filtered.weight = weight;
-        filtered.additional = additional;
-        filtered.confirmed = "취소";
-        filtered["turndown_reason"] = reason;
-        filtered["confirmed_By"] = auth.currentUser?.displayName!;
-        filtered["rating"] = 0;
+        filtered[0].weight = "취소";
+        filtered[0].additional = "취소";
+        filtered[0].confirmed = "취소";
+        filtered[0]["turndown_reason"] = reason;
+        filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+        filtered[0]["rating"] = 0;
         const timestamp = Date.now(); // This would be the timestamp you want to format
-        filtered['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+        filtered[0]['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
     
         //sent to confirmed orders
         db.collection("orders").doc("confirmed").update({
@@ -419,11 +404,12 @@ export default function OrderTable() {
 
 
         db.collection("orders").doc("user").update({
-          orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+          orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
         })
+        console.log(totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0]), orderHistory, "selectedzzz")
         console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
 
-      const filtered2:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+      const filtered2:any = totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
       var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
       var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
           found_time[0].confirmed = "취소"
@@ -440,13 +426,31 @@ export default function OrderTable() {
       })
       console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
      setSelected([]); 
-     await delay(1000);
+     await delay(500);
+     history.push("/finalize");
     }
-      else{
-
-      }
     } 
   }
+
+
+
+
+
+
+  const handleChange = (prop : string) => (event: any) => {
+      
+    if (prop === "weight_"){
+      setWeight(event.target.value)
+    }
+    else if (prop === "additional_"){
+      setAdditional(event.target.value)
+    }
+    else if (prop === "rating_"){
+      setRating(event.target.value)
+    }
+
+  }
+  const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
   
   const finished = async (user:string) =>{
 
@@ -530,55 +534,16 @@ else{
 }
   }
 
-  // Gathering data
-  // useEffect(()=>{
-  //   console.log(selected, orderUser,"before")
-  //     if(orderUser && selected){
-  //       console.log(selected, orderUser,"after")
-  //       const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
-  //       console.log(filtered[0],"filtered");
-  //       if (filtered[0].userId == "non_user"){
-  //             db.collection('user').doc("non_user").get().then((doc)=>{
-  //               doc.data()!.orders.forEach((showing:any) =>{
-  //                 if(filtered[0].phone === showing.phone){
-  //                   console.log(showing, "setUserSleceted");
-  //                   setUserSelected(showing);
-  //                   console.log(doc.data()!.orders, "setUseOrderSleceted");
-  //                   setUserOrderSelected(doc.data()!.orders);
-  //                 }
-  //               })
-  //             })
-  //           }
-  //           else{
-  //         db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
-  //             setUserSelected(doc.data()!)
-  //             setUserOrderSelected(doc.data()!.orders)
-  //             console.log(doc.data()!, doc.data()!.orders, "hasdasd")
-  //         })
-  //       }
-  //     }
-  // },[selected])
   useEffect(()=>{
     //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
     db.collection('orders').doc("user").get().then((doc)=>{
-        setOrderHistory([...doc.data()!.orders]);
-        setOrderUser([...doc.data()!.orders]);
-
+      // doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))
+        setOrderHistory([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))]);
+        setTotalHistory([...doc.data()!.orders]);
+        setOrderUser([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))]);
         })
-    // setChange(true);
 },[...selected])
-useEffect(()=>{
-      //처음 돌면서 현재 오더 안에 서 모든 비회원 document 를 OrderHistory 및 USER 에 PUSH
-      // if(!change){
-      //  if(orderHistory!=[]){
-      //   db.collection('orders').doc("non_user").get().then((doc)=>{
-      //     setOrderHistory([...doc.data()!.orders]);
-      //     setOrderUser([...doc.data()!.orders]);
-      //   })
-      // }
-      //   console.log("hi")
-      // }
-},[change])
+
   return (
     <div className={classes.root}>
     <img className="img-logo-login" src="./videhome_logo.png"></img>
@@ -642,7 +607,17 @@ useEffect(()=>{
             </TableBody>
           </Table>
         </TableContainer>
-
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={orderHistory.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={
+              handleChangeRowsPerPage
+          }
+      />
       </Paper>
       {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

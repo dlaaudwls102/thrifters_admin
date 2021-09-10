@@ -21,28 +21,32 @@ import { auth, db } from '../config/firebase';
 import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles, TablePagination } from '@material-ui/core';
 import firebase from "firebase/app";
 
+import SearchIcon from '@material-ui/icons/Search';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import {useHistory} from 'react-router-dom';
+
 interface Data {
-  confirmed_Time: string;
-  confirmed_By: string;
+  time: string;
   name: string;
-  additional: number;
-  weight: number;
+  address: string;
+  phone: string;
+  date:string;
 }
 
 
 function createData(
-  confirmed_Time: string,
-  confirmed_By: string,
+  date: string,
+  time: string,
   name: string,
-  weight: number,
-  additional: number,
+  address: string,
+  phone: string,
 
 ): Data {
-  return { confirmed_Time, confirmed_By, name, weight, additional};
+  return { date, time, name, address, phone};
 }
 
-const rows = [
-  createData('2021-08-25', "03:20", "신영관" , 300, 4000),
+const rows:Data[] = [
+
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -84,11 +88,11 @@ interface HeadCell {
 }
 
 const headCells: HeadCell[] = [
-  { id: 'confirmed_Time', numeric: false, disablePadding: true, label: '시간' },
-  { id: 'confirmed_By', numeric: false, disablePadding: false, label: '담당' },
-  { id: 'name', numeric: false, disablePadding: false, label: '고객' },
-  { id: 'weight', numeric: true, disablePadding: false, label: '무게' },
-  { id: 'additional', numeric: true, disablePadding: false, label: '추가' },
+  { id: 'date', numeric: false, disablePadding: true, label: '날짜' },
+  { id: 'time', numeric: false, disablePadding: false, label: '시간' },
+  { id: 'name', numeric: false, disablePadding: false, label: '성함' },
+  { id: 'address', numeric: false, disablePadding: false, label: '주소' },
+  { id: 'phone', numeric: false, disablePadding: false, label: '전화' },
 ];
 
 interface EnhancedTableProps {
@@ -171,43 +175,7 @@ interface EnhancedTableToolbarProps {
   numSelected: number;
 }
 
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const classes = useToolbarStyles();
-  const { numSelected } = props;
 
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-      style={{padding:"10px 0"}}
-    >
-      {numSelected > 0 ? (
-        <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} 개 선택
-        </Typography>
-      ) : (
-        <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-          누적현황
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        // <Tooltip title="Filter list">
-        //   <IconButton aria-label="filter list">
-        //     <FilterListIcon />
-        //   </IconButton>
-        // </Tooltip>
-        <></>
-      )}
-    </Toolbar>
-  );
-};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -238,28 +206,32 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function CheckedTable() {
+export default function FinalizeOrderTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('confirmed_Time');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('date');
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [totalHistory, setTotalHistory] = React.useState<Data []>();
 
   //newData
-  const [orderHistory,setOrderHistory] = React.useState([createData('2021-08-25', "03:20", "신영관" , 300, 3000)]);
+  const [orderHistory,setOrderHistory] = React.useState<Data[]>([]);
+  const [orderHisortNon, setOrderHistoryNon] = React.useState<Data[]>([]);
   const [orderUser,setOrderUser] = React.useState<any>();
   const [selectedOrder,setSelectedOrder] = React.useState<any>();
   const [cound,setCound] = React.useState<any>();
   const [userSelected, setUserSelected] = React.useState<any>();
   const [userOrderSelected, setUserOrderSelected] = React.useState<any>();
+  const [change,setChange]  = React.useState<any>(false);
 
   //newInput data
   const [weight, setWeight] = React.useState<number>();
   const [additional, setAdditional] = React.useState<any>();
   const [rating, setRating] = React.useState<number>();
- 
+  // history
+    const history = useHistory();
   //show Modal
   const [onOff,setOnOff] = React.useState(false);
 
@@ -271,31 +243,84 @@ export default function CheckedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.confirmed_Time);
+      const newSelecteds = rows.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
+  const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+    const classes = useToolbarStyles();
+    const { numSelected } = props;
+  
+    return (
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: numSelected > 0,
+        })}
+        style={{padding:"10px 0"}}
+      >
+        {numSelected > 0 ? (
+          <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} color="inherit" variant="subtitle1" component="div">
+            {numSelected} 개 선택
+          </Typography>
+        ) : (
+          <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
+            회원 매입정산 현황
+          </Typography>
+        )}
+        {numSelected > 0 ? (
+          <>
+          <Tooltip title="매입하기">
+            <IconButton aria-label="delete" onClick={()=>{showModal()}}>
+                <AttachMoneyIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="취소하기">
+              <IconButton aria-label="delete" onClick={()=>{turnDown()}}>
+                  <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : (
+          // <Tooltip title="Filter list">
+          //   <IconButton aria-label="filter list">
+          //     <FilterListIcon />
+          //   </IconButton>
+          // </Tooltip>
+          <></>
+        )}
+      </Toolbar>
+    );
+  };
+
+
+
+
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1), name);
+    } 
+    else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+    } 
 
-    setSelected(newSelected);
+    const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
+    
+    if(selected.length === 0){
+        db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
+          setUserSelected(doc.data()!)
+          setUserOrderSelected(doc.data()!.orders)
+          setSelected(newSelected);
+          })
+      }
+    if(selected.length >= 1){
+      setSelected(newSelected);
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -307,22 +332,40 @@ export default function CheckedTable() {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
-
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, orderHistory.length - page * rowsPerPage);
+  // const emptyRows = rowsPerPage - Math.min(rowsPerPage, orderHistory.length - page * rowsPerPage);
 
   // MADE FUNCTIONS
 
   const showModal = () =>{
-    const filtered = orderHistory.filter(order => (order.confirmed_Time) == selected[0]);
+    const filtered = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
     setSelectedOrder(filtered[0]);
+   
+    if(orderUser){
+
+      const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
+
+      if (filtered[0].userId == "non_user"){
+            db.collection('user').doc("non_user").get().then((doc)=>{
+              doc.data()!.orders.forEach((showing:any) =>{
+                if(filtered[0].phone === showing.phone){
+                  setUserSelected(showing);
+                  setUserOrderSelected(doc.data()!.orders);
+                }
+              })
+            })
+          }
+          else{
+          db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
+            setUserSelected(doc.data()!)
+            setUserOrderSelected(doc.data()!.orders)
+        })
+      }
+    }
+        
     setCound(filtered[0]);
     setOnOff(true);
-
   }
   const handleChange = (prop : string) => (event: any) => {
       
@@ -337,8 +380,63 @@ export default function CheckedTable() {
     }
 
   }
+  const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
+  const turnDown = async () =>{
+    setOnOff(false);
+    var reason = prompt("이유를 적어주세요");
+    if (reason != undefined){
+      var confirmDelete = window.confirm("삭제 하시겠습니까?")
+      if (confirmDelete){
+        const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+        filtered[0].weight = "취소";
+        filtered[0].additional = "취소";
+        filtered[0].confirmed = "취소";
+        filtered[0]["turndown_reason"] = reason;
+        filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+        filtered[0]["rating"] = 0;
+        const timestamp = Date.now(); // This would be the timestamp you want to format
+        filtered[0]['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+    
+        //sent to confirmed orders
+        console.log(filtered[0])
+        db.collection("orders").doc("confirmed").update({
+            orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
+          })
+        console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
+
+
+        db.collection("orders").doc("user").update({
+          orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+        })
+        console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
+
+      const filtered2:any = totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+      var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
+      var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
+          found_time[0].confirmed = "취소"
+          found_time[0].weight = reason;
+          found_time[0].additional = reason;
+    
+      db.collection('user').doc(filtered2[0].uid!).update({
+        orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
+      })
+      console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
+
+      db.collection('user').doc(filtered2[0].uid!).update({
+        orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+      })
+      console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
+     setSelected([]); 
+     await delay(500);
+     history.push("/confirmed");
+    }
+      else{
+        setSelected([]); 
+      }
+    } 
+  }
   
-  const finished = (user:string) =>{
+  const finished = async (user:string) =>{
 
     selectedOrder.weight = weight;
     selectedOrder.additional = additional;
@@ -355,57 +453,120 @@ export default function CheckedTable() {
     console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
     
     //finding user's info's order and deleting, and updating it with confirmed order
-
-
+ 
+if(userSelected.userId !== "non_user"){
     var totalWeight = Number(userSelected.totalWeight) + Number(weight);
     var totalAdditional = Number(userSelected.totalAdditional) + Number(additional);
     var numberOrd = userSelected.numberOfOrders;
     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
         found_time[0].confirmed = "확인"
-        found_time[0].weight = weight;
-        found_time[0].additional = additional;
+        found_time[0].weight = Number(weight);
+        found_time[0].additional = Number(additional);
     
     db.collection('user').doc(selectedOrder.uid).update({
       orders : userOrderSelected!.filter((post:any) => post.date !== selectedOrder.date)
     })
-    console.log("[" + Date.now() + "]" + "DONE deleting current User order")
+    console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
 
     db.collection('user').doc(selectedOrder.uid).update({
       orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
-      averageWeights : (totalWeight/numberOrd).toFixed(2),
+      averageWeights : Number(((totalWeight*200)+totalAdditional)/numberOrd).toFixed(2),
       totalWeight: Number(totalWeight),
       totalAdditional: Number(totalAdditional)
     })
-    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
+    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
   
     //delete from admin user order
   db.collection("orders").doc("user").update({
-    orders: orderHistory.filter(order => (order.confirmed_Time) !== selected[0])
+    orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
   })
-    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
+    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
+    alert("신청확인 완료되었습니다.")
+    setSelected([]); 
+    await delay(500);
+    history.push("/confirmed");
+}
+// else{
+
+//     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
+//     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
+//         found_time[0].confirmed = "확인"
+//         found_time[0].weight = weight;
+//         found_time[0].additional = additional;
     
+//     db.collection('user').doc('non_user').update({
+//       orders : userOrderSelected!.filter((post:any) => post.name !== selectedOrder.name)
+//     })
+//     console.log("[" + Date.now() + "]" + "DONE deleting current User order")
+
+//     db.collection('user').doc("non_user").update({
+//       count: firebase.firestore.FieldValue.increment(-1),
+//       orders : firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+//     })
+//     console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
+  
+//     //delete from admin user order
+//   db.collection("orders").doc("non_user").update({
+//     orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+//   })
+//     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
+//     alert("신청확인 완료되었습니다.")
+//     setSelected([]); 
+//     await delay(500);
+//     history.push("/confirmed");
+// }
   }
 
-  // Gaterhing data
+  // Gathering data
+  // useEffect(()=>{
+  //   console.log(selected, orderUser,"before")
+  //     if(orderUser && selected){
+  //       console.log(selected, orderUser,"after")
+  //       const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
+  //       console.log(filtered[0],"filtered");
+  //       if (filtered[0].userId == "non_user"){
+  //             db.collection('user').doc("non_user").get().then((doc)=>{
+  //               doc.data()!.orders.forEach((showing:any) =>{
+  //                 if(filtered[0].phone === showing.phone){
+  //                   console.log(showing, "setUserSleceted");
+  //                   setUserSelected(showing);
+  //                   console.log(doc.data()!.orders, "setUseOrderSleceted");
+  //                   setUserOrderSelected(doc.data()!.orders);
+  //                 }
+  //               })
+  //             })
+  //           }
+  //           else{
+  //         db.collection('user').doc(filtered[0].userId).get().then((doc)=>{
+  //             setUserSelected(doc.data()!)
+  //             setUserOrderSelected(doc.data()!.orders)
+  //             console.log(doc.data()!, doc.data()!.orders, "hasdasd")
+  //         })
+  //       }
+  //     }
+  // },[selected])
   useEffect(()=>{
-        
-    db.collection('orders').doc("confirmed").get().then((doc)=>{
-            setOrderHistory(doc.data()!.orders);
-            setOrderUser(doc.data()!.orders);
+    //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
+    db.collection('orders').doc("user").get().then((doc)=>{
+        setOrderHistory([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "확인"))]);
+        setOrderUser([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "확인"))]);
+        setTotalHistory([...doc.data()!.orders])
         })
-},[])
-//   useEffect(()=>{
-//       if(selected && orderUser ){
-//         const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
-
-//             db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
-    
-//               setUserSelected(doc.data()!)
-//               setUserOrderSelected(doc.data()!.orders)
-//           })
-//       }
-//   },[selected])
+    // setChange(true);
+},[...selected])
+useEffect(()=>{
+      //처음 돌면서 현재 오더 안에 서 모든 비회원 document 를 OrderHistory 및 USER 에 PUSH
+      // if(!change){
+      //  if(orderHistory!=[]){
+      //   db.collection('orders').doc("non_user").get().then((doc)=>{
+      //     setOrderHistory([...doc.data()!.orders]);
+      //     setOrderUser([...doc.data()!.orders]);
+      //   })
+      // }
+      //   console.log("hi")
+      // }
+},[change])
   return (
     <div className={classes.root}>
     <img className="img-logo-login" src="./videhome_logo.png"></img>
@@ -425,23 +586,23 @@ export default function CheckedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={orderHistory.length}
+              rowCount={orderHistory!.length}
             />
             <TableBody>
-              {stableSort(orderHistory, getComparator(order, orderBy))
+              {stableSort(orderHistory!, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.confirmed_Time);
+                  const isItemSelected = isSelected(row.date + ", " + row.time + ", " + row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.confirmed_Time)}
+                      onClick={(event) => handleClick(event, row.date + ", " + row.time + ", " + row.name)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.confirmed_Time}
+                      key={row.date + ", " + row.time + ", " + row.name}
                       selected={isItemSelected}
                       style={{minWidth:"60px",textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}}
                     >
@@ -452,12 +613,12 @@ export default function CheckedTable() {
                         />
                       </TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} component="th" id={labelId} scope="row" padding="none">
-                        {row.confirmed_Time}
+                        {row.date.slice(-5)}
                       </TableCell>
-                      <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.confirmed_By}</TableCell>
+                      <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.time}</TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.name}</TableCell>
-                      <TableCell style={{fontSize:"15px", minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.weight.toString() === "취소")?row.weight:row.weight + " KG"}</TableCell>
-                      <TableCell style={{minWidth:"100px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.additional.toString() === "취소")?row.additional:row.additional + " 원"}</TableCell>
+                      <TableCell style={{fontSize:"15px", minWidth:"200px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.address}</TableCell>
+                      <TableCell style={{minWidth:"200px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.phone}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -481,9 +642,13 @@ export default function CheckedTable() {
           }
       />
       </Paper>
+      {/* <FormControlLabel
+        control={<Switch checked={dense} onChange={handleChangeDense} />}
+        label="축소"
+      /> */}
       {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
      {(onOff)?
-      <div className="modal" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>
+      <div className="modal" id="pot" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>
         <div>
           <div className="total"> 
             <div  className="totalCate" >

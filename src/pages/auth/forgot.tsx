@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-// import { Button, FormGroup, Input } from 'reactstrap';
-import AuthContainer from '../../components/AuthContainer';
-import ErrorText from '../../components/ErrorText';
 import { auth } from '../../config/firebase';
 import logging from '../../config/logging';
 import IPageProps from '../../interfaces/page';
@@ -9,7 +6,7 @@ import IPageProps from '../../interfaces/page';
 const ForgotPasswordPage: React.FunctionComponent<IPageProps> = props => {
     const [sending, setSending] = useState<boolean>(false);
     const [sent, setSent] = useState<boolean>(false);
-    const [email, setEmail] = useState<string>('');
+    const [email] = useState<string>('');
     const [error, setError] = useState<string>('');
 
     const resetPasswordRequest = () => {

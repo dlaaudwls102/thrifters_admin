@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -19,10 +18,11 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
-import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles } from '@material-ui/core';
+import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles, TablePagination } from '@material-ui/core';
 import firebase from "firebase/app";
 import SearchIcon from '@material-ui/icons/Search';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import {useHistory} from 'react-router-dom';
 
 interface Data {
   time: string;
@@ -212,7 +212,10 @@ export default function Non_OrderTable() {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(100);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [totalHistory, setTotalHistory] = React.useState<Data []>();
+
+  const history = useHistory();
 
   //newData
   const [orderHistory,setOrderHistory] = React.useState<Data[]>([]);
@@ -270,7 +273,7 @@ export default function Non_OrderTable() {
         {numSelected > 0 ? (
           <>
           <Tooltip title="매입하기">
-            <IconButton aria-label="delete" onClick={()=>{showModal()}}>
+            <IconButton aria-label="delete" onClick={()=>{confirmApplication()}}>
                 <AttachMoneyIcon />
             </IconButton>
           </Tooltip>
@@ -307,24 +310,17 @@ export default function Non_OrderTable() {
       newSelected = newSelected.concat(selected.slice(1));
       setOnOff(false);
     } 
-    // else if (selectedIndex === selected.length - 1) {
-    //   newSelected = newSelected.concat(selected.slice(0, -1));
-    // }
-    //  else if (selectedIndex > 0) {
-    //   newSelected = newSelected.concat(
-    //     selected.slice(0, selectedIndex),
-    //     selected.slice(selectedIndex + 1),
-    //   );
-    // }
-   
     const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
  
     if(selected.length === 0){
-        db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
-          setUserSelected(doc.data()!)
-          setUserOrderSelected(doc.data()!.orders)
-        
-          setSelected(newSelected);
+        db.collection('user').doc("non_user").get().then((doc)=>{
+          doc.data()!.orders.forEach((showing:any) =>{
+            if(filtered[0].phone === showing.phone){
+              setUserSelected(showing);
+              setUserOrderSelected(doc.data()!.orders);
+              setSelected(newSelected);
+            }
+          })
           })
       }
     if(selected.length >= 1){
@@ -375,13 +371,12 @@ export default function Non_OrderTable() {
           db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
             setUserSelected(doc.data()!)
             setUserOrderSelected(doc.data()!.orders)
-
         })
       }
     }
         
     setCound(filtered[0]);
-    setOnOff(true);
+    setOnOff(!onOff);
   }
   const handleChange = (prop : string) => (event: any) => {
       
@@ -396,6 +391,50 @@ export default function Non_OrderTable() {
     }
 
   }
+  const confirmApplication = async () =>{
+
+    var confirmDelete = window.confirm("매입 하시겠습니까?")
+    if (confirmDelete){
+      const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+      filtered[0]["confirmed"] = "확인";
+      filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+      filtered[0]["rating"] = 0;
+ 
+      const timestamp = Date.now(); // This would be the timestamp you want to format
+      filtered[0]['checked_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+  
+      //sent to confirmed orders
+      db.collection("orders").doc("non_user").update({
+        orders:  totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+      })
+      db.collection("orders").doc("non_user").update({
+        orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
+      })
+      console.log("[" + Date.now() + "]" + "DONE Deleting adding new altered data to order -> user (비회원)")
+
+    const filtered2:any = totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+    var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
+    var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
+        found_time[0].confirmed = "확인"
+   
+    db.collection('user').doc("non_user").update({
+      orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
+    })
+    console.log("[" + Date.now() + "]" + "DONE deleting current User order (비회원)")
+
+    db.collection('user').doc("non_user").update({
+      orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+    })
+    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (비회원)")
+   setSelected([]); 
+   alert("신청 확인하였습니다")
+   await delay(500);
+   history.push("/finalize");
+  }
+  else{
+    setSelected([]); 
+  }
+}
   const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
   const turnDown = async () =>{
     setOnOff(false);
@@ -404,14 +443,14 @@ export default function Non_OrderTable() {
       var confirmDelete = window.confirm("삭제 하시겠습니까?")
       if (confirmDelete){
         const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
-        filtered.weight = weight;
-        filtered.additional = additional;
-        filtered.confirmed = "취소";
-        filtered["turndown_reason"] = reason;
-        filtered["confirmed_By"] = auth.currentUser?.displayName!;
-        filtered["rating"] = 0;
+        filtered[0].weight = "취소";
+        filtered[0].additional = "취소";
+        filtered[0].confirmed = "취소";
+        filtered[0]["turndown_reason"] = reason;
+        filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+        filtered[0]["rating"] = 0;
         const timestamp = Date.now(); // This would be the timestamp you want to format
-        filtered['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+        filtered[0]['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
     
         //sent to confirmed orders
         db.collection("orders").doc("confirmed").update({
@@ -421,11 +460,11 @@ export default function Non_OrderTable() {
 
 
         db.collection("orders").doc("non_user").update({
-          orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+          orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
         })
         console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
    
-      const filtered2:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+      const filtered2:any = totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
       var found_date = userOrderSelected.filter((order:any) => (order.date) == filtered2[0].date);
       var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
           found_time[0].confirmed = "취소"
@@ -566,8 +605,9 @@ else{
   useEffect(()=>{
     //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
     db.collection('orders').doc("non_user").get().then((doc)=>{
-        setOrderHistory([...doc.data()!.orders]);
-        setOrderUser([...doc.data()!.orders]);
+      setOrderHistory([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))]);
+      setTotalHistory([...doc.data()!.orders]);
+      setOrderUser([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))]);
       })
     // setChange(true);
 },[...selected])
@@ -634,7 +674,17 @@ else{
             </TableBody>
           </Table>
         </TableContainer>
-
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={orderHistory.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={
+              handleChangeRowsPerPage
+          }
+      />
       </Paper>
       {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

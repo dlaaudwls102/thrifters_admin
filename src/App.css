@@ -21,7 +21,7 @@
 .Apps p{
   color: #07381B;
   font-weight: 600;
-  font-size: 30px;
+  font-size: 15px;
 }
 .left{
   position: flex;
@@ -311,7 +311,7 @@
   .Apps p{
     color: #07381B;
     font-weight: 600;
-    font-size: 30px;
+    font-size: 15px;
   }
   .left{
     position: flex;

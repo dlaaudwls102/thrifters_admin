@@ -1,36 +1,24 @@
 import { FormControl, InputAdornment, TextField, Button } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import AuthContainer from '../../components/AuthContainer';
+import { useHistory } from 'react-router-dom';
 import ErrorText from '../../components/ErrorText';
-import { auth, db } from '../../config/firebase';
-import logging from '../../config/logging';
+import { db } from '../../config/firebase';
 import IPageProps from '../../interfaces/page';
 
-
-
-
-
 const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
-    const [registering, setRegistering] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
     const [averageWeights, setAverageWeights] = useState<string>('');
     const [numberOfOrders, setNumberOfOrders] = useState<string>('');
     const [totalAdditional, setTotalAdditional] = useState<string>('');
     const [totalWeights, setTotalWeights] = useState<string>('');
-    const [error, setError] = useState<string>('');
+    const [error] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [Nname, setNName] = useState<string>('');
     const [address, setAddress] =useState<string>('');
     const [phone, setPhone] = useState<string>('');
-    const [data, setData] = useState<any>(props);
-    const [editON,setEditON] = useState<boolean>(false);
+    const [data] = useState<any>(props);
+    const [editON] = useState<boolean>(false);
   
-
-    const startEdit = () =>{
-        setEditON(!editON);
-    }
     const goBack = () =>{
        history.push('/')
     }

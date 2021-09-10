@@ -1,6 +1,5 @@
 import IRoute from "../interfaces/route";
 import ChangePasswordPage from "../pages/auth/change";
-import CustomerInfoPage from "../pages/auth/customer_info";
 import ForgotPasswordPage from "../pages/auth/forgot";
 import LoginPage from "../pages/auth/login";
 import LogoutPage from "../pages/auth/logout";
@@ -8,6 +7,11 @@ import QRReaderPage from "../pages/auth/QRReader";
 import RegisterPage from "../pages/auth/register";
 import ResetPasswordPage from "../pages/auth/reset";
 import HomePage from "../pages/home";
+import RequestConfirmationPage from "../pages/auth/Videhome_requests"
+import FinalizingPage from "../pages/auth/Videhome_finalize";
+import ConfirmedPage from "../pages/auth/Videhome_confirmedOrder";
+import CustomerListPage from "../pages/auth/Videhome_customerList";
+import CustomerInfoPage from "../pages/auth/customer_info";
 
 const routes: IRoute[] = [
     {
@@ -18,7 +22,7 @@ const routes: IRoute[] = [
         protected: true
     },
     {
-        path: '/register',
+        path: '/login/register',
         exact: true,
         component: RegisterPage,
         name: 'Register Page',
@@ -50,14 +54,42 @@ const routes: IRoute[] = [
         exact: true,
         component: QRReaderPage,
         name: 'QRREADER Page',
-        protected: true
+        protected: false
+    },
+    {
+        path: '/requests',
+        exact: true,
+        component: RequestConfirmationPage,
+        name: '신청확인',
+        protected: false
+    },
+    {
+        path: '/finalize',
+        exact: true,
+        component: FinalizingPage,
+        name: '매입정산',
+        protected: false
+    },
+    {
+        path: '/confirmed',
+        exact: true,
+        component: ConfirmedPage,
+        name: '매입정산',
+        protected: false
+    },
+    {
+        path: '/customer_list',
+        exact: true,
+        component: CustomerListPage,
+        name: '고객정보',
+        protected: false
     },
     {
         path: '/customer_info',
         exact: true,
         component: CustomerInfoPage,
-        name: 'Customer Info Page',
-        protected: true
+        name: '고객정보',
+        protected: false
     },
     {
         path: '/forget',
