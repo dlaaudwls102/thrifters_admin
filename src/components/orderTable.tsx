@@ -235,6 +235,9 @@ export default function OrderTable() {
   //show Modal
   const [onOff,setOnOff] = React.useState(false);
 
+  //mssg
+  const [messageInbox, setMessageInbox] = React.useState<any[]>([]);
+
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -343,10 +346,14 @@ export default function OrderTable() {
         filtered[0]["confirmed"] = "확인";
         filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
         filtered[0]["rating"] = 0;
-   
+    
         const timestamp = Date.now(); // This would be the timestamp you want to format
         filtered[0]['checked_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
-    
+        var today = new Date(),
+        date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
+
+
+
         //sent to confirmed orders
         db.collection("orders").doc("user").update({
           orders:  totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
@@ -361,13 +368,25 @@ export default function OrderTable() {
       var found_time = found_date.filter((order:any) => (order.time) == filtered2[0].time);
           found_time[0].confirmed = "확인"
      
+        const messages = {
+          date: date,
+          time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
+          read: false,
+          title: "판매신청",
+          info: "신청승인",
+          order: found_time[0]
+      }
+
       db.collection('user').doc(filtered2[0].uid!).update({
-        orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
+        orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date),
       })
       console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
 
       db.collection('user').doc(filtered2[0].uid!).update({
         orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+        message: firebase.firestore.FieldValue.arrayUnion(
+          messages
+      )
       })
       console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
      setSelected([]); 
@@ -415,6 +434,17 @@ export default function OrderTable() {
           found_time[0].confirmed = "취소"
           found_time[0].weight = reason;
           found_time[0].additional = reason;
+      var today = new Date(),
+      date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
+          const messages = {
+            date: date,
+            time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
+            read: false,
+            title: "판매신청",
+            info: "신청취소",
+            reason: reason,
+            order: found_time[0]
+        }
     
       db.collection('user').doc(filtered2[0].uid!).update({
         orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
@@ -423,6 +453,9 @@ export default function OrderTable() {
 
       db.collection('user').doc(filtered2[0].uid!).update({
         orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+        message: firebase.firestore.FieldValue.arrayUnion(
+          messages
+      )
       })
       console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
      setSelected([]); 
@@ -541,6 +574,7 @@ else{
         setOrderHistory([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))]);
         setTotalHistory([...doc.data()!.orders]);
         setOrderUser([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))]);
+        setMessageInbox(doc.data()!.message);
         })
 },[...selected])
 

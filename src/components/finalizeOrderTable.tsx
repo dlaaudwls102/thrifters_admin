@@ -416,7 +416,17 @@ export default function FinalizeOrderTable() {
           found_time[0].confirmed = "취소"
           found_time[0].weight = reason;
           found_time[0].additional = reason;
-    
+          var today = new Date(),
+          date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
+          const messages = {
+            date: date,
+            time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
+            read: false,
+            title: "판매신청",
+            info: "신청취소",
+            reason: reason,
+            order: found_time[0]
+        }
       db.collection('user').doc(filtered2[0].uid!).update({
         orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
       })
@@ -424,6 +434,9 @@ export default function FinalizeOrderTable() {
 
       db.collection('user').doc(filtered2[0].uid!).update({
         orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
+        message: firebase.firestore.FieldValue.arrayUnion(
+          messages
+      )
       })
       console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
      setSelected([]); 
@@ -468,12 +481,28 @@ if(userSelected.userId !== "non_user"){
       orders : userOrderSelected!.filter((post:any) => post.date !== selectedOrder.date)
     })
     console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
-
+          
+    var today = new Date(),
+    date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
+    const messages = {
+            date: date,
+            time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
+            read: false,
+            title: "판매신청",
+            info: "판매완료",
+            weight: Number(weight),
+            additional:  Number(additional),
+            total:  Number(additional) + (Number(weight) * 200),
+            order: found_time[0]
+        }
     db.collection('user').doc(selectedOrder.uid).update({
       orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
       averageWeights : Number(((totalWeight*200)+totalAdditional)/numberOrd).toFixed(2),
       totalWeight: Number(totalWeight),
-      totalAdditional: Number(totalAdditional)
+      totalAdditional: Number(totalAdditional),
+      message: firebase.firestore.FieldValue.arrayUnion(
+        messages
+    )
     })
     console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
   
