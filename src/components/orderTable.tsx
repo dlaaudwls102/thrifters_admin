@@ -377,6 +377,16 @@ export default function OrderTable() {
           order: found_time[0]
       }
 
+        const calendar_item = {
+          start: filtered2[0].date+"T"+filtered2[0].time+":00",
+          end: filtered2[0].date+"T"+filtered2[0].time+":00",
+          id: filtered2[0].uid!,
+          title:  filtered2[0].name + "님 매입신청"
+        }
+
+      db.collection('showWork').doc("calendar").update({
+       request: firebase.firestore.FieldValue.arrayUnion(calendar_item)
+      })
       db.collection('user').doc(filtered2[0].uid!).update({
         orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date),
       })

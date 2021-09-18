@@ -153,6 +153,26 @@ const HomePage: React.FunctionComponent<IPageProps> = (props) => {
               className={classes.button}
               variant="outlined"
               onClick={() => {
+                history.push("/calendar");
+              }}
+              style={{
+                width: "65%",
+                padding: "10px",
+                margin: "auto",
+                border: "solid 2px",
+                borderRadius: "10rem",
+                color: "black",
+                fontFamily: "TmoneyRoundWindExtraBold",
+              }}
+            >
+              나의 일정
+            </Button>
+          </div>
+          <div id="pot" style={{ padding: "0 0 20px 0" }}>
+            <Button
+              className={classes.button}
+              variant="outlined"
+              onClick={() => {
                 history.push("/finalize");
               }}
               style={{

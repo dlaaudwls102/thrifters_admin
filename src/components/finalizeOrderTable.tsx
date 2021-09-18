@@ -453,7 +453,7 @@ export default function FinalizeOrderTable() {
 
     selectedOrder.weight = weight;
     selectedOrder.additional = additional;
-    selectedOrder.confirmed = "확인";
+    selectedOrder.confirmed = "정산";
     selectedOrder["confirmed_By"] = user;
     selectedOrder["rating"] = rating;
     const timestamp = Date.now(); // This would be the timestamp you want to format

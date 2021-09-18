@@ -12,6 +12,7 @@ import FinalizingPage from "../pages/auth/Videhome_finalize";
 import ConfirmedPage from "../pages/auth/Videhome_confirmedOrder";
 import CustomerListPage from "../pages/auth/Videhome_customerList";
 import CustomerInfoPage from "../pages/auth/customer_info";
+import CalendarPage from "../pages/auth/Videhome_calendar";
 
 const routes: IRoute[] = [
     {
@@ -48,6 +49,13 @@ const routes: IRoute[] = [
         component: LogoutPage,
         name: 'Logout Page',
         protected: true
+    },
+    {
+        path: '/calendar',
+        exact: true,
+        component: CalendarPage,
+        name: 'Calendar Page',
+        protected: false
     },
     {
         path: '/QR_Reader',
