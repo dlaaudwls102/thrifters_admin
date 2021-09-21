@@ -14,23 +14,25 @@ const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
     const history = useHistory();
 
     return (
-        <div>
+        <div style={{width:"100%"}}>
             <div className="img-logo-loginss">
                 <div id="diode">
                     <div id="laser"></div>
                     </div>
                 </div>
                 <img className="img-logo-logins" src="./videhome_logo.png"></img>
-            <div style={{border:"solid 7px #FBAA13",padding:0}}>
+            <div style={{borderTop:"solid 10px #FBAA13",borderBottom:"solid 10px #FBAA13", width:"100%", marginTop:"40px"}}>
+            <div style={{position:'relative', zIndex:-1, padding:"10px 0", justifyContent:"center"}}>
             <BarcodeScannerComponent
                 facingMode={"environment"}
                 width={500}
-                height={400}
+                height={"100%"}
                 onUpdate={(err, result) => {
                 if (result) setData(result.getText());
                 else setData("Not Found");
                 }}
             />
+            </div>
             </div>
             {(data == "Not Found")?<></>
             : history.push('/customer_info',data)}

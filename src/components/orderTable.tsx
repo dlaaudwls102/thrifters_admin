@@ -373,7 +373,7 @@ export default function OrderTable() {
           time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
           read: false,
           title: "판매신청",
-          info: "신청승인",
+          info: "승인완료",
           order: found_time[0]
       }
 

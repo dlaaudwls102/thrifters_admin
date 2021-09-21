@@ -134,7 +134,7 @@
   left:0;
   right:0;
   top: 0;
-  bottom:200px;
+  bottom:150px;
   margin-left:auto;
   margin-right:auto;
   margin-top:auto;
@@ -679,7 +679,7 @@ EDIT ON
 }
   #laser {
     width: 100%;
-
+    justify-content: center;
     background-color: tomato;
     height: 1px;
     position: absolute;

@@ -206,7 +206,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function FinalizeOrderTable() {
+export default function Non_PaymentConfirmationTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('date');
@@ -267,7 +267,7 @@ export default function FinalizeOrderTable() {
           </Typography>
         ) : (
           <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-            회원 매입현황
+            비회원 송금여부 현황
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -308,14 +308,16 @@ export default function FinalizeOrderTable() {
     else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } 
-
     const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
-    
     if(selected.length === 0){
-        db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
-          setUserSelected(doc.data()!)
-          setUserOrderSelected(doc.data()!.orders)
-          setSelected(newSelected);
+        db.collection('user').doc("non_user").get().then((doc)=>{
+          doc.data()!.orders.forEach((showing:any) =>{
+            if(filtered[0].phone === showing.phone){
+              setUserSelected(showing);
+              setUserOrderSelected(doc.data()!.orders);
+              setSelected(newSelected);
+            }
+          })
           })
       }
     if(selected.length >= 1){
@@ -365,21 +367,9 @@ export default function FinalizeOrderTable() {
     }
         
     setCound(filtered[0]);
-    setOnOff(true);
+    finished(auth.currentUser?.displayName!);
   }
-  const handleChange = (prop : string) => (event: any) => {
-      
-    if (prop === "weight_"){
-      setWeight(event.target.value)
-    }
-    else if (prop === "additional_"){
-      setAdditional(event.target.value)
-    }
-    else if (prop === "rating_"){
-      setRating(event.target.value)
-    }
 
-  }
   const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
   const turnDown = async () =>{
     setOnOff(false);
@@ -405,7 +395,7 @@ export default function FinalizeOrderTable() {
         console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
 
 
-        db.collection("orders").doc("user").update({
+        db.collection("orders").doc("non_user").update({
           orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
         })
         console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
@@ -416,27 +406,14 @@ export default function FinalizeOrderTable() {
           found_time[0].confirmed = "취소"
           found_time[0].weight = reason;
           found_time[0].additional = reason;
-          var today = new Date(),
-          date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
-          const messages = {
-            date: date,
-            time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
-            read: false,
-            title: "판매신청",
-            info: "신청취소",
-            reason: reason,
-            order: found_time[0]
-        }
-      db.collection('user').doc(filtered2[0].uid!).update({
+    
+      db.collection('user').doc("non_user").update({
         orders : userOrderSelected!.filter((post:any) => post.date !== filtered2[0].date)
       })
       console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
 
-      db.collection('user').doc(filtered2[0].uid!).update({
+      db.collection('user').doc("non_user").update({
         orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
-        message: firebase.firestore.FieldValue.arrayUnion(
-          messages
-      )
       })
       console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
      setSelected([]); 
@@ -450,117 +427,48 @@ export default function FinalizeOrderTable() {
   }
   
   const finished = async (user:string) =>{
+    var confirmPayment = window.confirm("송금완료 하셨습니까?")
+    if (confirmPayment){
+    selectedOrder.weight = weight;
+    selectedOrder.additional = additional;
+    selectedOrder.confirmed = "완료";
+    selectedOrder["payed_By"] = user;
+    const timestamp = Date.now(); // This would be the timestamp you want to format
+    selectedOrder['payConfirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
 
-    // selectedOrder.weight = weight;
-    // selectedOrder.additional = additional;
-    // selectedOrder.confirmed = "방문";
-    // selectedOrder["confirmed_By"] = user;
-    // selectedOrder["rating"] = rating;
-    // const timestamp = Date.now(); // This would be the timestamp you want to format
-    // selectedOrder['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
-
-    // //sent to confirmed orders
-    // db.collection("orders").doc("confirmed").update({
-    //   orders: firebase.firestore.FieldValue.arrayUnion(selectedOrder)
-    // })
-    // console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
-  const timestamp = Date.now(); // This would be the timestamp you want to format
-    const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
-    filtered[0]["confirmed"] = "방문";
-    filtered[0]["pickedUp_By"] = auth.currentUser?.displayName!;
-    filtered[0]["rating"] = rating;
-    filtered[0]['pickedUp_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
-    var today = new Date(),
-    date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
-
-    db.collection("orders").doc("user").update({
-      orders:  totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+    //sent to confirmed orders
+    db.collection("orders").doc("confirmed").update({
+      orders: firebase.firestore.FieldValue.arrayUnion(selectedOrder)
     })
-    db.collection("orders").doc("user").update({
-      orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
-    })
-    console.log("[" + Date.now() + "]" + "DONE Deleting adding new altered data to order -> user")
+    console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
     
     //finding user's info's order and deleting, and updating it with confirmed order
  
-if(userSelected.userId !== "non_user"){
-    var totalWeight = Number(userSelected.totalWeight) + Number(weight);
-    var totalAdditional = Number(userSelected.totalAdditional) + Number(additional);
-    var numberOrd = userSelected.numberOfOrders;
     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
-        found_time[0].confirmed = "방문"
-        found_time[0].weight = Number(weight);
-        found_time[0].additional = Number(additional);
+        found_time[0].confirmed = "완료"
     
-    db.collection('user').doc(selectedOrder.uid).update({
-      orders : userOrderSelected!.filter((post:any) => post.date !== selectedOrder.date)
+    db.collection('user').doc('non_user').update({
+      orders : userOrderSelected!.filter((post:any) => post.name !== selectedOrder.name)
     })
-    console.log("[" + Date.now() + "]" + "DONE deleting current User order (회원)")
-          
-    var today = new Date(),
-    date = today.getFullYear() + '-' + (today.getMonth() + 1) + '/' + today.getDate();
-    const messages = {
-            date: date,
-            time: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp),
-            read: false,
-            title: "판매신청",
-            info: "방문완료",
-            weight: Number(weight),
-            additional:  Number(additional),
-            total:  Number(additional) + (Number(weight) * 200),
-            order: found_time[0]
-        }
-    db.collection('user').doc(selectedOrder.uid).update({
-      orders: firebase.firestore.FieldValue.arrayUnion(found_time[0]),
-      averageWeights : Number(((totalWeight*200)+totalAdditional)/numberOrd).toFixed(2),
-      totalWeight: Number(totalWeight),
-      totalAdditional: Number(totalAdditional),
-      message: firebase.firestore.FieldValue.arrayUnion(
-        messages
-    )
+    console.log("[" + Date.now() + "]" + "DONE deleting current User order")
+
+    db.collection('user').doc("non_user").update({
+      count: firebase.firestore.FieldValue.increment(-1),
+      orders : firebase.firestore.FieldValue.arrayUnion(found_time[0]),
     })
-    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders (회원)")
+    console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
   
     //delete from admin user order
-  // db.collection("orders").doc("user").update({
-  //   orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
-  // })
-  //   console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
+  db.collection("orders").doc("non_user").update({
+    orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+  })
+    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
     alert("신청확인 완료되었습니다.")
     setSelected([]); 
     await delay(500);
-    history.push("/payment");
-}
-// else{
-
-//     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
-//     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
-//         found_time[0].confirmed = "확인"
-//         found_time[0].weight = weight;
-//         found_time[0].additional = additional;
-    
-//     db.collection('user').doc('non_user').update({
-//       orders : userOrderSelected!.filter((post:any) => post.name !== selectedOrder.name)
-//     })
-//     console.log("[" + Date.now() + "]" + "DONE deleting current User order")
-
-//     db.collection('user').doc("non_user").update({
-//       count: firebase.firestore.FieldValue.increment(-1),
-//       orders : firebase.firestore.FieldValue.arrayUnion(found_time[0]),
-//     })
-//     console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
-  
-//     //delete from admin user order
-//   db.collection("orders").doc("non_user").update({
-//     orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
-//   })
-//     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
-//     alert("신청확인 완료되었습니다.")
-//     setSelected([]); 
-//     await delay(500);
-//     history.push("/confirmed");
-// }
+    history.push("/confirmed");
+    }
   }
 
   // Gathering data
@@ -593,9 +501,9 @@ if(userSelected.userId !== "non_user"){
   // },[selected])
   useEffect(()=>{
     //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
-    db.collection('orders').doc("user").get().then((doc)=>{
-        setOrderHistory([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "확인"))]);
-        setOrderUser([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "확인"))]);
+    db.collection('orders').doc("non_user").get().then((doc)=>{
+        setOrderHistory([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "방문"))]);
+        setOrderUser([...doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "방문"))]);
         setTotalHistory([...doc.data()!.orders])
         })
     // setChange(true);
@@ -614,7 +522,6 @@ useEffect(()=>{
 },[change])
   return (
     <div className={classes.root}>
-    <img className="img-logo-login" src="./videhome_logo.png"></img>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -687,113 +594,6 @@ useEffect(()=>{
           }
       />
       </Paper>
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="축소"
-      /> */}
-      {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
-     {(onOff)?
-      <div className="modal" id="pot" style={{margin:"auto", padding:"30px 0 ", width:"90%"}}>
-        <div>
-          <div className="total"> 
-            <div  className="totalCate" >
-                <div style={{ borderBottom:"solid black 5px", 
-                  margin: "auto",
-                  backgroundColor:"#07381B",
-                  color:"white",
-                  padding: "10px 0px",fontSize:"20px"}} >
-                  무게입력 (KG)
-                </div>
-                <div className="totalCate_price" style={{    margin:"auto",
-                  padding: "20px 0",}}>
-                  <FormControl style={{width:"50%"}} >
-                    <TextField
-                        style = {{top:"2px", marginBottom:"25px"}}
-                            id="input-with-icon-textfield"
-                            type="input"
-                            onChange={handleChange("weight_")}
-                            placeholder="무게를 입력해주세요"
-                            inputProps={{ style: { textAlign: 'center',fontSize:"19px", fontFamily: 'Cafe24Oneprettynight' },
-                            'aria-label': 'naked',
-                            startAdornment: (
-                              <InputAdornment position="start">
-                              </InputAdornment>
-                          ),}}
-                            InputLabelProps={{ 
-                              style:{fontSize:"25px", fontFamily: 'TmoneyRoundWindExtraBold'}
-                              }}
-                    />
-                  </FormControl>
-              </div>
-            </div>
-            <div  className="totalCate" >
-                <div style={{ borderBottom:"solid black 5px", 
-                  margin: "auto",
-                  backgroundColor:"#07381B",
-                  color:"white",
-                  padding: "10px 0px",fontSize:"20px"}} >
-                  추가금액 입력 (원)
-                </div>
-                <div className="totalCate_price" style={{    margin:"auto",
-                  padding: "20px 0",}}>
-                  <FormControl style={{width:"50%"}} >
-                    <TextField
-                        style = {{top:"2px", marginBottom:"25px"}}
-                            id="input-with-icon-textfield"
-                            type="input"
-                            onChange={handleChange("additional_")}
-                            placeholder="추가금액을 입력해주세요"
-                            inputProps={{ style: { textAlign: 'center',fontSize:"19px", fontFamily: 'Cafe24Oneprettynight' },
-                            'aria-label': 'naked',
-                            startAdornment: (
-                              <InputAdornment position="start">
-                              </InputAdornment>
-                          ),}}
-                            InputLabelProps={{ 
-                              style:{fontSize:"25px", fontFamily: 'TmoneyRoundWindExtraBold'}
-                              }}
-                    />
-                  </FormControl>
-              </div>
-            </div>
-            <div  className="totalCate" >
-                <div style={{ borderBottom:"solid black 5px", 
-                  margin: "auto",
-                  backgroundColor:"#07381B",
-                  color:"white",
-                  padding: "10px 0px",fontSize:"20px"}} >
-                  별점 입력( 1 ~ 5)
-                </div>
-                <div className="totalCate_price" style={{    margin:"auto",
-                  padding: "20px 0",}}>
-                  <FormControl style={{width:"50%"}} >
-                    <TextField
-                        style = {{top:"2px", marginBottom:"25px"}}
-                            id="input-with-icon-textfield"
-                            type="input"
-                            onChange={handleChange("rating_")}
-                            placeholder="평가를 입력해주세요"
-                            inputProps={{ style: { textAlign: 'center',fontSize:"19px", fontFamily: 'Cafe24Oneprettynight' },
-                            'aria-label': 'naked',
-                            startAdornment: (
-                              <InputAdornment position="start">
-                              </InputAdornment>
-                          ),}}
-                            InputLabelProps={{ 
-                              style:{fontSize:"25px", fontFamily: 'TmoneyRoundWindExtraBold'}
-                              }}
-                    />
-                  </FormControl>
-              </div>
-            </div>
-          </div>
-        </div>
-        <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px", width:"50%"}} variant="outlined" onClick={()=>{finished(auth.currentUser?.displayName!)}} >매입 완료</Button>
-      </div>
-     :<></>
-
-     
-    }
     </div>
   );
 }

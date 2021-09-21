@@ -267,7 +267,7 @@ export default function Non_FinalizeOrderTable() {
           </Typography>
         ) : (
           <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-            비회원 매입정산 현황
+            비회원 매입현황
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -440,25 +440,41 @@ export default function Non_FinalizeOrderTable() {
   
   const finished = async (user:string) =>{
 
-    selectedOrder.weight = weight;
-    selectedOrder.additional = additional;
-    selectedOrder.confirmed = "확인";
-    selectedOrder["confirmed_By"] = user;
-    selectedOrder["rating"] = rating;
+    // selectedOrder.weight = weight;
+    // selectedOrder.additional = additional;
+    // selectedOrder.confirmed = "방문";
+    // selectedOrder["confirmed_By"] = user;
+    // selectedOrder["rating"] = rating;
+    // const timestamp = Date.now(); // This would be the timestamp you want to format
+    // selectedOrder['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+
+    // //sent to confirmed orders
+    // db.collection("orders").doc("confirmed").update({
+    //   orders: firebase.firestore.FieldValue.arrayUnion(selectedOrder)
+    // })
+    // console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
+    const filtered:any = orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) == selected[0]);
+    filtered[0]["confirmed"] = "확인";
+    filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+    filtered[0]["rating"] = 0;
+
     const timestamp = Date.now(); // This would be the timestamp you want to format
-    selectedOrder['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+    filtered[0]['checked_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
 
     //sent to confirmed orders
-    db.collection("orders").doc("confirmed").update({
-      orders: firebase.firestore.FieldValue.arrayUnion(selectedOrder)
+    db.collection("orders").doc("non_user").update({
+      orders:  totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
     })
-    console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
+    db.collection("orders").doc("non_user").update({
+      orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
+    })
+    console.log("[" + Date.now() + "]" + "DONE Deleting adding new altered data to order -> user (비회원)")
     
     //finding user's info's order and deleting, and updating it with confirmed order
  
     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
-        found_time[0].confirmed = "확인"
+        found_time[0].confirmed = "방문"
         found_time[0].weight = weight;
         found_time[0].additional = additional;
     
@@ -474,14 +490,14 @@ export default function Non_FinalizeOrderTable() {
     console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
   
     //delete from admin user order
-  db.collection("orders").doc("non_user").update({
-    orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
-  })
-    console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
+  // db.collection("orders").doc("non_user").update({
+  //   orders: orderHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+  // })
+  //   console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
     alert("신청확인 완료되었습니다.")
     setSelected([]); 
     await delay(500);
-    history.push("/confirmed");
+    history.push("/payment");
 
   }
 

@@ -22,8 +22,8 @@ import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withS
 import firebase from "firebase/app";
 
 interface Data {
-  confirmed_Time: string;
-  confirmed_By: string;
+  payConfirmed_Time: string;
+  payed_By: string;
   name: string;
   additional: number;
   weight: number;
@@ -31,14 +31,14 @@ interface Data {
 
 
 function createData(
-  confirmed_Time: string,
-  confirmed_By: string,
+  payConfirmed_Time: string,
+  payed_By: string,
   name: string,
   weight: number,
   additional: number,
 
 ): Data {
-  return { confirmed_Time, confirmed_By, name, weight, additional};
+  return { payConfirmed_Time, payed_By, name, weight, additional};
 }
 
 const rows = [
@@ -84,8 +84,8 @@ interface HeadCell {
 }
 
 const headCells: HeadCell[] = [
-  { id: 'confirmed_Time', numeric: false, disablePadding: true, label: '시간' },
-  { id: 'confirmed_By', numeric: false, disablePadding: false, label: '담당' },
+  { id: 'payConfirmed_Time', numeric: false, disablePadding: true, label: '시간' },
+  { id: 'payed_By', numeric: false, disablePadding: false, label: '담당' },
   { id: 'name', numeric: false, disablePadding: false, label: '고객' },
   { id: 'weight', numeric: true, disablePadding: false, label: '무게' },
   { id: 'additional', numeric: true, disablePadding: false, label: '추가' },
@@ -188,7 +188,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Typography>
       ) : (
         <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-          누적현황
+          송금완료 현황
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -241,7 +241,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CheckedTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('confirmed_Time');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('payConfirmed_Time');
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -271,7 +271,7 @@ export default function CheckedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.confirmed_Time);
+      const newSelecteds = rows.map((n) => n.payConfirmed_Time);
       setSelected(newSelecteds);
       return;
     }
@@ -318,7 +318,7 @@ export default function CheckedTable() {
   // MADE FUNCTIONS
 
   const showModal = () =>{
-    const filtered = orderHistory.filter(order => (order.confirmed_Time) == selected[0]);
+    const filtered = orderHistory.filter(order => (order.payConfirmed_Time) == selected[0]);
     setSelectedOrder(filtered[0]);
     setCound(filtered[0]);
     setOnOff(true);
@@ -343,10 +343,10 @@ export default function CheckedTable() {
     selectedOrder.weight = weight;
     selectedOrder.additional = additional;
     selectedOrder.confirmed = "확인";
-    selectedOrder["confirmed_By"] = user;
+    selectedOrder["payed_By"] = user;
     selectedOrder["rating"] = rating;
     const timestamp = Date.now(); // This would be the timestamp you want to format
-    selectedOrder['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+    selectedOrder['payConfirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
 
     //sent to confirmed orders
     db.collection("orders").doc("confirmed").update({
@@ -381,7 +381,7 @@ export default function CheckedTable() {
   
     //delete from admin user order
   db.collection("orders").doc("user").update({
-    orders: orderHistory.filter(order => (order.confirmed_Time) !== selected[0])
+    orders: orderHistory.filter(order => (order.payConfirmed_Time) !== selected[0])
   })
     console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders")
     
@@ -431,17 +431,17 @@ export default function CheckedTable() {
               {stableSort(orderHistory, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.confirmed_Time);
+                  const isItemSelected = isSelected(row.payConfirmed_Time);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.confirmed_Time)}
+                      onClick={(event) => handleClick(event, row.payConfirmed_Time)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.confirmed_Time}
+                      key={row.payConfirmed_Time}
                       selected={isItemSelected}
                       style={{minWidth:"60px",textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}}
                     >
@@ -452,9 +452,9 @@ export default function CheckedTable() {
                         />
                       </TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} component="th" id={labelId} scope="row" padding="none">
-                        {row.confirmed_Time}
+                        {row.payConfirmed_Time}
                       </TableCell>
-                      <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.confirmed_By}</TableCell>
+                      <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.payed_By}</TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.name}</TableCell>
                       <TableCell style={{fontSize:"15px", minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.weight.toString() === "취소")?row.weight:row.weight + " KG"}</TableCell>
                       <TableCell style={{minWidth:"100px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.additional.toString() === "취소")?row.additional:row.additional + " 원"}</TableCell>

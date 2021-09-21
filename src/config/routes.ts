@@ -13,6 +13,7 @@ import ConfirmedPage from "../pages/auth/Videhome_confirmedOrder";
 import CustomerListPage from "../pages/auth/Videhome_customerList";
 import CustomerInfoPage from "../pages/auth/customer_info";
 import CalendarPage from "../pages/auth/Videhome_calendar";
+import PaymentPage from '../pages/auth/Videhome_payment';
 
 const routes: IRoute[] = [
     {
@@ -83,6 +84,13 @@ const routes: IRoute[] = [
         exact: true,
         component: ConfirmedPage,
         name: '매입정산',
+        protected: false
+    },
+    {
+        path: '/payment',
+        exact: true,
+        component: PaymentPage,
+        name: '송금확인',
         protected: false
     },
     {
