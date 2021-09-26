@@ -118,6 +118,22 @@
   opacity: 1;
   padding: 1px;
 }
+.img-logo-small{
+  width: 20%;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  opacity: 1;
+  padding: 1px;
+  padding-top: 30px;
+}
+.img-logo-side{
+  width: 80%;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  opacity: 1;
+  padding: 20px 0px;
+  z-index: 2;
+}
 .img-logo-login{
   width: 30%;
   transition: .5s ease;
@@ -589,6 +605,12 @@
 
 /* FONTS */
 @font-face {
+  font-family: 'ONE-Mobile-POP';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-POP.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
   font-family: 'TmoneyRoundWindExtraBold';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/TmoneyRoundWindExtraBold.woff') format('woff');
   font-weight: normal;
@@ -710,4 +732,81 @@ EDIT ON
   50% {
     opacity: 0;
   }
+}
+
+.img-announce{
+  width: 100%;
+
+}
+
+
+.loader-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  flex-direction: column;
+}
+
+.loader {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  position: relative;
+  border: 10px solid #FBAA13;
+  animation: loader 2s infinite ease;
+}
+
+.loader_text{
+  display: inline-block;
+  width: 100%;
+  top: 12px;
+  font-size: 15px;
+  color: 	#07381B;
+  position: relative;
+  font-family: 'TmoneyRoundWindExtraBold';
+}
+
+.loader-inner {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  background-color: #FBAA13;
+  animation: loader-inner 2s infinite ease-in;
+}
+.loader-inner2 {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  background-color: #FBAA13;
+  animation: loader-inner 2s infinite ease-in;
+}
+.loader2 {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  position: relative;
+  border: 3px solid #FBAA13;
+  animation: loader 2s infinite ease;
+}
+
+@keyframes loader {
+  0% { transform: rotate(0deg);}
+  25% { transform: rotate(180deg);}
+  50% { transform: rotate(180deg);}
+  75% { transform: rotate(360deg);}
+  100% { transform: rotate(360deg);}
+}
+@keyframes loader-inner {
+  0% { height: 0%;}
+  25% { height: 0%;}
+  50% { height: 100%;}
+  75% { height: 100%;}
+  100% { height: 0%;}
 }

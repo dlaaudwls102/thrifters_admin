@@ -260,8 +260,8 @@ export default function FinalizeOrderTable() {
 
     //newInput data
     const [weight, setWeight] = React.useState<number>();
-    const [additional, setAdditional] = React.useState<any>();
-    const [rating, setRating] = React.useState<number>();
+    const [additional, setAdditional] = React.useState<any>(0);
+    const [rating, setRating] = React.useState<number>(0);
     // history
     const history = useHistory();
     //show Modal
@@ -279,29 +279,28 @@ export default function FinalizeOrderTable() {
 
     const [currency, setCurrency] = React.useState<any>([]);
 
-
     const formatNumber = (inputNumber: number) => {
-      let formatedNumber = Number(inputNumber)
-          .toFixed(2)
-          .replace(/\d(?=(\d{3})+\.)/g, '$&,');
-      let splitArray = formatedNumber.split('.');
-      if (splitArray.length > 1) {
-          formatedNumber = splitArray[0];
-      }
-      return formatedNumber;
-  };
+        let formatedNumber = Number(inputNumber)
+            .toFixed(2)
+            .replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        let splitArray = formatedNumber.split('.');
+        if (splitArray.length > 1) {
+            formatedNumber = splitArray[0];
+        }
+        return formatedNumber;
+    };
     const calculate = () => {
         console.log(bagNum);
         var action =
-            Number(bagNum)*Number(currency.calculate.bags) +
-            Number(bookNum)*Number(currency.calculate.books) +
-            Number(clotheNum)*Number(currency.calculate.clothes) +
-            Number(fashionNum)*Number(currency.calculate.fashion) +
-            Number(shoeNum)*Number(currency.calculate.shoes) +
-            Number(steelNum)*Number(currency.calculate.steel) +
-            Number(non_SteelNum)*Number(currency.calculate.non_steel);
+            Number(bagNum) * Number(currency.calculate.bags) +
+            Number(bookNum) * Number(currency.calculate.books) +
+            Number(clotheNum) * Number(currency.calculate.clothes) +
+            Number(fashionNum) * Number(currency.calculate.fashion) +
+            Number(shoeNum) * Number(currency.calculate.shoes) +
+            Number(steelNum) * Number(currency.calculate.steel) +
+            Number(non_SteelNum) * Number(currency.calculate.non_steel);
         console.log(action);
-        console.log(currency)
+        console.log(currency);
         setCalculated(action);
     };
     const handleRequestSort = (
@@ -353,7 +352,11 @@ export default function FinalizeOrderTable() {
                         id="tableTitle"
                         component="div"
                     >
-                        회원 매입현황
+          <img
+                    id="pot"
+                    className="img-announce"
+                    src="../002.png"
+                ></img>
                     </Typography>
                 )}
                 {numSelected > 0 ? (
@@ -519,10 +522,10 @@ export default function FinalizeOrderTable() {
                 filtered[0].additional = '취소';
                 filtered[0].confirmed = '취소';
                 filtered[0]['turndown_reason'] = reason;
-                filtered[0]['confirmed_By'] = auth.currentUser?.displayName!;
+                filtered[0]['payed_By'] = auth.currentUser?.displayName!;
                 filtered[0]['rating'] = 0;
                 const timestamp = Date.now(); // This would be the timestamp you want to format
-                filtered[0]['confirmed_Time'] = new Intl.DateTimeFormat(
+                filtered[0]['payConfirmed_Time'] = new Intl.DateTimeFormat(
                     'en-US',
                     {
                         year: 'numeric',
@@ -657,83 +660,26 @@ export default function FinalizeOrderTable() {
         //   orders: firebase.firestore.FieldValue.arrayUnion(selectedOrder)
         // })
         // console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
-        const timestamp = Date.now(); // This would be the timestamp you want to format
-        const filtered: any = orderHistory!.filter(
-            (order) =>
-                order.date + ', ' + order.time + ', ' + order.name ==
-                selected[0]
-        );
-        filtered[0]['confirmed'] = '방문';
-        filtered[0]['pickedUp_By'] = auth.currentUser?.displayName!;
-        filtered[0]['rating'] = rating;
-        filtered[0]['pickedUp_Time'] = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        }).format(timestamp);
-        var today = new Date(),
-            date =
-                today.getFullYear() +
-                '-' +
-                (today.getMonth() + 1) +
-                '/' +
-                today.getDate();
-
-        db.collection('orders')
-            .doc('user')
-            .update({
-                orders: totalHistory!.filter(
-                    (order) =>
-                        order.date + ', ' + order.time + ', ' + order.name !==
-                        selected[0]
-                ),
-            });
-        db.collection('orders')
-            .doc('user')
-            .update({
-                orders: firebase.firestore.FieldValue.arrayUnion(filtered[0]),
-            });
-        console.log(
-            '[' +
-                Date.now() +
-                ']' +
-                'DONE Deleting adding new altered data to order -> user'
-        );
-
-        //finding user's info's order and deleting, and updating it with confirmed order
-
-        if (userSelected.userId !== 'non_user') {
-            var totalWeight = Number(userSelected.totalWeight) + Number(calculated);
-            var totalAdditional =
-                Number(userSelected.totalAdditional) + Number(additional);
-            var numberOrd = userSelected.numberOfOrders;
-            var found_date = userOrderSelected.filter(
-                (order: any) => order.date == selectedOrder.date
+        if (calculated !== 0 && additional !== 0 && rating !== 0) {
+            const timestamp = Date.now(); // This would be the timestamp you want to format
+            const filtered: any = orderHistory!.filter(
+                (order) =>
+                    order.date + ', ' + order.time + ', ' + order.name ==
+                    selected[0]
             );
-            var found_time = found_date.filter(
-                (order: any) => order.time == selectedOrder.time
-            );
-            found_time[0].confirmed = '방문';
-            found_time[0].weight = Number(calculated);
-            found_time[0].additional = Number(additional);
-
-            db.collection('user')
-                .doc(selectedOrder.uid)
-                .update({
-                    orders: userOrderSelected!.filter(
-                        (post: any) => post.date !== selectedOrder.date
-                    ),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE deleting current User order (회원)'
-            );
-
+            filtered[0]['weight'] = Number(calculated);
+            filtered[0]['additional'] = Number(additional);
+            filtered[0]['confirmed'] = '방문';
+            filtered[0]['pickedUp_By'] = auth.currentUser?.displayName!;
+            filtered[0]['rating'] = rating;
+            filtered[0]['pickedUp_Time'] = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            }).format(timestamp);
             var today = new Date(),
                 date =
                     today.getFullYear() +
@@ -741,53 +687,133 @@ export default function FinalizeOrderTable() {
                     (today.getMonth() + 1) +
                     '/' +
                     today.getDate();
-            const messages = {
-                date: date,
-                time: new Intl.DateTimeFormat('en-US', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                }).format(timestamp),
-                read: false,
-                title: '판매신청',
-                info: '방문완료',
-                weight: Number(calculated),
-                additional: Number(additional),
-                total: Number(additional) + Number(calculated) * 200,
-                order: found_time[0],
-            };
-            db.collection('user')
-                .doc(selectedOrder.uid)
+
+            db.collection('orders')
+                .doc('user')
+                .update({
+                    orders: totalHistory!.filter(
+                        (order) =>
+                            order.date +
+                                ', ' +
+                                order.time +
+                                ', ' +
+                                order.name !==
+                            selected[0]
+                    ),
+                });
+            db.collection('orders')
+                .doc('user')
                 .update({
                     orders: firebase.firestore.FieldValue.arrayUnion(
-                        found_time[0]
+                        filtered[0]
                     ),
-                    averageWeights: Number(
-                        (totalWeight * 200 + totalAdditional) / numberOrd
-                    ).toFixed(2),
-                    totalWeight: Number(totalWeight),
-                    totalAdditional: Number(totalAdditional),
-                    message: firebase.firestore.FieldValue.arrayUnion(messages),
                 });
             console.log(
                 '[' +
                     Date.now() +
                     ']' +
-                    'DONE pushing updated data to user orders (회원)'
+                    'DONE Deleting adding new altered data to order -> user'
             );
 
-            //delete from admin user order
-            // db.collection("orders").doc("user").update({
-            //   orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
-            // })
-            //   console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
-            alert('신청확인 완료되었습니다.');
-            setSelected([]);
-            await delay(500);
-            history.push('/payment');
+            //finding user's info's order and deleting, and updating it with confirmed order
+
+            if (userSelected.userId !== 'non_user') {
+                var category = {bags: bagNum, books: bookNum, clothes: clotheNum, fashion:fashionNum, non_steel: non_SteelNum, shoes: shoeNum, steel:steelNum}
+                var totalWeight =
+                    Number(userSelected.totalWeight) + Number(bagNum) + Number(bookNum) + Number(clotheNum) + Number(fashionNum) + Number(non_SteelNum) + Number(shoeNum)+ Number(steelNum);
+                var totalWeightConverted = Number(userSelected.totalWeightConverted) + Number(calculated);
+                var totalAdditional =
+                    Number(userSelected.totalAdditional) + Number(additional);
+                var averageWeight = Number(userSelected.averageWeights);
+                var numberOrd = userSelected.numberOfOrders;
+                var found_date = userOrderSelected.filter(
+                    (order: any) => order.date == selectedOrder.date
+                );
+                var found_time = found_date.filter(
+                    (order: any) => order.time == selectedOrder.time
+                );
+                found_time[0].confirmed = '방문';
+                found_time[0].weight = Number(calculated);
+                found_time[0].additional = Number(additional);
+                found_time[0].category = category;
+
+                db.collection('user')
+                    .doc(selectedOrder.uid)
+                    .update({
+                        orders: userOrderSelected!.filter(
+                            (post: any) => post.date !== selectedOrder.date
+                        ),
+                    });
+                console.log(
+                    '[' +
+                        Date.now() +
+                        ']' +
+                        'DONE deleting current User order (회원)'
+                );
+                
+
+                var today = new Date(),
+                    date =
+                        today.getFullYear() +
+                        '-' +
+                        (today.getMonth() + 1) +
+                        '/' +
+                        today.getDate();
+                const messages = {
+                    date: date,
+                    time: new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                    }).format(timestamp),
+                    read: false,
+                    title: '판매신청',
+                    info: '방문완료',
+                    weight: Number(calculated),
+                    additional: Number(additional),
+                    total: Number(additional) + Number(calculated) * 200,
+                    order: found_time[0],
+                };
+                db.collection('user')
+                    .doc(selectedOrder.uid)
+                    .update({
+                        orders: firebase.firestore.FieldValue.arrayUnion(
+                            found_time[0]
+                        ),
+                        averageWeights: 
+                        firebase.firestore.FieldValue.arrayUnion(
+                            Number(
+                            ((Number(totalWeightConverted )+ Number(totalAdditional)) / Number(totalWeight))
+                        ).toFixed(2)),
+                        totalWeight: Number(totalWeight),
+                        totalWeightConverted : Number(totalWeightConverted),
+                        totalAdditional: Number(totalAdditional),
+                        message: firebase.firestore.FieldValue.arrayUnion(
+                            messages
+                        )
+                    });
+                console.log(
+                    '[' +
+                        Date.now() +
+                        ']' +
+                        'DONE pushing updated data to user orders (회원)'
+                );
+
+                //delete from admin user order
+                // db.collection("orders").doc("user").update({
+                //   orders: totalHistory!.filter(order => (order.date + ", " + order.time + ", " + order.name) !== selected[0])
+                // })
+                //   console.log("[" + Date.now() + "]" + "DONE deleting Data from admin user orders (회원)")
+                alert('신청확인 완료되었습니다.');
+                setSelected([]);
+                await delay(500);
+                history.push('/payment');
+            }
+        } else {
+            alert('계산하기를 눌러주세요, 아닐경우 모두 입력하셨는지 확인해주세요');
         }
         // else{
 
@@ -876,7 +902,7 @@ export default function FinalizeOrderTable() {
             .doc('currency')
             .get()
             .then((doc) => {
-              setCurrency(doc.data()!);
+                setCurrency(doc.data()!);
             });
         // setChange(true);
     }, [...selected]);
@@ -894,7 +920,11 @@ export default function FinalizeOrderTable() {
     }, [change]);
     return (
         <div className={classes.root}>
-            <img className="img-logo-login" src="./thrifter_logo.png"></img>
+                <img
+                    id="pot"
+                    className="img-logo-small"
+                    src="../thrifter_logo.png"
+                ></img>
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
@@ -1082,7 +1112,7 @@ export default function FinalizeOrderTable() {
                                     style={{
                                         margin: 'auto',
                                         padding: '20px 0',
-                                        color:"black"
+                                        color: 'black',
                                     }}
                                 >
                                     <FormControl style={{ width: '100%' }}>
@@ -1091,7 +1121,6 @@ export default function FinalizeOrderTable() {
                                                 display: 'flex',
                                                 flexDirection: 'row',
                                                 justifyContent: 'space-evenly',
-                                              
                                             }}
                                         >
                                             <div>의류: </div>
@@ -1412,17 +1441,15 @@ export default function FinalizeOrderTable() {
                                                     border: 'solid 4px black',
                                                     color: 'black',
                                                     marginTop: '20px',
-                                                  
                                                 }}
                                             >
                                                 <div
                                                     style={{
-                                                   
                                                         fontSize: '25px',
                                                         padding: '10px',
-                                                        alignItems:"center",
-                                                        background:"#07381B",
-                                                        color:"white"
+                                                        alignItems: 'center',
+                                                        background: '#07381B',
+                                                        color: 'white',
                                                     }}
                                                 >
                                                     금일 계산
@@ -1434,11 +1461,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div style={{width:"30%"}}>의류: </div>
-                                                  <div style={{width:"70%", textAlign:"left" , fontSize:"16px"}}>{clotheNum} KG x {currency.calculate.clothes}원 = {clotheNum * currency.calculate.clothes}원 </div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        의류:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {clotheNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .clothes
+                                                        }
+                                                        원 ={' '}
+                                                        {clotheNum *
+                                                            currency.calculate
+                                                                .clothes}
+                                                        원{' '}
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1447,11 +1495,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div style={{width:"30%"}}>서적: </div>
-                                                    <div style={{width:"70%", textAlign:"left" , fontSize:"16px"}}>{bookNum} KG x {currency.calculate.books}원 = {bookNum * currency.calculate.books}원</div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        서적:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {bookNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .books
+                                                        }
+                                                        원 ={' '}
+                                                        {bookNum *
+                                                            currency.calculate
+                                                                .books}
+                                                        원
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1460,11 +1529,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div  style={{width:"30%"}}>가방: </div>
-                                                    <div  style={{width:"70%", textAlign:"left" , fontSize:"16px"}}>{bagNum} KG x {currency.calculate.bags}원 = {bagNum * currency.calculate.bags}원</div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        가방:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {bagNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .bags
+                                                        }
+                                                        원 ={' '}
+                                                        {bagNum *
+                                                            currency.calculate
+                                                                .bags}
+                                                        원
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1473,11 +1563,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div  style={{width:"30%"}}>신발: </div>
-                                                    <div  style={{width:"70%", textAlign:"left" , fontSize:"16px"}}>{shoeNum} KG x {currency.calculate.shoes}원 = {shoeNum * currency.calculate.shoes}원</div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        신발:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {shoeNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .shoes
+                                                        }
+                                                        원 ={' '}
+                                                        {shoeNum *
+                                                            currency.calculate
+                                                                .shoes}
+                                                        원
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1486,11 +1597,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div  style={{width:"30%"}}>패션: </div>
-                                                    <div  style={{width:"70%", textAlign:"left" , fontSize:"16px"}}>{fashionNum} KG x {currency.calculate.fashion}원 = {fashionNum * currency.calculate.fashion}원</div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        패션:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {fashionNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .fashion
+                                                        }
+                                                        원 ={' '}
+                                                        {fashionNum *
+                                                            currency.calculate
+                                                                .fashion}
+                                                        원
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1499,11 +1631,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div  style={{width:"30%"}}>고철: </div>
-                                                    <div  style={{width:"70%", textAlign:"left" , fontSize:"16px"}}>{steelNum} KG x {currency.calculate.steel}원 = {steelNum * currency.calculate.steel}원</div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        고철:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {steelNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .steel
+                                                        }
+                                                        원 ={' '}
+                                                        {steelNum *
+                                                            currency.calculate
+                                                                .steel}
+                                                        원
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1512,11 +1665,32 @@ export default function FinalizeOrderTable() {
                                                         justifyContent:
                                                             'center',
                                                         padding: '10px',
-                                                        alignItems:"center"
+                                                        alignItems: 'center',
                                                     }}
                                                 >
-                                                    <div  style={{width:"30%"}}>비철: </div>
-                                                    <div  style={{width:"70%", textAlign:"left", fontSize:"16px"}}>{non_SteelNum} KG x {currency.calculate.non_steel}원 = {non_SteelNum * currency.calculate.non_steel}원</div>
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        비철:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {non_SteelNum} KG x{' '}
+                                                        {
+                                                            currency.calculate
+                                                                .non_steel
+                                                        }
+                                                        원 ={' '}
+                                                        {non_SteelNum *
+                                                            currency.calculate
+                                                                .non_steel}
+                                                        원
+                                                    </div>
                                                 </div>
                                                 <div
                                                     style={{
@@ -1527,7 +1701,21 @@ export default function FinalizeOrderTable() {
                                                         padding: '10px',
                                                     }}
                                                 >
-                                                    <div style={{textAlign:"right", width:"100%", borderTop:"solid 3px", paddingTop:"20px"}}>총 금액:  {formatNumber(calculated)}원</div>
+                                                    <div
+                                                        style={{
+                                                            textAlign: 'right',
+                                                            width: '100%',
+                                                            borderTop:
+                                                                'solid 3px',
+                                                            paddingTop: '20px',
+                                                        }}
+                                                    >
+                                                        총 금액:{' '}
+                                                        {formatNumber(
+                                                            calculated
+                                                        )}
+                                                        원
+                                                    </div>
                                                 </div>
                                             </div>
                                         ) : (

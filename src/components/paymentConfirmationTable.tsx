@@ -267,7 +267,11 @@ export default function PaymentConfirmationTable() {
           </Typography>
         ) : (
           <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-            회원 송금여부 현황
+             <img
+                    id="pot"
+                    className="img-announce"
+                    src="../003.png"
+                ></img>
           </Typography>
         )}
         {numSelected > 0 ? (
@@ -591,7 +595,7 @@ useEffect(()=>{
 },[change])
   return (
     <div className={classes.root}>
-    <img className="img-logo-login" src="./thrifter_logo.png"></img>
+    <img className="img-logo-small" src="./thrifter_logo.png"></img>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>

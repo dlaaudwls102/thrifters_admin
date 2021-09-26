@@ -7,8 +7,9 @@ import { auth } from '../../config/firebase';
 import ErrorComponent from '../../components/errorComponent';
 import IPageProps from '../../interfaces/page';
 import { useHistory } from 'react-router-dom';
+import Currency from "../../components/currency"
 
-const Videhome_ConfirmedOrder: React.FunctionComponent<IPageProps> = props => {
+const Videhome_Process_Info: React.FunctionComponent<IPageProps> = props => {
     const [show, setShow] = useState(false);
 
     
@@ -35,7 +36,16 @@ const Videhome_ConfirmedOrder: React.FunctionComponent<IPageProps> = props => {
             {show === true ? (
                 <div>
                     <div className="left" id="pot">
-                        <CheckedTable />
+                        {/* <Process_Info /> */}
+                        <div className="loader-wrapper" style={{ position: 'fixed' }}>
+    <span className="loader">
+        <span className="loader-innder"></span>
+    </span>
+    <span className="loader_text">
+
+        준비중 입니다.
+    </span>
+</div>
                         <div className="wrapper"></div>
                     </div>
                     <div className="middles">
@@ -47,20 +57,6 @@ const Videhome_ConfirmedOrder: React.FunctionComponent<IPageProps> = props => {
                 </>
             )}
             <div style={{width:"100%", position:"relative", display:"flex", justifyContent:"center", }}>
-            <Button
-                id="pot"
-                variant="outlined"
-                onClick={() => goBack()}
-                style={{
-                    width: '10%',
-                    padding: '10px',
-                
-                    fontFamily: 'TmoneyRoundWindExtraBold',
-                    fontSize: '15px',
-                }}
-            >
-               {"<"}
-            </Button>
                         <Button
                 id="pot"
                 variant="outlined"
@@ -80,4 +76,4 @@ const Videhome_ConfirmedOrder: React.FunctionComponent<IPageProps> = props => {
     );
 }
 
-export default Videhome_ConfirmedOrder;
+export default Videhome_Process_Info;

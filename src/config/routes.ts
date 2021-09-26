@@ -14,6 +14,11 @@ import CustomerListPage from "../pages/auth/Videhome_customerList";
 import CustomerInfoPage from "../pages/auth/customer_info";
 import CalendarPage from "../pages/auth/Videhome_calendar";
 import PaymentPage from '../pages/auth/Videhome_payment';
+import CurrencyPage from '../pages/auth/Videhome_currency';
+import RankingPage from "../pages/auth/Videhome_ranking";
+import LecturePage from "../pages/auth/Videhome_video";
+import ProcessInfoPage from "../pages/auth/Videhome_process_info";
+
 
 const routes: IRoute[] = [
     {
@@ -83,7 +88,7 @@ const routes: IRoute[] = [
         path: '/confirmed',
         exact: true,
         component: ConfirmedPage,
-        name: '매입정산',
+        name: '주문누적 현황',
         protected: false
     },
     {
@@ -94,10 +99,38 @@ const routes: IRoute[] = [
         protected: false
     },
     {
+        path: '/currency',
+        exact: true,
+        component: CurrencyPage,
+        name: '시세',
+        protected: true
+    },
+    {
+        path: '/ranking',
+        exact: true,
+        component: RankingPage,
+        name: '고객랭킹',
+        protected: true
+    },
+    {
+        path: '/video_lecture',
+        exact: true,
+        component: LecturePage,
+        name: '교육영상',
+        protected: true
+    },
+    {
+        path: '/process_info',
+        exact: true,
+        component: ProcessInfoPage,
+        name: '매입절차',
+        protected: true
+    },
+    {
         path: '/customer_list',
         exact: true,
         component: CustomerListPage,
-        name: '고객정보',
+        name: '고객리스트',
         protected: false
     },
     {

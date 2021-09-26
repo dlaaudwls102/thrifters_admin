@@ -6,9 +6,20 @@ import CustomerTable from '../../components/customerTable';
 import { auth } from '../../config/firebase';
 import ErrorComponent from '../../components/errorComponent';
 import IPageProps from '../../interfaces/page';
+import { useHistory } from 'react-router-dom';
 
 const Videhome_CustomerList: React.FunctionComponent<IPageProps> = props => {
     const [show, setShow] = useState(false);
+    const goBack = () =>{
+        history.push('/')
+     }
+     const goHome = () =>{
+        history.push('/')
+     }
+     const goNext = () =>{
+        history.push('/finalize')
+     }
+     const history = useHistory();
     useEffect(() => {
         auth.onAuthStateChanged((user: any) => {
             if (user) {
@@ -33,9 +44,22 @@ const Videhome_CustomerList: React.FunctionComponent<IPageProps> = props => {
                 </div>
             ) : (
                 <>
-                    <ErrorComponent />
                 </>
             )}
+                                    <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goBack()}
+                style={{
+                    width: '40%',
+                    padding: '10px',
+                    margin: '0 40px',
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+                뒤로가기
+            </Button>
         </div>
     );
 }

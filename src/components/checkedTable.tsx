@@ -144,7 +144,16 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     </TableHead>
   );
 }
-
+const formatNumber = (inputNumber: number) => {
+  let formatedNumber = Number(inputNumber)
+      .toFixed(2)
+      .replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  let splitArray = formatedNumber.split('.');
+  if (splitArray.length > 1) {
+      formatedNumber = splitArray[0];
+  }
+  return formatedNumber;
+};
 const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -188,7 +197,11 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         </Typography>
       ) : (
         <Typography style={{ fontFamily: 'TmoneyRoundWindExtraBold'}} className={classes.title} variant="h6" id="tableTitle" component="div">
-          송금완료 현황
+         <img
+                    id="pot"
+                    className="img-announce"
+                    src="../004.png"
+                ></img>
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -408,7 +421,11 @@ export default function CheckedTable() {
 //   },[selected])
   return (
     <div className={classes.root}>
-    <img className="img-logo-login" src="./thrifter_logo.png"></img>
+           <img
+                    id="pot"
+                    className="img-logo-small"
+                    src="../thrifter_logo.png"
+                ></img>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -452,12 +469,12 @@ export default function CheckedTable() {
                         />
                       </TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} component="th" id={labelId} scope="row" padding="none">
-                        {row.payConfirmed_Time}
+                        {(row.payConfirmed_Time)?row.payConfirmed_Time:"취소"}
                       </TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.payed_By}</TableCell>
                       <TableCell style={{minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{row.name}</TableCell>
-                      <TableCell style={{fontSize:"15px", minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.weight.toString() === "취소")?row.weight:row.weight + " KG"}</TableCell>
-                      <TableCell style={{minWidth:"100px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.additional.toString() === "취소")?row.additional:row.additional + " 원"}</TableCell>
+                      <TableCell style={{fontSize:"15px", minWidth:"70px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.weight.toString() === "취소")?row.weight:formatNumber(row.weight) + " 원"}</TableCell>
+                      <TableCell style={{minWidth:"100px", textAlign:"center", fontFamily: 'TmoneyRoundWindExtraBold'}} align="right">{(row.additional.toString() === "취소")?row.additional:formatNumber(row.additional) + " 원"}</TableCell>
                     </TableRow>
                   );
                 })}

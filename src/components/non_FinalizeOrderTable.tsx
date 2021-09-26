@@ -394,10 +394,10 @@ export default function Non_FinalizeOrderTable() {
         filtered[0].additional = "취소";
         filtered[0].confirmed = "취소";
         filtered[0]["turndown_reason"] = reason;
-        filtered[0]["confirmed_By"] = auth.currentUser?.displayName!;
+        filtered[0]["payed_By"] = auth.currentUser?.displayName!;
         filtered[0]["rating"] = 0;
         const timestamp = Date.now(); // This would be the timestamp you want to format
-        filtered[0]['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
+        filtered[0]['payConfirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
     
         //sent to confirmed orders
         console.log(filtered[0])

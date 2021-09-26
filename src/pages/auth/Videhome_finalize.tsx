@@ -25,6 +25,9 @@ const Videhome_Finalize: React.FunctionComponent<IPageProps> = props => {
     const goBack = () =>{
         history.push('/requests')
      }
+     const goHome = () =>{
+        history.push('/')
+     }
      const goNext = () =>{
         history.push('/payment')
      }
@@ -48,6 +51,7 @@ const Videhome_Finalize: React.FunctionComponent<IPageProps> = props => {
                     </div>
                 </div>
             )}
+            <div style={{width:"100%", position:"relative", display:"flex", justifyContent:"center", }}>
               <Button
                 id="pot"
                 variant="outlined"
@@ -65,11 +69,11 @@ const Videhome_Finalize: React.FunctionComponent<IPageProps> = props => {
                         <Button
                 id="pot"
                 variant="outlined"
-                onClick={() => goBack()}
+                onClick={() => goHome()}
                 style={{
                     width: '40%',
                     padding: '10px',
-                    margin: '40px',
+                    margin: '0 40px',
                     fontFamily: 'TmoneyRoundWindExtraBold',
                     fontSize: '15px',
                 }}
@@ -90,6 +94,7 @@ const Videhome_Finalize: React.FunctionComponent<IPageProps> = props => {
             >
                {">"}
             </Button>
+            </div>
         </div>
     );
 }
