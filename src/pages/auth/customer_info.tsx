@@ -110,7 +110,7 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
 
     return (
         <div>
-            <img className="img-logo-login" src="./videhome_logo.png"></img>
+            <img className="img-logo-login" src="./thrifter_logo.png"></img>
             <div style={{ color:"black"}}>
                 <FormControl style={{width:"100%"}} >
                         <TextField

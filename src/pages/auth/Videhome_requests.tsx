@@ -6,8 +6,16 @@ import { auth } from '../../config/firebase';
 import ErrorComponent from '../../components/errorComponent';
 import Non_OrderTable from '../../components/non_orderTable';
 import IPageProps from '../../interfaces/page';
+import { useHistory } from 'react-router-dom';
 
 const Videhome_Requests: React.FunctionComponent<IPageProps> = props => {
+    const goBack = () =>{
+        history.push('/')
+     }
+     const goNext = () =>{
+        history.push('/finalize')
+     }
+     const history = useHistory();
     const [show, setShow] = useState(false);
     useEffect(() => {
         auth.onAuthStateChanged((user: any) => {
@@ -37,6 +45,48 @@ const Videhome_Requests: React.FunctionComponent<IPageProps> = props => {
                     </div>
                 </div>
             )}
+                        <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goBack()}
+                style={{
+                    width: '10%',
+                    padding: '10px',
+                
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+               {"<"}
+            </Button>
+                        <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goBack()}
+                style={{
+                    width: '40%',
+                    padding: '10px',
+                    margin: '40px',
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+                뒤로가기
+            </Button>
+            <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goNext()}
+                style={{
+                    width: '10%',
+                    padding: '10px',
+                
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+               {">"}
+            </Button>
         </div>
     );
 }

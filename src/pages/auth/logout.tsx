@@ -16,7 +16,7 @@ const LogoutPage: React.FunctionComponent<IPageProps> = props => {
 
     return (
         <div>
-            <img className="img-logo-login" src="./videhome_logo.png" alt=""/>
+            <img className="img-logo-login" src="./thrifter_logo.png" alt=""/>
         <div>
             <p className='text-center' style={{fontSize:"20px", fontFamily: 'TmoneyRoundWindExtraBold', color:"black"}}>로그아웃 하시겠습니까?</p>
             <div className='text-center' style={{display:"flex",position:"relative"}}>

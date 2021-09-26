@@ -420,7 +420,7 @@
     position: relative;
     width: auto;
     height: auto;
-    margin: 40px;
+    margin: 0px 40px 0 40px;
     display: flex;
     justify-content: center;
     align-items: center;

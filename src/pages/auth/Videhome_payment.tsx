@@ -8,8 +8,16 @@ import IPageProps from '../../interfaces/page';
 import Non_FinalizeOrderTable from '../../components/non_FinalizeOrderTable';
 import PaymentConfirmationTable from '../../components/paymentConfirmationTable';
 import Non_PaymentConfirmationTable from '../../components/non_paymentConfirmationTable';
+import { useHistory } from 'react-router-dom';
 
-const Videhome_Payment: React.FunctionComponent<IPageProps> = props => {
+const Videhome_Payment: React.FunctionComponent<IPageProps> = (props) => {
+    const goBack = () =>{
+        history.push('/finalize')
+     }
+     const goNext = () =>{
+        history.push('/confirmed')
+     }
+     const history = useHistory();
     const [show, setShow] = useState(false);
     useEffect(() => {
         auth.onAuthStateChanged((user: any) => {
@@ -39,8 +47,50 @@ const Videhome_Payment: React.FunctionComponent<IPageProps> = props => {
                     </div>
                 </div>
             )}
+            <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goBack()}
+                style={{
+                    width: '10%',
+                    padding: '10px',
+                
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+               {"<"}
+            </Button>
+                        <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goBack()}
+                style={{
+                    width: '40%',
+                    padding: '10px',
+                    margin: '40px',
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+                뒤로가기
+            </Button>
+            <Button
+                id="pot"
+                variant="outlined"
+                onClick={() => goNext()}
+                style={{
+                    width: '10%',
+                    padding: '10px',
+                
+                    fontFamily: 'TmoneyRoundWindExtraBold',
+                    fontSize: '15px',
+                }}
+            >
+               {">"}
+            </Button>
         </div>
     );
-}
+};
 
 export default Videhome_Payment;

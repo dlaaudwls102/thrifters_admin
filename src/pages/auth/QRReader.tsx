@@ -20,7 +20,7 @@ const QRReaderPage: React.FunctionComponent<IPageProps> = props => {
                     <div id="laser"></div>
                     </div>
                 </div>
-                <img className="img-logo-logins" src="./videhome_logo.png"></img>
+                <img className="img-logo-logins" src="./thrifter_logo.png"></img>
             <div style={{borderTop:"solid 10px #FBAA13",borderBottom:"solid 10px #FBAA13", width:"100%", marginTop:"40px"}}>
             <div style={{position:'relative', zIndex:-1, padding:"10px 0", justifyContent:"center"}}>
             <BarcodeScannerComponent

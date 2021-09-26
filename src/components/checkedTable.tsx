@@ -408,7 +408,7 @@ export default function CheckedTable() {
 //   },[selected])
   return (
     <div className={classes.root}>
-    <img className="img-logo-login" src="./videhome_logo.png"></img>
+    <img className="img-logo-login" src="./thrifter_logo.png"></img>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>

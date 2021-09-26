@@ -65,7 +65,7 @@ const HomePage: React.FunctionComponent<IPageProps> = (props) => {
     <div>
       <div className="Header_center fade">
         <div>
-          <img className="img-logo" src="./videhome_logo.png" alt=""/>
+          <img className="img-logo" src="./thrifter_logo.png" alt=""/>
         </div>
       </div>
 

@@ -109,7 +109,7 @@ const RegisterPage: React.FunctionComponent<IPageProps> = props => {
 
     return (
         <div>
-            <img className="img-logo-login" src="./videhome_logo.png" alt="" />
+            <img className="img-logo-login" src="./thrifter_logo.png" alt="" />
             <div style={{ color:"black"}}>
                 <FormControl style={{width:"100%"}} >
                         <TextField
