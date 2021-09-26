@@ -38,7 +38,7 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const TopNav = () => {
     const [page, setPage] = useState<Number | null>(0);
     const [messages, setMessages] = useState<any | null>(0);
-    const [numberOfOrders,setNumberOfOrders] = useState<any | null>(0);
+    const [numberOfOrders, setNumberOfOrders] = useState<any | null>(0);
     const [state, setState] = React.useState({
         top: false,
         left: false,
@@ -49,11 +49,14 @@ const TopNav = () => {
     const history = useHistory();
 
     useEffect(() => {
-      db.collection("orders").doc("user").get().then(doc=>{
-        if(doc.data()!.orders){
-        setNumberOfOrders(doc!.data()!.orders.length)
-      }
-      })
+        db.collection('orders')
+            .doc('user')
+            .get()
+            .then((doc) => {
+                if (doc.data()!.orders) {
+                    setNumberOfOrders(doc!.data()!.orders.length);
+                }
+            });
         db.collection('user')
             .doc(auth.currentUser?.uid!)
             .get()
@@ -221,205 +224,251 @@ const TopNav = () => {
                 </div>
             </div>
             <Divider />
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-evenly',
-                    flexDirection: 'row',
-                    padding: '20px 0',
-                    fontFamily: 'ONE-Mobile-POP',
-                }}
-            >
-                <div
-                    style={{ justifyContent: 'center', textAlign: 'center' }}
-                    onClick={onClickHeaderBtn.bind(this, 1, '/requests')}
-                >
-                    <div style={{paddingBottom:'10px', color:"red"}}>
-                        {numberOfOrders}
+            {auth.currentUser?.uid ? (
+                <>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-evenly',
+                            flexDirection: 'row',
+                            padding: '20px 0',
+                            fontFamily: 'ONE-Mobile-POP',
+                        }}
+                    >
+                        <div
+                            style={{
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                            }}
+                            onClick={onClickHeaderBtn.bind(
+                                this,
+                                1,
+                                '/requests'
+                            )}
+                        >
+                            <div
+                                style={{ paddingBottom: '10px', color: 'red' }}
+                            >
+                                {numberOfOrders}
+                            </div>
+                            <div>신청건수</div>
+                        </div>
+                        <div
+                            style={{
+                                justifyContent: 'center',
+                                textAlign: 'center',
+                            }}
+                            onClick={onClickHeaderBtn.bind(
+                                this,
+                                1,
+                                '/currency'
+                            )}
+                        >
+                            <div>
+                                <CalendarTodayIcon fontSize="medium" />
+                            </div>
+                            <div>시세조정</div>
+                        </div>
                     </div>
-                    <div>신청건수</div>
-                </div>
-                <div
-                    style={{ justifyContent: 'center', textAlign: 'center' }}
-                    onClick={onClickHeaderBtn.bind(this, 1, '/currency')}
-                >
-                    <div>
-                        <CalendarTodayIcon fontSize="medium" />
+                    <Divider />
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            fontFamily: 'ONE-Mobile-POP',
+                            padding: '20px',
+                            fontSize: '20px',
+                        }}
+                    >
+                        비드홈
                     </div>
-                    <div>시세조정</div>
-                </div>
-            </div>
-            <Divider />
-            <div
-                style={{
-                    textAlign: 'left',
-                    fontFamily: 'ONE-Mobile-POP',
-                    padding: '20px',
-                    fontSize: '20px',
-                }}
-            >
-                비드홈
-            </div>
-            <div
-                style={{
-                    padding: ' 0 10px 10px 20px',
-                    fontFamily: 'ONE-Mobile-POP',
-                }}
-            >
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'매입신청 확인'}
-                        onClick={onClickHeaderBtn.bind(this, 1, '/requests')}
+                    <div
+                        style={{
+                            padding: ' 0 10px 10px 20px',
+                            fontFamily: 'ONE-Mobile-POP',
+                        }}
                     >
-                        <ListItemIcon>
-                            <ScheduleIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'매입신청 확인'} />
-                    </ListItem>
-                </div>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'방문 및 정산'}
-                        onClick={onClickHeaderBtn.bind(this, 1, '/finalize')}
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'매입신청 확인'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/requests'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <ScheduleIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'매입신청 확인'} />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'방문 및 정산'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/finalize'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <LocalShippingIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'방문 및 정산'} />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'송금확인'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/payment'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <PaymentIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'송금확인'} />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'주문완료 현황'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/confirmed'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <AssignmentTurnedInIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'주문완료 현황'} />
+                            </ListItem>
+                        </div>
+                    </div>
+                    <Divider />
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            fontFamily: 'ONE-Mobile-POP',
+                            padding: '20px',
+                            fontSize: '20px',
+                        }}
                     >
-                        <ListItemIcon>
-                            <LocalShippingIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'방문 및 정산'} />
-                    </ListItem>
-                </div>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'송금확인'}
-                        onClick={onClickHeaderBtn.bind(this, 1, '/payment')}
+                        고객
+                    </div>
+                    <div style={{ padding: ' 0 10px 10px 20px' }}>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'고객정보'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/customer_list'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <PersonOutlineIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'고객정보'}
+                                    style={{ fontFamily: 'ONE-Mobile-POP' }}
+                                />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'고객랭킹'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/ranking'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <AttachMoneyIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'고객랭킹'} />
+                            </ListItem>
+                        </div>
+                    </div>
+                    <Divider />
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            fontFamily: 'ONE-Mobile-POP',
+                            padding: '20px',
+                            fontSize: '20px',
+                        }}
                     >
-                        <ListItemIcon>
-                            <PaymentIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'송금확인'} />
-                    </ListItem>
-                </div>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'주문완료 현황'}
-                        onClick={onClickHeaderBtn.bind(this, 1, '/confirmed')}
-                    >
-                        <ListItemIcon>
-                            <AssignmentTurnedInIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'주문완료 현황'} />
-                    </ListItem>
-                </div>
-            </div>
-            <Divider />
-            <div
-                style={{
-                    textAlign: 'left',
-                    fontFamily: 'ONE-Mobile-POP',
-                    padding: '20px',
-                    fontSize: '20px',
-                }}
-            >
-                고객
-            </div>
-            <div style={{ padding: ' 0 10px 10px 20px' }}>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'고객정보'}
-                        onClick={onClickHeaderBtn.bind(
-                            this,
-                            1,
-                            '/customer_list'
-                        )}
-                    >
-                        <ListItemIcon>
-                            <PersonOutlineIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={'고객정보'}
-                            style={{ fontFamily: 'ONE-Mobile-POP' }}
-                        />
-                    </ListItem>
-                </div>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'고객랭킹'}
-                        onClick={onClickHeaderBtn.bind(this, 1, '/ranking')}
-                    >
-                        <ListItemIcon>
-                            <AttachMoneyIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'고객랭킹'} />
-                    </ListItem>
-                </div>
-            </div>
-            <Divider />
-            <div
-                style={{
-                    textAlign: 'left',
-                    fontFamily: 'ONE-Mobile-POP',
-                    padding: '20px',
-                    fontSize: '20px',
-                }}
-            >
-                직원
-            </div>
-            <div style={{ padding: ' 0 10px 10px 20px' }}>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'직원정보'}
-                        onClick={onClickHeaderBtn.bind(
-                            this,
-                            1,
-                            '/customer_list'
-                        )}
-                    >
-                        <ListItemIcon>
-                            <PersonOutlineIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            primary={'직원정보'}
-                            style={{ fontFamily: 'ONE-Mobile-POP' }}
-                        />
-                    </ListItem>
-                </div>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'교육영상'}
-                        onClick={onClickHeaderBtn.bind(this, 1, '/video_lecture')}
-                    >
-                        <ListItemIcon>
-                          <OndemandVideoIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary={'교육영상'} />
-                    </ListItem>
-                </div>
-                <div style={{ padding: '5px' }}>
-                    <ListItem
-                        button
-                        key={'매입절차'}
-                        onClick={onClickHeaderBtn.bind(
-                            this,
-                            1,
-                            '/process_info'
-                        )}
-                    >
-                        <ListItemIcon>
-                            <HelpOutlineIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'매입절차'} />
-                    </ListItem>
-                </div>
-            </div>
-            
+                        직원
+                    </div>
+                    <div style={{ padding: ' 0 10px 10px 20px' }}>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'직원정보'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/customer_list'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <PersonOutlineIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'직원정보'}
+                                    style={{ fontFamily: 'ONE-Mobile-POP' }}
+                                />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'교육영상'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/video_lecture'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <OndemandVideoIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'교육영상'} />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'매입절차'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/process_info'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <HelpOutlineIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={'매입절차'} />
+                            </ListItem>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <></>
+            )}
+
             {/* <List>
                 {['All mail', 'Trash', 'Spam'].map((text, index) => (
                     <ListItem button key={text}>
@@ -490,6 +539,22 @@ const TopNav = () => {
                     {list('left')}
                 </SwipeableDrawer>
             </React.Fragment>
+            {/* <React.Fragment key={'left'}>
+                <Button
+                    onClick={toggleDrawer('left', true)}
+                    style={{ color: '#07381B' }}
+                >
+                    <MenuIcon fontSize="large" />
+                </Button>
+                <SwipeableDrawer
+                    anchor={'left'}
+                    open={state['left']}
+                    onClose={toggleDrawer('left', false)}
+                    onOpen={toggleDrawer('left', true)}
+                >
+                    {list('left')}
+                </SwipeableDrawer>
+            </React.Fragment> */}
         </div>
     );
 };

@@ -68,7 +68,7 @@ const routes: IRoute[] = [
         exact: true,
         component: QRReaderPage,
         name: 'QRREADER Page',
-        protected: false
+        protected: true
     },
     {
         path: '/requests',
