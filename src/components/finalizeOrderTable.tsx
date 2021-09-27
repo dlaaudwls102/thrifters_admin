@@ -352,11 +352,11 @@ export default function FinalizeOrderTable() {
                         id="tableTitle"
                         component="div"
                     >
-          <img
-                    id="pot"
-                    className="img-announce"
-                    src="../002.png"
-                ></img>
+                        <img
+                            id="pot"
+                            className="img-announce"
+                            src="../002.png"
+                        ></img>
                     </Typography>
                 )}
                 {numSelected > 0 ? (
@@ -718,14 +718,37 @@ export default function FinalizeOrderTable() {
             //finding user's info's order and deleting, and updating it with confirmed order
 
             if (userSelected.userId !== 'non_user') {
-                var category = {bags: bagNum, books: bookNum, clothes: clotheNum, fashion:fashionNum, non_steel: non_SteelNum, shoes: shoeNum, steel:steelNum}
+                var category = {
+                    bags: bagNum,
+                    books: bookNum,
+                    clothes: clotheNum,
+                    fashion: fashionNum,
+                    non_steel: non_SteelNum,
+                    shoes: shoeNum,
+                    steel: steelNum,
+                };
                 var totalWeight =
-                    Number(userSelected.totalWeight) + Number(bagNum) + Number(bookNum) + Number(clotheNum) + Number(fashionNum) + Number(non_SteelNum) + Number(shoeNum)+ Number(steelNum);
-                var totalWeightConverted = Number(userSelected.totalWeightConverted) + Number(calculated);
+                    Number(userSelected.totalWeight) +
+                    Number(bagNum) +
+                    Number(bookNum) +
+                    Number(clotheNum) +
+                    Number(fashionNum) +
+                    Number(non_SteelNum) +
+                    Number(shoeNum) +
+                    Number(steelNum);
+                var thisWeight =
+                    Number(bagNum) +
+                    Number(bookNum) +
+                    Number(clotheNum) +
+                    Number(fashionNum) +
+                    Number(non_SteelNum) +
+                    Number(shoeNum) +
+                    Number(steelNum);
+                var totalWeightConverted =
+                    Number(userSelected.totalWeightConverted) +
+                    Number(calculated);
                 var totalAdditional =
                     Number(userSelected.totalAdditional) + Number(additional);
-                var averageWeight = Number(userSelected.averageWeights);
-                var numberOrd = userSelected.numberOfOrders;
                 var found_date = userOrderSelected.filter(
                     (order: any) => order.date == selectedOrder.date
                 );
@@ -750,7 +773,6 @@ export default function FinalizeOrderTable() {
                         ']' +
                         'DONE deleting current User order (회원)'
                 );
-                
 
                 var today = new Date(),
                     date =
@@ -783,17 +805,19 @@ export default function FinalizeOrderTable() {
                         orders: firebase.firestore.FieldValue.arrayUnion(
                             found_time[0]
                         ),
-                        averageWeights: 
-                        firebase.firestore.FieldValue.arrayUnion(
+                        averageWeights: firebase.firestore.FieldValue.arrayUnion(
                             Number(
-                            ((Number(totalWeightConverted )+ Number(totalAdditional)) / Number(totalWeight))
-                        ).toFixed(2)),
+                                (Number(calculated) +
+                                    Number(additional)) /
+                                    Number(thisWeight)
+                            ).toFixed(2)
+                        ),
                         totalWeight: Number(totalWeight),
-                        totalWeightConverted : Number(totalWeightConverted),
+                        totalWeightConverted: Number(totalWeightConverted),
                         totalAdditional: Number(totalAdditional),
                         message: firebase.firestore.FieldValue.arrayUnion(
                             messages
-                        )
+                        ),
                     });
                 console.log(
                     '[' +
@@ -813,7 +837,9 @@ export default function FinalizeOrderTable() {
                 history.push('/payment');
             }
         } else {
-            alert('계산하기를 눌러주세요, 아닐경우 모두 입력하셨는지 확인해주세요');
+            alert(
+                '계산하기를 눌러주세요, 아닐경우 모두 입력하셨는지 확인해주세요'
+            );
         }
         // else{
 
@@ -920,11 +946,11 @@ export default function FinalizeOrderTable() {
     }, [change]);
     return (
         <div className={classes.root}>
-                <img
-                    id="pot"
-                    className="img-logo-small"
-                    src="../thrifter_logo.png"
-                ></img>
+            <img
+                id="pot"
+                className="img-logo-small"
+                src="../thrifter_logo.png"
+            ></img>
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>

@@ -2,17 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { Button, FormControlLabel, withStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import OrderTable from '../../components/orderTable';
-import CheckedTable from '../../components/checkedTable';
+import CustomerTable from '../../components/customerTable';
 import { auth } from '../../config/firebase';
 import ErrorComponent from '../../components/errorComponent';
 import IPageProps from '../../interfaces/page';
 import { useHistory } from 'react-router-dom';
-import Currency from "../../components/currency"
+import CustomerRank from '../../components/customerRank';
 
 const Videhome_Ranking: React.FunctionComponent<IPageProps> = props => {
     const [show, setShow] = useState(false);
-
-    
+    const goBack = () =>{
+        history.push('/')
+     }
+     const goHome = () =>{
+        history.push('/')
+     }
+     const goNext = () =>{
+        history.push('/finalize')
+     }
+     const history = useHistory();
     useEffect(() => {
         auth.onAuthStateChanged((user: any) => {
             if (user) {
@@ -23,29 +31,12 @@ const Videhome_Ranking: React.FunctionComponent<IPageProps> = props => {
         });
     }, []);
 
-    const goBack = () =>{
-        history.push('/payment')
-     }
-     const goHome = () =>{
-        history.push('/')
-     }
-     const history = useHistory();
-
     return (
         <div className="Apps fade">
             {show === true ? (
                 <div>
                     <div className="left" id="pot">
-                        {/* <Ranking /> */}
-                        <div className="loader-wrapper" style={{ position: 'fixed' }}>
-    <span className="loader">
-        <span className="loader-innder"></span>
-    </span>
-    <span className="loader_text">
-
-        준비중 입니다.
-    </span>
-</div>
+                        <CustomerRank />
                         <div className="wrapper"></div>
                     </div>
                     <div className="middles">
@@ -56,11 +47,10 @@ const Videhome_Ranking: React.FunctionComponent<IPageProps> = props => {
                 <>
                 </>
             )}
-            <div style={{width:"100%", position:"relative", display:"flex", justifyContent:"center", }}>
-                        <Button
+                                    <Button
                 id="pot"
                 variant="outlined"
-                onClick={() => goHome()}
+                onClick={() => goBack()}
                 style={{
                     width: '40%',
                     padding: '10px',
@@ -71,7 +61,6 @@ const Videhome_Ranking: React.FunctionComponent<IPageProps> = props => {
             >
                 뒤로가기
             </Button>
-            </div>
         </div>
     );
 }
