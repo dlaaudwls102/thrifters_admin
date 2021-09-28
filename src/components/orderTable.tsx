@@ -36,6 +36,7 @@ import firebase from 'firebase/app';
 import SearchIcon from '@material-ui/icons/Search';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { useHistory } from 'react-router-dom';
+import { Alert } from '@mui/material';
 
 interface Data {
     time: string;
@@ -246,6 +247,7 @@ export default function OrderTable() {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [totalHistory, setTotalHistory] = React.useState<Data[]>();
+    const [showAlert,setShowAlert]= React.useState<boolean>(false);
 
     //newData
     const [orderHistory, setOrderHistory] = React.useState<Data[]>([]);
@@ -1066,199 +1068,7 @@ export default function OrderTable() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="축소"
-      /> */}
-            {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
-            {onOff ? (
-                <div
-                    className="modal"
-                    style={{ margin: 'auto', padding: '30px 0 ', width: '90%' }}
-                >
-                    <div>
-                        <div className="total">
-                            <div className="totalCate">
-                                <div
-                                    style={{
-                                        borderBottom: 'solid black 5px',
-                                        margin: 'auto',
-                                        backgroundColor: '#07381B',
-                                        color: 'white',
-                                        padding: '10px 0px',
-                                        fontSize: '20px',
-                                    }}
-                                >
-                                    무게입력 (KG)
-                                </div>
-                                <div
-                                    className="totalCate_price"
-                                    style={{
-                                        margin: 'auto',
-                                        padding: '20px 0',
-                                    }}
-                                >
-                                    <FormControl style={{ width: '50%' }}>
-                                        <TextField
-                                            style={{
-                                                top: '2px',
-                                                marginBottom: '25px',
-                                            }}
-                                            id="input-with-icon-textfield"
-                                            type="input"
-                                            onChange={handleChange('weight_')}
-                                            placeholder="무게를 입력해주세요"
-                                            inputProps={{
-                                                style: {
-                                                    textAlign: 'center',
-                                                    fontSize: '19px',
-                                                    fontFamily:
-                                                        'Cafe24Oneprettynight',
-                                                },
-                                                'aria-label': 'naked',
-                                                startAdornment: (
-                                                    <InputAdornment position="start"></InputAdornment>
-                                                ),
-                                            }}
-                                            InputLabelProps={{
-                                                style: {
-                                                    fontSize: '25px',
-                                                    fontFamily:
-                                                        'TmoneyRoundWindExtraBold',
-                                                },
-                                            }}
-                                        />
-                                    </FormControl>
-                                </div>
-                            </div>
-                            <div className="totalCate">
-                                <div
-                                    style={{
-                                        borderBottom: 'solid black 5px',
-                                        margin: 'auto',
-                                        backgroundColor: '#07381B',
-                                        color: 'white',
-                                        padding: '10px 0px',
-                                        fontSize: '20px',
-                                    }}
-                                >
-                                    추가금액 입력 (원)
-                                </div>
-                                <div
-                                    className="totalCate_price"
-                                    style={{
-                                        margin: 'auto',
-                                        padding: '20px 0',
-                                    }}
-                                >
-                                    <FormControl style={{ width: '50%' }}>
-                                        <TextField
-                                            style={{
-                                                top: '2px',
-                                                marginBottom: '25px',
-                                            }}
-                                            id="input-with-icon-textfield"
-                                            type="input"
-                                            onChange={handleChange(
-                                                'additional_'
-                                            )}
-                                            placeholder="추가금액을 입력해주세요"
-                                            inputProps={{
-                                                style: {
-                                                    textAlign: 'center',
-                                                    fontSize: '19px',
-                                                    fontFamily:
-                                                        'Cafe24Oneprettynight',
-                                                },
-                                                'aria-label': 'naked',
-                                                startAdornment: (
-                                                    <InputAdornment position="start"></InputAdornment>
-                                                ),
-                                            }}
-                                            InputLabelProps={{
-                                                style: {
-                                                    fontSize: '25px',
-                                                    fontFamily:
-                                                        'TmoneyRoundWindExtraBold',
-                                                },
-                                            }}
-                                        />
-                                    </FormControl>
-                                </div>
-                            </div>
-                            <div className="totalCate">
-                                <div
-                                    style={{
-                                        borderBottom: 'solid black 5px',
-                                        margin: 'auto',
-                                        backgroundColor: '#07381B',
-                                        color: 'white',
-                                        padding: '10px 0px',
-                                        fontSize: '20px',
-                                    }}
-                                >
-                                    별점 입력( 1 ~ 5)
-                                </div>
-                                <div
-                                    className="totalCate_price"
-                                    style={{
-                                        margin: 'auto',
-                                        padding: '20px 0',
-                                    }}
-                                >
-                                    <FormControl style={{ width: '50%' }}>
-                                        <TextField
-                                            style={{
-                                                top: '2px',
-                                                marginBottom: '25px',
-                                            }}
-                                            id="input-with-icon-textfield"
-                                            type="input"
-                                            onChange={handleChange('rating_')}
-                                            placeholder="평가를 입력해주세요"
-                                            inputProps={{
-                                                style: {
-                                                    textAlign: 'center',
-                                                    fontSize: '19px',
-                                                    fontFamily:
-                                                        'Cafe24Oneprettynight',
-                                                },
-                                                'aria-label': 'naked',
-                                                startAdornment: (
-                                                    <InputAdornment position="start"></InputAdornment>
-                                                ),
-                                            }}
-                                            InputLabelProps={{
-                                                style: {
-                                                    fontSize: '25px',
-                                                    fontFamily:
-                                                        'TmoneyRoundWindExtraBold',
-                                                },
-                                            }}
-                                        />
-                                    </FormControl>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <Button
-                        className="buttons"
-                        style={{
-                            fontFamily: 'TmoneyRoundWindExtraBold',
-                            padding: '4px',
-                            width: '50%',
-                        }}
-                        variant="outlined"
-                        onClick={() => {
-                            finished(auth.currentUser?.displayName!);
-                        }}
-                    >
-                        매입 완료
-                    </Button>
-                </div>
-            ) : (
-                <></>
-            )}
+            {(showAlert)?  <Alert onClose={() => {setShowAlert(false)}} id="pot" severity="success">신청 승인되셨습니다!</Alert>:<></>}
         </div>
     );
 }

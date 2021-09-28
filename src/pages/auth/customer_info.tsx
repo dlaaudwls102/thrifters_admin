@@ -7,7 +7,7 @@ import IPageProps from '../../interfaces/page';
 
 const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
     const [email, setEmail] = useState<string>('');
-    const [averageWeights, setAverageWeights] = useState<string>('');
+    const [averageWeights, setAverageWeights] = useState<number>(0);
     const [numberOfOrders, setNumberOfOrders] = useState<string>('');
     const [totalAdditional, setTotalAdditional] = useState<string>('');
     const [totalWeights, setTotalWeights] = useState<string>('');
@@ -92,11 +92,16 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
                         setPhone(doc.data()!.phone);
                         setName(doc.data()!.name);
                         setNName(doc.data()!.nickname);
-                        setAverageWeights(doc.data()!.averageWeights);
+                        var count:any = 0
+                        for (var i = 0 ; i < doc.data()!.averageWeights.length; i++ ){
+                            count = count + Number(doc.data()!.averageWeights[i])
+                        }
+                        var average = Math.round(Number(count)/doc.data()!.averageWeights.length);
+                        setAverageWeights(average);
                         setEmail(doc.data()!.userId);
                         setNumberOfOrders(doc.data()!.numberOfOrders);
                         setTotalAdditional(doc.data()!.totalAdditional);
-                        setTotalWeights(doc.data()!.totalWeights);
+                        setTotalWeights(doc.data()!.totalWeight);
                 }   
                 else{
                     alert("존재하지 않습니다." + " : " + data.location?.state )

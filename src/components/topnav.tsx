@@ -31,13 +31,14 @@ import PaymentIcon from '@mui/icons-material/Payment';
 import { auth, db } from '../config/firebase';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { PaymentOutlined } from '@material-ui/icons';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 const TopNav = () => {
     const [page, setPage] = useState<Number | null>(0);
-    const [messages, setMessages] = useState<any | null>(0);
     const [numberOfOrders, setNumberOfOrders] = useState<any | null>(0);
     const [state, setState] = React.useState({
         top: false,
@@ -55,20 +56,6 @@ const TopNav = () => {
             .then((doc) => {
                 if (doc.data()!.orders) {
                     setNumberOfOrders(doc!.data()!.orders.length);
-                }
-            });
-        db.collection('user')
-            .doc(auth.currentUser?.uid!)
-            .get()
-            .then((doc) => {
-                if (doc.data()!) {
-                    var inbox = doc.data()!.message;
-                    var count = 0;
-                    inbox!.forEach((data: any) => {
-                        if (data.read === false) count += 1;
-                    });
-                    setMessages(count);
-                    //finding unread messages counts
                 }
             });
     }, [state.left]);
@@ -194,12 +181,12 @@ const TopNav = () => {
             >
                 <div
                     style={{ justifyContent: 'center', textAlign: 'center' }}
-                    onClick={onClickHeaderBtn.bind(this, 1, '/login')}
+                    onClick={onClickHeaderBtn.bind(this, 1, '/requestOnSite')}
                 >
                     <div>
-                        <LoginIcon fontSize="medium" />
+                        <AddBusinessIcon fontSize="medium" />
                     </div>
-                    <div>로그인</div>
+                    <div>방문신청</div>
                 </div>
                 <div
                     style={{ justifyContent: 'center', textAlign: 'center' }}
@@ -214,9 +201,6 @@ const TopNav = () => {
                     style={{ justifyContent: 'center', textAlign: 'center' }}
                     onClick={onClickHeaderBtn.bind(this, 1, '/QR_Reader')}
                 >
-                    {messages !== 0 && (
-                        <div className="notification2">{messages}</div>
-                    )}
                     <div>
                         <QrCodeScannerIcon fontSize="medium" />
                     </div>
@@ -265,7 +249,7 @@ const TopNav = () => {
                             )}
                         >
                             <div>
-                                <CalendarTodayIcon fontSize="medium" />
+                                <MonetizationOnIcon fontSize="medium" />
                             </div>
                             <div>시세조정</div>
                         </div>
@@ -394,7 +378,7 @@ const TopNav = () => {
                                 )}
                             >
                                 <ListItemIcon>
-                                    <AttachMoneyIcon />
+                                    <ThumbUpOffAltIcon />
                                 </ListItemIcon>
                                 <ListItemText primary={'고객랭킹'} />
                             </ListItem>

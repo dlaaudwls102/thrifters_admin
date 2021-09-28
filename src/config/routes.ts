@@ -18,6 +18,7 @@ import CurrencyPage from '../pages/auth/Videhome_currency';
 import RankingPage from "../pages/auth/Videhome_ranking";
 import LecturePage from "../pages/auth/Videhome_video";
 import ProcessInfoPage from "../pages/auth/Videhome_process_info";
+import RequestOnSitePage from "../pages/auth/Videhome_requestOnSite";
 
 
 const routes: IRoute[] = [
@@ -96,6 +97,13 @@ const routes: IRoute[] = [
         exact: true,
         component: PaymentPage,
         name: '송금확인',
+        protected: false
+    },
+    {
+        path: '/requestOnSite',
+        exact: true,
+        component: RequestOnSitePage,
+        name: '신청하기',
         protected: false
     },
     {
