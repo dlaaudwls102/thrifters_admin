@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FormControlLabel, withStyles } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { Button } from '@material-ui/core';
 import FinalizeOrderTable from '../../components/finalizeOrderTable';
 import { auth } from '../../config/firebase';
-import ErrorComponent from '../../components/errorComponent';
 import IPageProps from '../../interfaces/page';
 import Non_FinalizeOrderTable from '../../components/non_FinalizeOrderTable';
 import { useHistory } from 'react-router-dom';

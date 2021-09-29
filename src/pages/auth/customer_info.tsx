@@ -6,7 +6,6 @@ import { db } from '../../config/firebase';
 import IPageProps from '../../interfaces/page';
 
 const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
-    const [email, setEmail] = useState<string>('');
     const [averageWeights, setAverageWeights] = useState<number>(0);
     const [numberOfOrders, setNumberOfOrders] = useState<string>('');
     const [totalAdditional, setTotalAdditional] = useState<string>('');
@@ -98,7 +97,6 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
                         }
                         var average = Math.round(Number(count)/doc.data()!.averageWeights.length);
                         setAverageWeights(average);
-                        setEmail(doc.data()!.userId);
                         setNumberOfOrders(doc.data()!.numberOfOrders);
                         setTotalAdditional(doc.data()!.totalAdditional);
                         setTotalWeights(doc.data()!.totalWeight);
@@ -115,7 +113,7 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
 
     return (
         <div>
-            <img className="img-logo-login" src="./thrifter_logo.png"></img>
+            <img className="img-logo-login" src="./thrifter_logo.png" alt=""></img>
             <div style={{ color:"black"}}>
                 <FormControl style={{width:"100%"}} >
                         <TextField

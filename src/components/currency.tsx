@@ -1,24 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import FullCalendar from '@fullcalendar/react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
-import listPlugin from '@fullcalendar/list';
-import adaptivePlugin from '@fullcalendar/adaptive';
-
-import '@fullcalendar/core/main.cjs';
-import '@fullcalendar/daygrid/main.cjs';
-import Calender from '@fullcalendar/core';
 import { db } from '../config/firebase';
-import {
-    Button,
-    FormControl,
-    InputAdornment,
-    TextField,
-} from '@material-ui/core';
-import { ShowChart } from '@material-ui/icons';
+import { Button, FormControl, TextField } from '@material-ui/core';
 
 const Currency = () => {
     const [currencyList, setCurrencyList] = useState<any>({});
@@ -33,9 +16,7 @@ const Currency = () => {
         shoes: '신발',
         bags: '가방',
     };
-    const goBack = () => {
-        history.push('/');
-    };
+
     const history = useHistory();
     const delay = (ms: any) => new Promise((res: any) => setTimeout(res, ms));
     useEffect(() => {
@@ -48,7 +29,7 @@ const Currency = () => {
             .then((doc) => {
                 setListItems(
                     Object.keys(doc.data()!.calculate).map((key: any) => (
-                <>
+                        <>
                             <TextField
                                 autoComplete="new-password"
                                 name="confirm"
@@ -87,24 +68,21 @@ const Currency = () => {
                                 {translate[key]} 현재 시세:{' '}
                                 {doc.data()!.calculate[key]} 원{' '}
                             </div>
-                </>
+                        </>
                     ))
                 );
                 setCurrencyList(doc.data()!.calculate);
-                console.log(doc.data()!.calculate)
             });
     }, []);
     const handleChange = (prop: any) => (event: any) => {
         const onlyNums = event.target.value.replace(/[^0-9]/g, '');
-        if (onlyNums.length > 3){
-            alert("천원단위 이하로만 가능합니다.")
+        if (onlyNums.length > 3) {
+            alert('천원단위 이하로만 가능합니다.');
+        } else {
+            currencyList[prop] = Number(event.target.value);
+
+            setCurrencyList(currencyList);
         }
-        else{
-        currencyList[prop] = Number(event.target.value);
-        console.log(currencyList);
-        setCurrencyList(currencyList);
- 
-    }
     };
     const confirm = async () => {
         var confirmEdit = window.confirm('변경 하시겠습니까?');
@@ -117,7 +95,7 @@ const Currency = () => {
             alert('변경되었습니다.');
             await delay(500);
             setOnOff(false);
-            history.push("/")
+            history.push('/');
         }
     };
     return (
@@ -131,7 +109,12 @@ const Currency = () => {
             }}
         >
             <div className="Apps">
-                <img id="pot" className="img-announce" src="../006.png"></img>
+                <img
+                    id="pot"
+                    className="img-announce"
+                    src="../006.png"
+                    alt=""
+                ></img>
                 {onOff ? (
                     <div
                         className="loader-wrapper"

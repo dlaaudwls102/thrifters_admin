@@ -12,17 +12,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
-import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles, TablePagination } from '@material-ui/core';
+import { Button, TablePagination } from '@material-ui/core';
 import firebase from "firebase/app";
-
-import SearchIcon from '@material-ui/icons/Search';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import {useHistory} from 'react-router-dom';
 
 interface Data {
@@ -273,15 +266,23 @@ export default function Non_PaymentConfirmationTable() {
         {numSelected > 0 ? (
           <>
           <Tooltip title="매입하기">
-            <IconButton aria-label="delete" onClick={()=>{showModal()}}>
-                <AttachMoneyIcon />
-            </IconButton>
+          <div
+                                style={{
+                                    fontFamily: 'TmoneyRoundWindExtraBold',
+                                    fontSize:"15px",
+                                    width:"25%",
+                                    border:"solid 3px",
+                                    borderRadius:"1rem",
+                                    margin:"10px",
+                                    padding:"4px"
+                                }}
+                                onClick={() => {
+                                    showModal();
+                                }}
+                            >
+                                송금완료
+                            </div>
           </Tooltip>
-          <Tooltip title="취소하기">
-              <IconButton aria-label="delete" onClick={()=>{turnDown()}}>
-                  <DeleteIcon />
-              </IconButton>
-            </Tooltip>
           </>
         ) : (
           // <Tooltip title="Filter list">
@@ -303,27 +304,35 @@ export default function Non_PaymentConfirmationTable() {
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected.slice(1), name);
-    } 
-    else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } 
-    const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == newSelected[0])
-    if(selected.length === 0){
-        db.collection('user').doc("non_user").get().then((doc)=>{
-          doc.data()!.orders.forEach((showing:any) =>{
-            if(filtered[0].phone === showing.phone){
-              setUserSelected(showing);
-              setUserOrderSelected(doc.data()!.orders);
-              setSelected(newSelected);
-            }
-          })
-          })
-      }
-    if(selected.length >= 1){
-      setSelected(newSelected);
+        newSelected = newSelected.concat(selected.slice(1), name);
+    } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
     }
-  };
+    const filtered = orderUser.filter(
+        (order: any) =>
+            order.date + ', ' + order.time + ', ' + order.name ==
+            newSelected[0]
+    );
+    if (selected.length === 0) {
+        db.collection('user')
+            .doc('non_user')
+            .get()
+            .then((doc) => {
+                doc.data()!.orders.forEach((showing: any) => {
+                    if (filtered[0].phone === showing.phone) {
+                        setUserSelected(showing);
+                        setUserOrderSelected(doc.data()!.orders);
+                        setSelected(newSelected);
+                
+                    }
+                });
+            });
+    }
+    if (selected.length >= 1) {
+        setSelected(newSelected);
+
+    }
+};
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -348,7 +357,7 @@ export default function Non_PaymentConfirmationTable() {
 
       const filtered = orderUser.filter((order:any) => (order.date + ", " + order.time + ", " + order.name) == selected[0])
 
-      if (filtered[0].userId == "non_user"){
+      if (filtered[0].userId === "non_user"){
             db.collection('user').doc("non_user").get().then((doc)=>{
               doc.data()!.orders.forEach((showing:any) =>{
                 if(filtered[0].phone === showing.phone){
@@ -358,16 +367,9 @@ export default function Non_PaymentConfirmationTable() {
               })
             })
           }
-          else{
-          db.collection('user').doc(filtered[0].uid).get().then((doc)=>{
-            setUserSelected(doc.data()!)
-            setUserOrderSelected(doc.data()!.orders)
-        })
-      }
     }
-        
     setCound(filtered[0]);
-    finished(auth.currentUser?.displayName!);
+    setOnOff(true);
   }
 
   const delay = (ms:any) => new Promise((res:any) => setTimeout(res, ms));
@@ -388,7 +390,7 @@ export default function Non_PaymentConfirmationTable() {
         filtered[0]['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(timestamp);
     
         //sent to confirmed orders
-        console.log(filtered[0])
+
         db.collection("orders").doc("confirmed").update({
             orders: firebase.firestore.FieldValue.arrayUnion(filtered[0])
           })
@@ -429,8 +431,6 @@ export default function Non_PaymentConfirmationTable() {
   const finished = async (user:string) =>{
     var confirmPayment = window.confirm("송금완료 하셨습니까?")
     if (confirmPayment){
-    selectedOrder.weight = weight;
-    selectedOrder.additional = additional;
     selectedOrder.confirmed = "완료";
     selectedOrder["payed_By"] = user;
     const timestamp = Date.now(); // This would be the timestamp you want to format
@@ -447,14 +447,13 @@ export default function Non_PaymentConfirmationTable() {
     var found_date = userOrderSelected.filter((order:any) => (order.date) == selectedOrder.date);
     var found_time = found_date.filter((order:any) => (order.time) == selectedOrder.time);
         found_time[0].confirmed = "완료"
-    
+   
     db.collection('user').doc('non_user').update({
       orders : userOrderSelected!.filter((post:any) => post.name !== selectedOrder.name)
     })
     console.log("[" + Date.now() + "]" + "DONE deleting current User order")
 
     db.collection('user').doc("non_user").update({
-      count: firebase.firestore.FieldValue.increment(-1),
       orders : firebase.firestore.FieldValue.arrayUnion(found_time[0]),
     })
     console.log("[" + Date.now() + "]" + "DONE pushing updated data to user orders")
@@ -594,6 +593,24 @@ useEffect(()=>{
           }
       />
       </Paper>
+      {(onOff)?
+                <Button
+                  onClick={()=>{finished(auth.currentUser?.displayName!)}}
+                  style={{
+                    width: "65%",
+                    padding: "10px",
+                    margin: "auto",
+                    border: "solid 2px",
+                    borderRadius: "10rem",
+                    color: "black",
+                    fontFamily: "TmoneyRoundWindExtraBold",
+                    marginBottom:"20px"
+                  }}
+                >
+                  송금하기
+                </Button>
+
+      :<></>}
     </div>
   );
 }

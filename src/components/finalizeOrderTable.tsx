@@ -17,25 +17,16 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
 import {
     Button,
     FormControl,
-    FormControlLabel,
     InputAdornment,
     TextField,
-    withStyles,
     TablePagination,
 } from '@material-ui/core';
 import firebase from 'firebase/app';
-
-import SearchIcon from '@material-ui/icons/Search';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { useHistory } from 'react-router-dom';
 
 interface Data {
@@ -290,7 +281,7 @@ export default function FinalizeOrderTable() {
         return formatedNumber;
     };
     const calculate = () => {
-        console.log(bagNum);
+
         var action =
             Number(bagNum) * Number(currency.calculate.bags) +
             Number(bookNum) * Number(currency.calculate.books) +
@@ -299,8 +290,7 @@ export default function FinalizeOrderTable() {
             Number(shoeNum) * Number(currency.calculate.shoes) +
             Number(steelNum) * Number(currency.calculate.steel) +
             Number(non_SteelNum) * Number(currency.calculate.non_steel);
-        console.log(action);
-        console.log(currency);
+
         setCalculated(action);
     };
     const handleRequestSort = (
@@ -362,24 +352,38 @@ export default function FinalizeOrderTable() {
                 {numSelected > 0 ? (
                     <>
                         <Tooltip title="매입하기">
-                            <IconButton
-                                aria-label="delete"
+                        <div
+                                style={{
+                                    fontFamily: 'TmoneyRoundWindExtraBold',
+                                    fontSize:"15px",
+                                    width:"25%",
+                                    border:"solid 3px",
+                                    borderRadius:"1rem",
+                                    margin:"10px"
+                                }}
                                 onClick={() => {
                                     showModal();
                                 }}
                             >
-                                <AttachMoneyIcon />
-                            </IconButton>
+                                정산
+                            </div>
                         </Tooltip>
                         <Tooltip title="취소하기">
-                            <IconButton
-                                aria-label="delete"
+                        <div
+                                style={{
+                                    fontFamily: 'TmoneyRoundWindExtraBold',
+                                    fontSize:"15px",
+                                    width:"25%",
+                                    border:"solid 3px",
+                                    borderRadius:"1rem",
+                                    margin:"10px"
+                                }}
                                 onClick={() => {
-                                    turnDown();
+                                  turnDown();
                                 }}
                             >
-                                <DeleteIcon />
-                            </IconButton>
+                               취소
+                            </div>
                         </Tooltip>
                     </>
                 ) : (
@@ -538,7 +542,7 @@ export default function FinalizeOrderTable() {
                 ).format(timestamp);
 
                 //sent to confirmed orders
-                console.log(filtered[0]);
+          
                 db.collection('orders')
                     .doc('confirmed')
                     .update({

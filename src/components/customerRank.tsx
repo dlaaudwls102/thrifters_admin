@@ -19,21 +19,16 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
 import {
     Button,
     FormControl,
-    FormControlLabel,
     InputAdornment,
     TextField,
-    withStyles,
     TablePagination,
 } from '@material-ui/core';
 import firebase from 'firebase/app';
-import { amber } from '@material-ui/core/colors';
 
 interface Data {
     userId: string;
@@ -240,11 +235,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                     id="tableTitle"
                     component="div"
                 >
-         <img
-                    id="pot"
-                    className="img-announce"
-                    src="../005.png"
-                ></img>
+                    <img
+                        id="pot"
+                        className="img-announce"
+                        src="../005.png"
+                        alt=""
+                    ></img>
                 </Typography>
             )}
             {numSelected > 0 ? (
@@ -386,7 +382,7 @@ export default function CustomerRank() {
 
     const showModal = () => {
         const filtered = orderHistory.filter(
-            (order) => order.userId == selected[0]
+            (order) => order.userId === selected[0]
         );
         setSelectedOrder(filtered[0]);
         setCound(filtered[0]);
@@ -410,7 +406,7 @@ export default function CustomerRank() {
             average /= avg.length;
         }
         if (average === 0) {
-            return "주문없음";
+            return '주문없음';
         } else {
             return average;
         }
@@ -445,10 +441,10 @@ export default function CustomerRank() {
         var totaladdress = Number(userSelected.totaladdress) + Number(address);
         var numberOrd = userSelected.numberOfOrders;
         var found_date = userOrderSelected.filter(
-            (order: any) => order.date == selectedOrder.date
+            (order: any) => order.date === selectedOrder.date
         );
         var found_time = found_date.filter(
-            (order: any) => order.time == selectedOrder.time
+            (order: any) => order.time ===  selectedOrder.time
         );
         found_time[0].confirmed = '확인';
         found_time[0].phone = phone;
@@ -499,10 +495,10 @@ export default function CustomerRank() {
                 var list: Data[] = [];
                 documents.forEach((doc: any) => {
                     // setOrderHistory([...doc])
-                    console.log(doc)
-                    if(doc.numberOfOrders){
-                    list.push(doc);
-                  }
+
+                    if (doc.numberOfOrders) {
+                        list.push(doc);
+                    }
                 });
                 setOrderHistory(list);
                 // do something with documents
@@ -521,11 +517,12 @@ export default function CustomerRank() {
     //   },[selected])
     return (
         <div className={classes.root}>
-                   <img
-                    id="pot"
-                    className="img-logo-small"
-                    src="../thrifter_logo.png"
-                ></img>
+            <img
+                id="pot"
+                className="img-logo-small"
+                src="../thrifter_logo.png"
+                alt=""
+            ></img>
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>

@@ -14,13 +14,10 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import { auth, db } from '../config/firebase';
-import { Button, FormControl, FormControlLabel, InputAdornment, TextField, withStyles, TablePagination } from '@material-ui/core';
+import { Button, FormControl, InputAdornment, TextField,  TablePagination } from '@material-ui/core';
 import firebase from "firebase/app";
-import SearchIcon from '@material-ui/icons/Search';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import {useHistory} from 'react-router-dom';
 

@@ -10,14 +10,12 @@ import adaptivePlugin from '@fullcalendar/adaptive';
 
 import "@fullcalendar/core/main.cjs";
 import "@fullcalendar/daygrid/main.cjs";
-import Calender from '@fullcalendar/core'
 import { db } from '../config/firebase';
 import { Button } from '@material-ui/core';
 
 
 
 const Calendars = () => {
-    const calendarComponentRef = React.createRef();
     const [events,setEvents] = useState(
         // [
         //     { id: '1', resourceId: 'b', start: '2018-02-07T02:00:00', end: '2018-02-07T07:00:00', title: 'event 1' },
@@ -36,26 +34,21 @@ const Calendars = () => {
     const handleSelectedDates = (info: any) => {
         alert('selected ' + info.startStr + ' to ' + info.endStr);
         const title = prompt("What's the name of the title");
-        console.log(info);
+
         if (title != null) {
-            const newEvent = {
-                title,
-                start: info.startStr,
-                end: info.endStr,
-            };
-            const data = [...events, newEvent];
-            // setEvents( data );
-            console.log("here", data);
+            // const newEvent = {
+            //     title,
+            //     start: info.startStr,
+            //     end: info.endStr,
+            // };
+
             } else {
-            console.log("nothing");
+          
     }
         
     };
 
     useEffect(()=>{
-        // db.collection("showWork").doc("calendar").update({
-        //     request: events
-        // })
         db.collection("showWork").doc("calendar")
         .get().then((doc)=>{
            setEvents(doc.data()!.request);

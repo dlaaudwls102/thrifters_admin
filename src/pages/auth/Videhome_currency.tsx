@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FormControlLabel, withStyles } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
-import OrderTable from '../../components/orderTable';
-import CheckedTable from '../../components/checkedTable';
+import { Button } from '@material-ui/core';
 import { auth } from '../../config/firebase';
-import ErrorComponent from '../../components/errorComponent';
 import IPageProps from '../../interfaces/page';
 import { useHistory } from 'react-router-dom';
 import Currency from "../../components/currency"

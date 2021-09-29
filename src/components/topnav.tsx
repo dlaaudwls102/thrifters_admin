@@ -1,28 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
-import HouseIcon from '@material-ui/icons/House';
 import Box from '@mui/material/Box';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Button from '@mui/material/Button';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import CloseIcon from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
-import LoginIcon from '@material-ui/icons/LockOpen';
-import StorefrontIcon from '@material-ui/icons/Storefront';
-import HomeIcon from '@material-ui/icons/Home';
-import AssistantDirectionIcon from '@mui/icons-material/AssistantDirection';
-import CampaignIcon from '@mui/icons-material/Campaign';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -33,7 +22,6 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import { PaymentOutlined } from '@material-ui/icons';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 

@@ -116,63 +116,75 @@ function RequestOnSite() {
         }
     };
     const addInfo = () => {
-        const year = dDay.toString().slice(0, 4);
-        const month = dDay.toString().slice(5, 7);
-        const day = dDay.toString().slice(8, 11);
-        const check: number = day_of_week(
-            Number(year),
-            Number(month),
-            Number(day)
-        );
-        setAnswer(check);
-        if (0 < check && check <= 5) {
-            var finalWay = '';
-            if (way == 22) {
-                finalWay = '비대면 (문앞)';
-            } else {
-                if (cate == 101) {
-                    finalWay = '자택';
+        if (
+            name === undefined ||
+            address === undefined ||
+            tel === undefined ||
+            dDay === undefined ||
+            hour === undefined ||
+            minute === undefined ||
+            accountNumber === undefined 
+        ) {
+            alert('모든 입력란을 작성하시고 눌러주세요.');
+        } else {
+            const year = dDay.toString().slice(0, 4);
+            const month = dDay.toString().slice(5, 7);
+            const day = dDay.toString().slice(8, 11);
+            const check: number = day_of_week(
+                Number(year),
+                Number(month),
+                Number(day)
+            );
+            setAnswer(check);
+            if (0 < check && check <= 5) {
+                var finalWay = '';
+                if (way === 22) {
+                    finalWay = '비대면 (문앞)';
                 } else {
-                    if (store == 1024) {
-                        finalWay = '백석점(즌비중)';
-                    } else if (store == 1021) {
-                        finalWay = '마두점(준비중)';
-                    } else if (store == 1022) {
-                        finalWay = '주엽점(준비중)';
-                    } else if (store == 1023) {
-                        finalWay = '대화점(준비중)';
+                    if (cate === 101) {
+                        finalWay = '자택';
                     } else {
-                        finalWay = '중산점';
+                        if (store === 1024) {
+                            finalWay = '백석점(즌비중)';
+                        } else if (store === 1021) {
+                            finalWay = '마두점(준비중)';
+                        } else if (store === 1022) {
+                            finalWay = '주엽점(준비중)';
+                        } else if (store === 1023) {
+                            finalWay = '대화점(준비중)';
+                        } else {
+                            finalWay = '중산점';
+                        }
                     }
                 }
-            }
-            if (
-                name == undefined ||
-                address == undefined ||
-                tel == undefined ||
-                dDay == undefined ||
-                hour == undefined ||
-                minute == undefined
-            ) {
-                alert('모든 입력란을 작성하시고 눌러주세요.');
+                if (
+                    name === undefined ||
+                    address === undefined ||
+                    tel === undefined ||
+                    dDay === undefined ||
+                    hour === undefined ||
+                    minute === undefined
+                ) {
+                    alert('모든 입력란을 작성하시고 눌러주세요.');
+                } else {
+                    alert(name + ' 고객님, 신청서 저장 완료되었습니다.');
+                    setFilled(true);
+                    setRealWay(finalWay);
+                }
             } else {
-                alert(name + ' 고객님, 신청서 저장 완료되었습니다.');
-                setFilled(true);
-                setRealWay(finalWay);
+                alert('평일신청만 가능합니다. 다시 선택해주세요');
+                setDDay('yyyy-MM-dd');
+                return;
             }
-        } else {
-            alert('평일신청만 가능합니다. 다시 선택해주세요');
-            setDDay('yyyy-MM-dd');
-            return;
         }
     };
     const history = useHistory();
 
     const delay = (ms: any) => new Promise((res: any) => setTimeout(res, ms));
     const calcMass = async () => {
-        if (consentAgreement1 == false) {
+        if (consentAgreement1 === false) {
             alert('필수 약관에 동의해주시기 바랍니다.');
-        } else if (name === '') {
+        } else if (!auth.currentUser?.displayName!) {
             alert(
                 '회원정보를 다 입력하시고 저장하기를 누르셧는지 확인해주세요.'
             );
@@ -224,7 +236,7 @@ function RequestOnSite() {
                 address: address,
                 phone: tel,
                 accountNumber: accountNumber,
-                bank_type:selectedBank,
+                bank_type: selectedBank,
                 date: dDay,
                 time: hour + ':' + minute,
                 way: realWay + ' 방문(QR)',
@@ -287,7 +299,7 @@ function RequestOnSite() {
                         ),
                         privacyAgree: true,
                         accountNumber: accountNumber,
-                        bank_type:selectedBank
+                        bank_type: selectedBank,
                     });
                 db.collection('admin')
                     .doc(auth.currentUser?.uid)
@@ -306,7 +318,8 @@ function RequestOnSite() {
                             orders
                         ),
                     })
-                    .then((message) => console.log(message));
+                    // .then((message) => console.log(message)
+                    // );
                 setDone(true);
                 alert('회원 직접방문 수거신청이 완료되었습니다.');
                 setIsLoading(true);
@@ -356,7 +369,7 @@ function RequestOnSite() {
     const [QRRead, setQRRead] = useState<boolean>(false);
     const [uid, setUid] = useState<string>('');
     const [banks, setBanks] = useState([]);
-    const [selectedBank,setSelectedBank]= useState("국민은행");
+    const [selectedBank, setSelectedBank] = useState('국민은행');
 
     //나중에  DB  구성할것들
     const [cate, setCate] = React.useState(101);
@@ -422,7 +435,7 @@ function RequestOnSite() {
                 hourz.slice(0, 2) +
                 '-' +
                 hourz.slice(3, 5);
-            console.log(day);
+     
             const min = new Intl.DateTimeFormat('en-US', {
                 year: undefined,
                 month: undefined,
@@ -445,11 +458,16 @@ function RequestOnSite() {
                         setStore(1020);
                         setHour(min.slice(0, 2));
                         setMinute(min.slice(3, 5));
+                        if (doc.data()!.accountNumber) {
+                            setAccountNumber(doc.data()!.accountNumber);
+                            setSelectedBank(doc.data()!.bank_type);
+                        }
                         // setDDay()
                     } else {
                         alert(
                             '정보를 찾지 못했습니다. 다시확인해주시고 시도해주세요.'
                         );
+                        setQRRead(true);
                         // doc.data() will be undefined in this case
                     }
                 });
@@ -464,7 +482,7 @@ function RequestOnSite() {
                     setTimeRangeHours(doc.data()!.hours);
                     setTimeRangeMinutes(doc.data()!.minutes);
                 });
-                db.collection('infos')
+            db.collection('infos')
                 .doc('banks')
                 .get()
                 .then((doc) => {
@@ -502,18 +520,16 @@ function RequestOnSite() {
         setStore(event.target.value);
     };
     const handleChange = (prop: string) => (event: any) => {
-        if (prop == 'name_') {
+        if (prop === 'name_') {
             setName(event.target.value);
-        } else if (prop == 'address_') {
+        } else if (prop === 'address_') {
             setAddress(event.target.value);
-        } 
-        else if (prop == 'bank_acc_') {
+        } else if (prop === 'bank_acc_') {
             setSelectedBank(event.target.value);
-        } 
-        else if (prop == 'accountNumber_') {
+        } else if (prop === 'accountNumber_') {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             setAccountNumber(onlyNums);
-        } else if (prop == 'tel_') {
+        } else if (prop === 'tel_') {
             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
             if (onlyNums.length < 11) {
                 setTel(onlyNums);
@@ -525,7 +541,7 @@ function RequestOnSite() {
                 );
                 setTel(number);
             }
-        } else if (prop == 'Dday_') {
+        } else if (prop === 'Dday_') {
             const year = event.target.value.toString().slice(0, 4);
             const month = event.target.value.toString().slice(5, 7);
             const day = event.target.value.toString().slice(8, 11);
@@ -536,39 +552,38 @@ function RequestOnSite() {
             );
             setAnswer(check);
             if (0 < check && check <= 5 && uid !== '') {
-                if(uid){
-                db.collection('user')
-                    .doc(uid)
-                    .get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            var finding = doc.data()!.orders;
-                            finding.forEach((orders: any) => {
-                                if (orders.date === event.target.value) {
-                                    setDDay('yyyy-MM-dd');
-                                    alert(
-                                        '정하신 날짜에 이미 판매 신청이 존재합니다. 다른날로 정해주세요.'
-                                    );
-                                    return;
-                                }
-                            });
-                        }
-                    });
+                if (uid) {
+                    db.collection('user')
+                        .doc(uid)
+                        .get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                var finding = doc.data()!.orders;
+                                finding.forEach((orders: any) => {
+                                    if (orders.date === event.target.value) {
+                                        setDDay('yyyy-MM-dd');
+                                        alert(
+                                            '정하신 날짜에 이미 판매 신청이 존재합니다. 다른날로 정해주세요.'
+                                        );
+                                        return;
+                                    }
+                                });
+                            }
+                        });
                     setDDay(event.target.value);
                 }
-            }
-            else if (0 < check && check <= 5 && uid === ''){
+            } else if (0 < check && check <= 5 && uid === '') {
                 setDDay(event.target.value);
             }
-        } else if (prop == 'time_') {
+        } else if (prop === 'time_') {
             setTime(event.target.value);
-        } else if (prop == 'time_H') {
+        } else if (prop === 'time_H') {
             setHour(event.target.value);
-        } else if (prop == 'time_M') {
+        } else if (prop === 'time_M') {
             setMinute(event.target.value);
-        } else if (prop == 'additional_') {
+        } else if (prop === 'additional_') {
             setAdditional(event.target.value);
-        } else if (prop == 'consent_1') {
+        } else if (prop === 'consent_1') {
             setConsentAgreement1(!consentAgreement1);
         }
     };
@@ -598,7 +613,7 @@ function RequestOnSite() {
     }
     function onOff() {
         setConsentModal(!consentModal);
-        if (consentModal == false) {
+        if (consentModal === false) {
             rootElement.scrollTo({
                 top: 0,
                 behavior: 'smooth',
@@ -740,13 +755,19 @@ function RequestOnSite() {
                     value={tel}
                     onChange={handleChange('tel_')}
                 />
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent:'flex-start' }}>
-                <div style={{width:"30%"}}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                    }}
+                >
+                    <div style={{ width: '30%' }}>
                         <div
                             style={{
                                 textAlign: 'left',
                                 color: 'rgba(0, 0, 0, 0.54)',
-                                marginTop:"6px"
+                                marginTop: '6px',
                             }}
                         >
                             은행
@@ -769,7 +790,13 @@ function RequestOnSite() {
                                     flexDirection: 'row',
                                 }}
                             >
-                                <div style={{  width: '100%', top:"-3px", position:'relative' }}>
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        top: '-3px',
+                                        position: 'relative',
+                                    }}
+                                >
                                     <Select
                                         label="시간"
                                         labelId="demo-customized-select-label"
@@ -998,7 +1025,7 @@ function RequestOnSite() {
                         </MenuItem>
                     ))}
                 </TextField>
-                {way == 11 ? (
+                {way === 11 ? (
                     <TextField
                         style={{ top: '8px', marginBottom: '25px' }}
                         id="standard-select-condition"
@@ -1030,7 +1057,7 @@ function RequestOnSite() {
                 ) : (
                     <></>
                 )}
-                {cate == 102 ? (
+                {cate === 102 ? (
                     <TextField
                         style={{ top: '8px', marginBottom: '25px' }}
                         id="standard-select-condition"
