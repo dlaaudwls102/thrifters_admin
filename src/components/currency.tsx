@@ -4,9 +4,10 @@ import { db } from '../config/firebase';
 import { Button, FormControl, TextField } from '@material-ui/core';
 
 const Currency = () => {
-    const [currencyList, setCurrencyList] = useState<any>({});
+    const [currencyList, setCurrencyList] = useState<any>();
     const [listItems, setListItems] = useState<any>();
     const [onOff, setOnOff] = useState<boolean>(false);
+    const [show, setShow] = useState<boolean>(false);
     const translate: any = {
         books: '책',
         steel: '고철',
@@ -20,9 +21,13 @@ const Currency = () => {
     const history = useHistory();
     const delay = (ms: any) => new Promise((res: any) => setTimeout(res, ms));
     useEffect(() => {
-        // db.collection("showWork").doc("calendar").update({
-        //     request: events
-        // })
+        db.collection('infos')
+        .doc('currency')
+        .get()
+        .then((doc) => {
+            console.log(doc.data()!.calculate)
+            setCurrencyList(doc.data()!.calculate!);
+        });
         db.collection('infos')
             .doc('currency')
             .get()
@@ -74,17 +79,40 @@ const Currency = () => {
                 setCurrencyList(doc.data()!.calculate);
             });
     }, []);
-    const handleChange = (prop: any) => (event: any) => {
+
+    // useEffect(() => {
+    //     db.collection('infos')
+    //         .doc('currency')
+    //         .get()
+    //         .then((doc) => {
+    //             if(doc)
+    //             setCurrencyList(doc.data()!.calculate!);
+    //         });
+    // }, [listItems]);
+
+    const receive = () => {
+        db.collection('infos')
+            .doc('currency')
+            .get()
+            .then((doc) => {
+                console.log(doc.data()!.calculate)
+                setCurrencyList(doc.data()!.calculate!);
+            });
+        setShow(true);
+    };
+
+    const handleChange = (prop: any) => (event: any) => { 
+        console.log(event.target.value)
         const onlyNums = event.target.value.replace(/[^0-9]/g, '');
         if (onlyNums.length > 3) {
             alert('천원단위 이하로만 가능합니다.');
         } else {
-            currencyList[prop] = Number(event.target.value);
-
+            currencyList[prop] = Number(onlyNums);
             setCurrencyList(currencyList);
         }
     };
     const confirm = async () => {
+        console.log(currencyList);
         var confirmEdit = window.confirm('변경 하시겠습니까?');
         if (confirmEdit && currencyList !== {}) {
             db.collection('infos').doc('currency').update({
@@ -131,25 +159,43 @@ const Currency = () => {
                 ) : (
                     <></>
                 )}
-
-                <FormControl style={{ width: '70%' }}>
-                    {listItems}
-                    <Button
-                        className="buttons"
-                        style={{
-                            fontFamily: 'TmoneyRoundWindExtraBold',
-                            padding: '4px',
-                            width: '100%',
-                            margin: '40px 0',
-                        }}
-                        variant="outlined"
-                        onClick={() => {
-                            confirm();
-                        }}
-                    >
-                        변경 완료
-                    </Button>
-                </FormControl>
+                <Button
+                    className="buttons"
+                    style={{
+                        fontFamily: 'TmoneyRoundWindExtraBold',
+                        padding: '4px',
+                        width: '100%',
+                        margin: '40px 0',
+                    }}
+                    variant="outlined"
+                    onClick={() => {
+                        receive();
+                    }}
+                >
+                    받아오기
+                </Button>
+                {show && (
+                    <div className="fade">
+                        <FormControl style={{ width: '70%' }}>
+                            {listItems}
+                            <Button
+                                className="buttons"
+                                style={{
+                                    fontFamily: 'TmoneyRoundWindExtraBold',
+                                    padding: '4px',
+                                    width: '100%',
+                                    margin: '40px 0',
+                                }}
+                                variant="outlined"
+                                onClick={() => {
+                                    confirm();
+                                }}
+                            >
+                                변경 완료
+                            </Button>
+                        </FormControl>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -665,6 +665,15 @@ export default function FinalizeOrderTable() {
         // })
         // console.log("[" + Date.now() + "]" + "DONE Sending Data to Confirmed")
         if (calculated !== 0 && additional !== 0 && rating !== 0) {
+            var category = {
+                bags: bagNum,
+                books: bookNum,
+                clothes: clotheNum,
+                fashion: fashionNum,
+                non_steel: non_SteelNum,
+                shoes: shoeNum,
+                steel: steelNum,
+            };
             const timestamp = Date.now(); // This would be the timestamp you want to format
             const filtered: any = orderHistory!.filter(
                 (order) =>
@@ -676,6 +685,7 @@ export default function FinalizeOrderTable() {
             filtered[0]['confirmed'] = '방문';
             filtered[0]['pickedUp_By'] = auth.currentUser?.displayName!;
             filtered[0]['rating'] = rating;
+            filtered[0]['category'] = category;
             filtered[0]['pickedUp_Time'] = new Intl.DateTimeFormat('en-US', {
                 year: 'numeric',
                 month: '2-digit',

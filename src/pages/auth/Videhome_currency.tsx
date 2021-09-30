@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
-import { auth } from '../../config/firebase';
+import { auth, db } from '../../config/firebase';
 import IPageProps from '../../interfaces/page';
 import { useHistory } from 'react-router-dom';
 import Currency from "../../components/currency"

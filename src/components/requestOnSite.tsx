@@ -123,7 +123,7 @@ function RequestOnSite() {
             dDay === undefined ||
             hour === undefined ||
             minute === undefined ||
-            accountNumber === undefined 
+            accountNumber === undefined
         ) {
             alert('모든 입력란을 작성하시고 눌러주세요.');
         } else {
@@ -281,6 +281,20 @@ function RequestOnSite() {
                             workPlan
                         ),
                     });
+                    const calendar_item = {
+                        start: dDay + 'T' + hour  + ":" + minute + ':00',
+                        end: dDay + 'T' + hour  + ":" + minute + ':00',
+                        id: uid,
+                        title: name + '님 매입신청' + ' 방문(QR)',
+                    };
+    
+                    db.collection('showWork')
+                        .doc('calendar')
+                        .update({
+                            request: firebase.firestore.FieldValue.arrayUnion(
+                                calendar_item
+                            ),
+                        });
                 db.collection('user')
                     .doc(uid)
                     .update({
@@ -317,9 +331,9 @@ function RequestOnSite() {
                         orders: firebase.firestore.FieldValue.arrayUnion(
                             orders
                         ),
-                    })
-                    // .then((message) => console.log(message)
-                    // );
+                    });
+                // .then((message) => console.log(message)
+                // );
                 setDone(true);
                 alert('회원 직접방문 수거신청이 완료되었습니다.');
                 setIsLoading(true);
@@ -340,6 +354,21 @@ function RequestOnSite() {
                     .update({
                         requested: firebase.firestore.FieldValue.arrayUnion(
                             workPlan
+                        ),
+                    });
+
+                const calendar_item = {
+                    start: dDay + 'T' + hour  + ":" + minute + ':00',
+                    end: dDay + 'T' + hour  + ":" + minute + ':00',
+                    id: "non_user",
+                    title: name + '님 매입신청' + ' 방문(QR)',
+                };
+
+                db.collection('showWork')
+                    .doc('calendar')
+                    .update({
+                        request: firebase.firestore.FieldValue.arrayUnion(
+                            calendar_item
                         ),
                     });
                 db.collection('orders')
@@ -435,7 +464,7 @@ function RequestOnSite() {
                 hourz.slice(0, 2) +
                 '-' +
                 hourz.slice(3, 5);
-     
+
             const min = new Intl.DateTimeFormat('en-US', {
                 year: undefined,
                 month: undefined,
