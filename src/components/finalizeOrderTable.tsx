@@ -591,7 +591,7 @@ export default function FinalizeOrderTable() {
                 var today = new Date(),
                     date =
                         today.getFullYear() +
-                        '-' +
+                        '/' +
                         (today.getMonth() + 1) +
                         '/' +
                         today.getDate();

@@ -20,28 +20,31 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import { auth, db } from '../config/firebase';
 import {
+    Button,
+    FormControl,
+    InputAdornment,
+    TextField,
     TablePagination,
 } from '@material-ui/core';
 import firebase from 'firebase/app';
 import { useHistory } from 'react-router-dom';
-import { Alert } from '@mui/material';
 
 interface Data {
-    time: string;
     name: string;
-    address: string;
+    price_range: string;
     phone: string;
     date: string;
+    product: string;
 }
 
 function createData(
     date: string,
-    time: string,
     name: string,
-    address: string,
-    phone: string
+    price_range: string,
+    phone: string,
+    product: string
 ): Data {
-    return { date, time, name, address, phone };
+    return { date, name, product, price_range, phone };
 }
 
 const rows: Data[] = [];
@@ -89,9 +92,14 @@ interface HeadCell {
 
 const headCells: HeadCell[] = [
     { id: 'date', numeric: false, disablePadding: true, label: '날짜' },
-    { id: 'time', numeric: false, disablePadding: false, label: '시간' },
     { id: 'name', numeric: false, disablePadding: false, label: '성함' },
-    { id: 'address', numeric: false, disablePadding: false, label: '주소' },
+    { id: 'product', numeric: false, disablePadding: false, label: '품목' },
+    {
+        id: 'price_range',
+        numeric: false,
+        disablePadding: false,
+        label: '가격대',
+    },
     { id: 'phone', numeric: false, disablePadding: false, label: '전화' },
 ];
 
@@ -226,7 +234,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-export default function OrderTable() {
+export default function NeedsTable() {
     const classes = useStyles();
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('date');
@@ -235,7 +243,6 @@ export default function OrderTable() {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [totalHistory, setTotalHistory] = React.useState<Data[]>();
-    const [showAlert,setShowAlert]= React.useState<boolean>(false);
 
     //newData
     const [orderHistory, setOrderHistory] = React.useState<Data[]>([]);
@@ -247,18 +254,25 @@ export default function OrderTable() {
     const [userOrderSelected, setUserOrderSelected] = React.useState<any>();
     const [change, setChange] = React.useState<any>(false);
 
-    //history
-    const history = useHistory();
     //newInput data
     const [weight, setWeight] = React.useState<number>();
-    const [additional, setAdditional] = React.useState<any>();
-    const [rating, setRating] = React.useState<number>();
-
+    const [additional, setAdditional] = React.useState<any>(0);
+    const [rating, setRating] = React.useState<number>(0);
+    // history
+    const history = useHistory();
     //show Modal
     const [onOff, setOnOff] = React.useState(false);
 
-    //mssg
-    const [messageInbox, setMessageInbox] = React.useState<any[]>([]);
+    const formatNumber = (inputNumber: number) => {
+        let formatedNumber = Number(inputNumber)
+            .toFixed(2)
+            .replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        let splitArray = formatedNumber.split('.');
+        if (splitArray.length > 1) {
+            formatedNumber = splitArray[0];
+        }
+        return formatedNumber;
+    };
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -309,11 +323,7 @@ export default function OrderTable() {
                         id="tableTitle"
                         component="div"
                     >
-                             <img
-                    id="pot"
-                    className="img-announce"
-                    src="../001.png"
-                ></img>
+                        필요해요 신청
                     </Typography>
                 )}
                 {numSelected > 0 ? (
@@ -322,38 +332,43 @@ export default function OrderTable() {
                             <div
                                 style={{
                                     fontFamily: 'TmoneyRoundWindExtraBold',
-                                    fontSize:"15px",
-                                    width:"25%",
-                                    border:"solid 3px",
-                                    borderRadius:"1rem",
-                                    margin:"10px"
+                                    fontSize: '15px',
+                                    width: '25%',
+                                    border: 'solid 3px',
+                                    borderRadius: '1rem',
+                                    margin: '10px',
                                 }}
                                 onClick={() => {
-                                    confirmApplication();
+                                    showModal();
                                 }}
                             >
-                                매입
+                                해결
                             </div>
                         </Tooltip>
                         <Tooltip title="취소하기">
-                                         <div
+                            <div
                                 style={{
                                     fontFamily: 'TmoneyRoundWindExtraBold',
-                                    fontSize:"15px",
-                                    width:"25%",
-                                    border:"solid 3px",
-                                    borderRadius:"1rem",
-                                    margin:"10px"
+                                    fontSize: '15px',
+                                    width: '25%',
+                                    border: 'solid 3px',
+                                    borderRadius: '1rem',
+                                    margin: '10px',
                                 }}
                                 onClick={() => {
-                                  turnDown();
+                                    turnDown();
                                 }}
                             >
-                               취소
+                                없음
                             </div>
                         </Tooltip>
                     </>
                 ) : (
+                    // <Tooltip title="Filter list">
+                    //   <IconButton aria-label="filter list">
+                    //     <FilterListIcon />
+                    //   </IconButton>
+                    // </Tooltip>
                     <></>
                 )}
             </Toolbar>
@@ -372,7 +387,7 @@ export default function OrderTable() {
 
         const filtered = orderUser.filter(
             (order: any) =>
-                order.date + ', ' + order.time + ', ' + order.name ==
+                order.date + ', ' + order.product + ', ' + order.name ==
                 newSelected[0]
         );
 
@@ -383,7 +398,6 @@ export default function OrderTable() {
                 .then((doc) => {
                     setUserSelected(doc.data()!);
                     setUserOrderSelected(doc.data()!.orders);
-
                     setSelected(newSelected);
                 });
         }
@@ -409,162 +423,91 @@ export default function OrderTable() {
 
     // MADE FUNCTIONS
 
-    const confirmApplication = async () => {
-        var confirmDelete = window.confirm('매입 하시겠습니까?');
-        if (confirmDelete) {
-            const filtered: any = orderHistory!.filter(
-                (order) =>
-                    order.date + ', ' + order.time + ', ' + order.name ==
+    const showModal = () => {
+        const filtered = orderHistory!.filter(
+            (order) =>
+                order.date + ', ' + order.product + ', ' + order.name ==
+                selected[0]
+        );
+        setSelectedOrder(filtered[0]);
+
+        if (orderUser) {
+            const filtered = orderUser.filter(
+                (order: any) =>
+                    order.date + ', ' + order.product + ', ' + order.name ==
                     selected[0]
             );
-            filtered[0]['confirmed'] = '확인';
-            filtered[0]['confirmed_By'] = auth.currentUser?.displayName!;
-            filtered[0]['rating'] = 0;
 
-            const timestamp = Date.now(); // This would be the timestamp you want to format
-            filtered[0]['checked_Time'] = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }).format(timestamp);
-            var today = new Date(),
-                date =
-                    today.getFullYear() +
-                    '/' +
-                    (today.getMonth() + 1) +
-                    '/' +
-                    today.getDate();
+            if (filtered[0].userId == 'non_user') {
+                db.collection('user')
+                    .doc('non_user')
+                    .get()
+                    .then((doc) => {
+                        doc.data()!.orders.forEach((showing: any) => {
+                            if (filtered[0].phone === showing.phone) {
+                                setUserSelected(showing);
+                                setUserOrderSelected(doc.data()!.orders);
+                            }
+                        });
+                    });
+            } else {
+                db.collection('user')
+                    .doc(filtered[0].uid)
+                    .get()
+                    .then((doc) => {
+                        setUserSelected(doc.data()!);
+                        setUserOrderSelected(doc.data()!.orders);
+                    });
+            }
+        }
 
-            //sent to confirmed orders
-            db.collection('orders')
-                .doc('user')
-                .update({
-                    orders: totalHistory!.filter(
-                        (order) =>
-                            order.date +
-                                ', ' +
-                                order.time +
-                                ', ' +
-                                order.name !==
-                            selected[0]
-                    ),
-                });
-            db.collection('orders')
-                .doc('user')
-                .update({
-                    orders: firebase.firestore.FieldValue.arrayUnion(
-                        filtered[0]
-                    ),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE Deleting adding new altered data to order -> user'
-            );
-
-            const filtered2: any = totalHistory!.filter(
-                (order) =>
-                    order.date + ', ' + order.time + ', ' + order.name ==
-                    selected[0]
-            );
-            var found_date = userOrderSelected.filter(
-                (order: any) => order.date == filtered2[0].date
-            );
-            var found_time = found_date.filter(
-                (order: any) => order.time == filtered2[0].time
-            );
-            found_time[0].confirmed = '확인';
-
-            const messages = {
-                date: date,
-                time: new Intl.DateTimeFormat('en-US', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                }).format(timestamp),
-                read: false,
-                title: '판매신청',
-                info: '승인완료',
-                order: found_time[0],
-            };
-
-            const calendar_item = {
-                start: filtered2[0].date + 'T' + filtered2[0].time + ':00',
-                end: filtered2[0].date + 'T' + filtered2[0].time + ':00',
-                id: filtered2[0].uid!,
-                title: filtered2[0].name + '님 매입신청',
-            };
-
-            db.collection('showWork')
-                .doc('calendar')
-                .update({
-                    request: firebase.firestore.FieldValue.arrayUnion(
-                        calendar_item
-                    ),
-                });
-            db.collection('user')
-                .doc(filtered2[0].uid!)
-                .update({
-                    orders: userOrderSelected!.filter(
-                        (post: any) => post.date !== filtered2[0].date
-                    ),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE deleting current User order (회원)'
-            );
-
-            db.collection('user')
-                .doc(filtered2[0].uid!)
-                .update({
-                    orders: firebase.firestore.FieldValue.arrayUnion(
-                        found_time[0]
-                    ),
-                    message: firebase.firestore.FieldValue.arrayUnion(messages),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE pushing updated data to user orders (회원)'
-            );
-            setSelected([]);
-            alert('신청 확인하였습니다');
-            await delay(500);
-            history.push('/finalize');
-        } else {
-            setSelected([]);
+        setCound(filtered[0]);
+        setOnOff(true);
+    };
+    const handleChange = (prop: string) => (event: any) => {
+        if (prop === 'weight_') {
+            setWeight(event.target.value);
+        } else if (prop === 'additional_') {
+            setAdditional(event.target.value);
+        } else if (prop === 'rating_') {
+            setRating(event.target.value);
         }
     };
-
+    const delay = (ms: any) => new Promise((res: any) => setTimeout(res, ms));
     const turnDown = async () => {
         setOnOff(false);
         var reason = prompt('이유를 적어주세요');
         if (reason != undefined) {
-            var confirmDelete = window.confirm('삭제 하시겠습니까?');
+            const timeStamp = Date.now();
+            var date = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: undefined,
+                minute: undefined,
+                second: undefined,
+            }).format(timeStamp);
+            date = date.slice(-4) + '/' + date.slice(0, 5);
+            const hour = new Intl.DateTimeFormat('en-US', {
+                        year: undefined,
+                        month: undefined,
+                        day: undefined,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: undefined,
+                    }).format(timeStamp);
+            var confirmDelete = window.confirm('찾기를 실패 하시겠습니까?');
             if (confirmDelete) {
                 const filtered: any = orderHistory!.filter(
                     (order) =>
-                        order.date + ', ' + order.time + ', ' + order.name ==
+                        order.date + ', ' + order.product + ', ' + order.name ==
                         selected[0]
                 );
-                filtered[0].weight = '취소';
-                filtered[0].additional = '취소';
-                filtered[0].confirmed = '취소';
+                filtered[0].confirmed = '찾기실패';
                 filtered[0]['turndown_reason'] = reason;
-                filtered[0]['payed_By'] = auth.currentUser?.displayName!;
-                filtered[0]['rating'] = 0;
+                filtered[0]['failed_By'] = auth.currentUser?.displayName!;
                 const timestamp = Date.now(); // This would be the timestamp you want to format
-                filtered[0]['payConfirmed_Time'] = new Intl.DateTimeFormat(
+                filtered[0]['failedConfirmed_Time'] = new Intl.DateTimeFormat(
                     'en-US',
                     {
                         year: 'numeric',
@@ -576,330 +519,176 @@ export default function OrderTable() {
                     }
                 ).format(timestamp);
 
+                const messages = {
+                    date: date,
+                    time: hour.slice(0, 5),
+                    read: false,
+                    title: filtered[0]["product"],
+                    info: '찾기실패',
+                    reason:reason
+                };
                 //sent to confirmed orders
-                db.collection('orders')
-                    .doc('confirmed')
-                    .update({
-                        orders: firebase.firestore.FieldValue.arrayUnion(
-                            filtered[0]
-                        ),
-                    });
-                console.log(
-                    '[' + Date.now() + ']' + 'DONE Sending Data to Confirmed'
-                );
 
-                db.collection('orders')
+                db.collection('needs')
                     .doc('user')
                     .update({
-                        orders: totalHistory!.filter(
+                        needs: totalHistory!.filter(
                             (order) =>
                                 order.date +
                                     ', ' +
-                                    order.time +
+                                    order.product +
                                     ', ' +
                                     order.name !==
                                 selected[0]
                         ),
                     });
-                console.log(
-                    totalHistory!.filter(
-                        (order) =>
-                            order.date +
-                                ', ' +
-                                order.time +
-                                ', ' +
-                                order.name !==
-                            selected[0]
-                    ),
-                    orderHistory,
-                    'selectedzzz'
-                );
+                    db.collection("user").doc(filtered[0]["uid"]).update({
+                        message: firebase.firestore.FieldValue.arrayUnion(
+                            messages
+                        ),
+                    })
                 console.log(
                     '[' +
                         Date.now() +
                         ']' +
                         'DONE deleting Data from admin user orders (회원)'
                 );
+                db.collection('needs')
+                .doc('user')
+                .update({
+                    needs: firebase.firestore.FieldValue.arrayUnion(
+                        filtered[0]
+                    ),
+                });
 
-                const filtered2: any = totalHistory!.filter(
-                    (order) =>
-                        order.date + ', ' + order.time + ', ' + order.name ==
-                        selected[0]
-                );
-                var found_date = userOrderSelected.filter(
-                    (order: any) => order.date == filtered2[0].date
-                );
-                var found_time = found_date.filter(
-                    (order: any) => order.time == filtered2[0].time
-                );
-                found_time[0].confirmed = '취소';
-                found_time[0].weight = reason;
-                found_time[0].additional = reason;
-                var today = new Date(),
-                    date =
-                        today.getFullYear() +
-                        '/' +
-                        (today.getMonth() + 1) +
-                        '/' +
-                        today.getDate();
-                const messages = {
-                    date: date,
-                    time: new Intl.DateTimeFormat('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                    }).format(timestamp),
-                    read: false,
-                    title: '판매신청',
-                    info: '신청취소',
-                    reason: reason,
-                    order: found_time[0],
-                };
-
-                db.collection('user')
-                    .doc(filtered2[0].uid!)
-                    .update({
-                        orders: userOrderSelected!.filter(
-                            (post: any) => post.date !== filtered2[0].date
-                        ),
-                    });
-                console.log(
-                    '[' +
-                        Date.now() +
-                        ']' +
-                        'DONE deleting current User order (회원)'
-                );
-
-                db.collection('user')
-                    .doc(filtered2[0].uid!)
-                    .update({
-                        orders: firebase.firestore.FieldValue.arrayUnion(
-                            found_time[0]
-                        ),
-                        message: firebase.firestore.FieldValue.arrayUnion(
-                            messages
-                        ),
-                    });
-                console.log(
-                    '[' +
-                        Date.now() +
-                        ']' +
-                        'DONE pushing updated data to user orders (회원)'
-                );
                 setSelected([]);
                 await delay(500);
-                history.push('/finalize');
+                history.push('/');
+            } else {
+                setSelected([]);
             }
         }
     };
 
-    const handleChange = (prop: string) => (event: any) => {
-        if (prop === 'weight_') {
-            setWeight(event.target.value);
-        } else if (prop === 'additional_') {
-            setAdditional(event.target.value);
-        } else if (prop === 'rating_') {
-            setRating(event.target.value);
-        }
-    };
-    const delay = (ms: any) => new Promise((res: any) => setTimeout(res, ms));
-
     const finished = async (user: string) => {
-        selectedOrder.weight = weight;
-        selectedOrder.additional = additional;
-        selectedOrder.confirmed = '확인';
-        selectedOrder['confirmed_By'] = user;
-        selectedOrder['rating'] = rating;
-        const timestamp = Date.now(); // This would be the timestamp you want to format
-        selectedOrder['confirmed_Time'] = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        }).format(timestamp);
-
-        //sent to confirmed orders
-        db.collection('orders')
-            .doc('confirmed')
-            .update({
-                orders: firebase.firestore.FieldValue.arrayUnion(selectedOrder),
-            });
-        console.log('[' + Date.now() + ']' + 'DONE Sending Data to Confirmed');
-
-        //finding user's info's order and deleting, and updating it with confirmed order
-
-        if (userSelected.userId !== 'non_user') {
-            var totalWeight = Number(userSelected.totalWeight) + Number(weight);
-            var totalAdditional =
-                Number(userSelected.totalAdditional) + Number(additional);
-            var numberOrd = userSelected.numberOfOrders;
-            var found_date = userOrderSelected.filter(
-                (order: any) => order.date == selectedOrder.date
+        var confirmDelete = window.confirm('고객님이 필요하신것을 해결 하셨습니까?');
+        if (confirmDelete) {
+            const timestamp = Date.now(); // This would be the timestamp you want to format
+            const filtered: any = orderHistory!.filter(
+                (order) =>
+                    order.date + ', ' + order.product + ', ' + order.name ==
+                    selected[0]
             );
-            var found_time = found_date.filter(
-                (order: any) => order.time == selectedOrder.time
-            );
-            found_time[0].confirmed = '확인';
-            found_time[0].weight = weight;
-            found_time[0].additional = additional;
-
-            db.collection('user')
-                .doc(selectedOrder.uid)
-                .update({
-                    orders: userOrderSelected!.filter(
-                        (post: any) => post.date !== selectedOrder.date
-                    ),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE deleting current User order (회원)'
-            );
-
-            db.collection('user')
-                .doc(selectedOrder.uid)
-                .update({
-                    orders: firebase.firestore.FieldValue.arrayUnion(
-                        found_time[0]
-                    ),
-                    averageWeights: Number(
-                        (totalWeight * 200 + totalAdditional) / numberOrd
-                    ).toFixed(2),
-                    totalWeight: Number(totalWeight),
-                    totalAdditional: Number(totalAdditional),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE pushing updated data to user orders (회원)'
-            );
-
-            //delete from admin user order
-            db.collection('orders')
+            filtered[0]['confirmed'] = '찾기완료';
+            filtered[0]['fulfilledNeed_By'] = auth.currentUser?.displayName!;
+            filtered[0]['fulfilledNeed_Time'] = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            }).format(timestamp);
+            const timeStamp = Date.now();
+            var date = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: undefined,
+                minute: undefined,
+                second: undefined,
+            }).format(timeStamp);
+            date = date.slice(-4) + '/' + date.slice(0, 5);
+            const hour = new Intl.DateTimeFormat('en-US', {
+                        year: undefined,
+                        month: undefined,
+                        day: undefined,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: undefined,
+                    }).format(timeStamp);
+            const messages = {
+                date: date,
+                time: hour.slice(0, 5),
+                read: false,
+                title: filtered[0]["product"],
+                info: '찾기완료',
+            };
+            db.collection("user").doc(filtered[0]["uid"]).update({
+                message: firebase.firestore.FieldValue.arrayUnion(
+                    messages
+                ),
+            })
+            db.collection('needs')
                 .doc('user')
                 .update({
-                    orders: orderHistory!.filter(
+                    needs: totalHistory!.filter(
                         (order) =>
                             order.date +
                                 ', ' +
-                                order.time +
+                                order.product +
                                 ', ' +
                                 order.name !==
                             selected[0]
                     ),
                 });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE deleting Data from admin user orders (회원)'
-            );
-            alert('신청확인 완료되었습니다.');
-            setSelected([]);
-            await delay(1500);
-            setOnOff(false);
-            await delay(1500);
-        } else {
-            var found_date = userOrderSelected.filter(
-                (order: any) => order.date == selectedOrder.date
-            );
-            var found_time = found_date.filter(
-                (order: any) => order.time == selectedOrder.time
-            );
-            found_time[0].confirmed = '확인';
-            found_time[0].weight = weight;
-            found_time[0].additional = additional;
-
-            db.collection('user')
-                .doc('non_user')
+            db.collection('needs')
+                .doc('user')
                 .update({
-                    orders: userOrderSelected!.filter(
-                        (post: any) => post.name !== selectedOrder.name
-                    ),
-                });
-            console.log(
-                '[' + Date.now() + ']' + 'DONE deleting current User order'
-            );
-
-            db.collection('user')
-                .doc('non_user')
-                .update({
-                    count: firebase.firestore.FieldValue.increment(-1),
-                    orders: firebase.firestore.FieldValue.arrayUnion(
-                        found_time[0]
+                    needs: firebase.firestore.FieldValue.arrayUnion(
+                        filtered[0]
                     ),
                 });
             console.log(
                 '[' +
                     Date.now() +
                     ']' +
-                    'DONE pushing updated data to user orders'
+                    'DONE Deleting adding new altered data to order -> user'
             );
 
-            //delete from admin user order
-            db.collection('orders')
-                .doc('non_user')
-                .update({
-                    orders: orderHistory!.filter(
-                        (order) =>
-                            order.date +
-                                ', ' +
-                                order.time +
-                                ', ' +
-                                order.name !==
-                            selected[0]
-                    ),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE deleting Data from admin user orders'
-            );
-            alert('신청확인 완료되었습니다.');
-            setSelected([]);
-            await delay(1000);
-        }
+            //finding user's info's order and deleting, and updating it with confirmed order
+
+            if (userSelected.userId !== 'non_user') {
+                alert('필요해요 신청 확인 완료되었습니다.');
+                setSelected([]);
+                await delay(500);
+                history.push('/');
+            }
+        } 
     };
-
     useEffect(() => {
         //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
-        db.collection('orders')
+        db.collection('needs')
             .doc('user')
             .get()
             .then((doc) => {
-                // doc.data()!.orders.filter((unconfirmed:any) => (unconfirmed.confirmed === "미확인"))
                 setOrderHistory([
                     ...doc
                         .data()!
-                        .orders.filter(
+                        .needs.filter(
                             (unconfirmed: any) =>
                                 unconfirmed.confirmed === '미확인'
                         ),
                 ]);
-                setTotalHistory([...doc.data()!.orders]);
                 setOrderUser([
                     ...doc
                         .data()!
-                        .orders.filter(
+                        .needs.filter(
                             (unconfirmed: any) =>
                                 unconfirmed.confirmed === '미확인'
                         ),
                 ]);
-                setMessageInbox(doc.data()!.message);
+                setTotalHistory([...doc.data()!.needs]);
             });
+        // setChange(true);
     }, [...selected]);
-
     return (
         <div className={classes.root}>
-            <img className="img-logo-small" src="./thrifter_logo.png"></img>
+            <img
+                id="pot"
+                className="img-logo-small"
+                src="../thrifter_logo.png"
+            ></img>
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar numSelected={selected.length} />
                 <TableContainer>
@@ -931,7 +720,7 @@ export default function OrderTable() {
                                     const isItemSelected = isSelected(
                                         row.date +
                                             ', ' +
-                                            row.time +
+                                            row.product +
                                             ', ' +
                                             row.name
                                     );
@@ -945,7 +734,7 @@ export default function OrderTable() {
                                                     event,
                                                     row.date +
                                                         ', ' +
-                                                        row.time +
+                                                        row.product +
                                                         ', ' +
                                                         row.name
                                                 )
@@ -956,7 +745,7 @@ export default function OrderTable() {
                                             key={
                                                 row.date +
                                                 ', ' +
-                                                row.time +
+                                                row.product +
                                                 ', ' +
                                                 row.name
                                             }
@@ -999,7 +788,7 @@ export default function OrderTable() {
                                                 }}
                                                 align="right"
                                             >
-                                                {row.time}
+                                                {row.name}
                                             </TableCell>
                                             <TableCell
                                                 style={{
@@ -1010,7 +799,7 @@ export default function OrderTable() {
                                                 }}
                                                 align="right"
                                             >
-                                                {row.name}
+                                                {row.product}
                                             </TableCell>
                                             <TableCell
                                                 style={{
@@ -1022,7 +811,7 @@ export default function OrderTable() {
                                                 }}
                                                 align="right"
                                             >
-                                                {row.address}
+                                                {row.price_range}
                                             </TableCell>
                                             <TableCell
                                                 style={{
@@ -1056,7 +845,44 @@ export default function OrderTable() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            {(showAlert)?  <Alert onClose={() => {setShowAlert(false)}} id="pot" severity="success">신청 승인되셨습니다!</Alert>:<></>}
+            {/* <FormControlLabel
+        control={<Switch checked={dense} onChange={handleChangeDense} />}
+        label="축소"
+      /> */}
+            {/* <Button className="buttons" style={{fontFamily: 'TmoneyRoundWindExtraBold', padding:"4px"}} variant="outlined" onClick={()=>{showModal()}} >선택</Button> */}
+            {onOff ? (
+                <div
+                    className="modal"
+                    id="pot"
+                    style={{ margin: 'auto', padding: '0px 0 ', width: '90%' }}
+                >
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>시간: {cound.date}</div>
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>성함: {cound.name}</div>
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>용품: {cound.product}</div>
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>용도: {cound.usage}</div>
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>색갈: {cound.color}</div>
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>가격대: {cound.price_range}</div>
+                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>기타: {cound.etc}</div>
+                    <Button
+                        className="buttons"
+                        style={{
+                            fontFamily: 'TmoneyRoundWindExtraBold',
+                            padding: '10px',
+                            width: '100%',
+                            margin:"auto",
+                            marginBottom:"20px"
+                        }}
+                        variant="outlined"
+                        onClick={() => {
+                            finished(auth.currentUser?.displayName!);
+                        }}
+                    >
+                        찾기 완료
+                    </Button>
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 }

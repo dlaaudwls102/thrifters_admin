@@ -655,7 +655,7 @@ export default function Non_FinalizeOrderTable() {
         var today = new Date(),
         date =
             today.getFullYear() +
-            '-' +
+            '/' +
             (today.getMonth() + 1) +
             '/' +
             today.getDate();

@@ -19,6 +19,7 @@ import RankingPage from "../pages/auth/Videhome_ranking";
 import LecturePage from "../pages/auth/Videhome_video";
 import ProcessInfoPage from "../pages/auth/Videhome_process_info";
 import RequestOnSitePage from "../pages/auth/Videhome_requestOnSite";
+import CustomerNeedsPage from "../pages/auth/Videhome_needs";
 
 
 const routes: IRoute[] = [
@@ -118,6 +119,13 @@ const routes: IRoute[] = [
         exact: true,
         component: RankingPage,
         name: '고객랭킹',
+        protected: true
+    },
+    {
+        path: '/customer_needs',
+        exact: true,
+        component: CustomerNeedsPage,
+        name: '필요신청 확인',
         protected: true
     },
     {

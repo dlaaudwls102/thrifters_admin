@@ -22,6 +22,7 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import EmojiPeopleOutlinedIcon from '@mui/icons-material/EmojiPeopleOutlined';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -351,6 +352,25 @@ const TopNav = () => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={'고객정보'}
+                                    style={{ fontFamily: 'ONE-Mobile-POP' }}
+                                />
+                            </ListItem>
+                        </div>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'필요요청'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/customer_needs'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <EmojiPeopleOutlinedIcon/>
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'필요신청 확인'}
                                     style={{ fontFamily: 'ONE-Mobile-POP' }}
                                 />
                             </ListItem>
