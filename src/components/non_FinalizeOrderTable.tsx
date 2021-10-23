@@ -639,6 +639,15 @@ export default function Non_FinalizeOrderTable() {
                 selected[0]
         );
         const timestamp = Date.now(); // This would be the timestamp you want to format
+        var category = {
+            bags: bagNum,
+            books: bookNum,
+            clothes: clotheNum,
+            fashion: fashionNum,
+            non_steel: non_SteelNum,
+            shoes: shoeNum,
+            steel: steelNum,
+        };
         filtered[0]['weight'] = Number(calculated);
         filtered[0]['additional'] = Number(additional);
         filtered[0]['confirmed'] = '방문';
@@ -652,6 +661,7 @@ export default function Non_FinalizeOrderTable() {
             minute: '2-digit',
             second: '2-digit',
         }).format(timestamp);
+        filtered[0]['category']= category;
         var today = new Date(),
         date =
             today.getFullYear() +
@@ -684,15 +694,7 @@ export default function Non_FinalizeOrderTable() {
 
         //finding user's info's order and deleting, and updating it with confirmed order
 
-        var category = {
-          bags: bagNum,
-          books: bookNum,
-          clothes: clotheNum,
-          fashion: fashionNum,
-          non_steel: non_SteelNum,
-          shoes: shoeNum,
-          steel: steelNum,
-      };
+
       var totalWeight =
           Number(userSelected.totalWeight) +
           Number(bagNum) +

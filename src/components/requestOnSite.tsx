@@ -136,47 +136,48 @@ function RequestOnSite() {
                 Number(day)
             );
             setAnswer(check);
-            if (0 < check && check <= 5) {
-                var finalWay = '';
-                if (way === 22) {
-                    finalWay = '비대면 (문앞)';
+            // if (0 < check && check <= 5) {
+            var finalWay = '';
+            if (way === 22) {
+                finalWay = '비대면 (문앞)';
+            } else {
+                if (cate === 101) {
+                    finalWay = '자택';
                 } else {
-                    if (cate === 101) {
-                        finalWay = '자택';
+                    if (store === 1024) {
+                        finalWay = '백석점(즌비중)';
+                    } else if (store === 1021) {
+                        finalWay = '마두점(준비중)';
+                    } else if (store === 1022) {
+                        finalWay = '주엽점(준비중)';
+                    } else if (store === 1023) {
+                        finalWay = '대화점(준비중)';
                     } else {
-                        if (store === 1024) {
-                            finalWay = '백석점(즌비중)';
-                        } else if (store === 1021) {
-                            finalWay = '마두점(준비중)';
-                        } else if (store === 1022) {
-                            finalWay = '주엽점(준비중)';
-                        } else if (store === 1023) {
-                            finalWay = '대화점(준비중)';
-                        } else {
-                            finalWay = '중산점';
-                        }
+                        finalWay = '중산점';
                     }
                 }
-                if (
-                    name === undefined ||
-                    address === undefined ||
-                    tel === undefined ||
-                    dDay === undefined ||
-                    hour === undefined ||
-                    minute === undefined
-                ) {
-                    alert('모든 입력란을 작성하시고 눌러주세요.');
-                } else {
-                    alert(name + ' 고객님, 신청서 저장 완료되었습니다.');
-                    setFilled(true);
-                    setRealWay(finalWay);
-                }
+            }
+            if (
+                name === undefined ||
+                address === undefined ||
+                tel === undefined ||
+                dDay === undefined ||
+                hour === undefined ||
+                minute === undefined
+            ) {
+                alert('모든 입력란을 작성하시고 눌러주세요.');
             } else {
-                alert('평일신청만 가능합니다. 다시 선택해주세요');
-                setDDay('yyyy-MM-dd');
-                return;
+                alert(name + ' 고객님, 신청서 저장 완료되었습니다.');
+                setFilled(true);
+                setRealWay(finalWay);
             }
         }
+        //  else {
+        //     alert('평일신청만 가능합니다. 다시 선택해주세요');
+        //     setDDay('yyyy-MM-dd');
+        //     return;
+        // }
+        // }
     };
     const history = useHistory();
 
@@ -281,20 +282,20 @@ function RequestOnSite() {
                             workPlan
                         ),
                     });
-                    const calendar_item = {
-                        start: dDay + 'T' + hour  + ":" + minute + ':00',
-                        end: dDay + 'T' + hour  + ":" + minute + ':00',
-                        id: uid,
-                        title: name + '님 매입신청' + ' 방문(QR)',
-                    };
-    
-                    db.collection('showWork')
-                        .doc('calendar')
-                        .update({
-                            request: firebase.firestore.FieldValue.arrayUnion(
-                                calendar_item
-                            ),
-                        });
+                const calendar_item = {
+                    start: dDay + 'T' + hour + ':' + minute + ':00',
+                    end: dDay + 'T' + hour + ':' + minute + ':00',
+                    id: uid,
+                    title: name + '님 매입신청' + ' 방문(QR)',
+                };
+
+                db.collection('showWork')
+                    .doc('calendar')
+                    .update({
+                        request: firebase.firestore.FieldValue.arrayUnion(
+                            calendar_item
+                        ),
+                    });
                 db.collection('user')
                     .doc(uid)
                     .update({
@@ -344,7 +345,7 @@ function RequestOnSite() {
                 var workPlan: any = {};
                 workPlan[dDay] = {
                     date: dDay,
-                    name: name + ' 방문(QR)',
+                    name: name + ' 방문(비회원)',
                     address: address,
                     phone: tel,
                     user: 'non_user',
@@ -358,10 +359,10 @@ function RequestOnSite() {
                     });
 
                 const calendar_item = {
-                    start: dDay + 'T' + hour  + ":" + minute + ':00',
-                    end: dDay + 'T' + hour  + ":" + minute + ':00',
-                    id: "non_user",
-                    title: name + '님 매입신청' + ' 방문(QR)',
+                    start: dDay + 'T' + hour + ':' + minute + ':00',
+                    end: dDay + 'T' + hour + ':' + minute + ':00',
+                    id: 'non_user',
+                    title: name + '님 매입신청' + ' 방문(비회원)',
                 };
 
                 db.collection('showWork')
@@ -580,7 +581,7 @@ function RequestOnSite() {
                 Number(day)
             );
             setAnswer(check);
-            if (0 < check && check <= 5 && uid !== '') {
+            // if (0 < check && check <= 5 && uid !== '') {
                 if (uid) {
                     db.collection('user')
                         .doc(uid)
@@ -601,9 +602,9 @@ function RequestOnSite() {
                         });
                     setDDay(event.target.value);
                 }
-            } else if (0 < check && check <= 5 && uid === '') {
-                setDDay(event.target.value);
-            }
+            // } else if (0 < check && check <= 5 && uid === '') {
+                // setDDay(event.target.value);
+            // }
         } else if (prop === 'time_') {
             setTime(event.target.value);
         } else if (prop === 'time_H') {
