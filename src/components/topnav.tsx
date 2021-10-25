@@ -29,6 +29,7 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const TopNav = () => {
     const [page, setPage] = useState<Number | null>(0);
     const [numberOfOrders, setNumberOfOrders] = useState<any | null>(0);
+    const [numberOfOrders_Offline, setNumberOfOrders_Offline] = useState<any | null>(0);
     const [state, setState] = React.useState({
         top: false,
         left: false,
@@ -39,12 +40,23 @@ const TopNav = () => {
     const history = useHistory();
 
     useEffect(() => {
+        var count = 0
         db.collection('orders')
             .doc('user')
             .get()
             .then((doc) => {
                 if (doc.data()!.orders) {
+                    count = count + doc!.data()!.orders.length;
                     setNumberOfOrders(doc!.data()!.orders.length);
+                }
+            });
+            db.collection('orders')
+            .doc('non_user')
+            .get()
+            .then((doc) => {
+                if (doc.data()!.orders) {
+                    count = count + doc!.data()!.orders.length;
+                    setNumberOfOrders_Offline(doc!.data()!.orders.length);
                 }
             });
     }, [state.left]);
@@ -222,7 +234,7 @@ const TopNav = () => {
                             <div
                                 style={{ paddingBottom: '10px', color: 'red' }}
                             >
-                                {numberOfOrders}
+                                {numberOfOrders+numberOfOrders_Offline}
                             </div>
                             <div>신청건수</div>
                         </div>

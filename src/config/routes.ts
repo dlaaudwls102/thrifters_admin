@@ -31,7 +31,7 @@ const routes: IRoute[] = [
         protected: true
     },
     {
-        path: '/login/register',
+        path: '/register',
         exact: true,
         component: RegisterPage,
         name: 'Register Page',

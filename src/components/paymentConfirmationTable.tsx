@@ -19,10 +19,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import { auth, db } from '../config/firebase';
-import {
-    Button,
-    TablePagination,
-} from '@material-ui/core';
+import { Button, TablePagination } from '@material-ui/core';
 import firebase from 'firebase/app';
 import { useHistory } from 'react-router-dom';
 
@@ -328,7 +325,7 @@ export default function PaymentConfirmationTable() {
                                     showModal();
                                 }}
                             >
-                                송금완료
+                                계좌확인
                             </div>
                         </Tooltip>
                     </>
@@ -399,6 +396,7 @@ export default function PaymentConfirmationTable() {
                 selected[0]
         );
         setSelectedOrder(filtered[0]);
+    
 
         if (orderUser) {
             const filtered = orderUser.filter(
@@ -406,8 +404,9 @@ export default function PaymentConfirmationTable() {
                     order.date + ', ' + order.time + ', ' + order.name ==
                     selected[0]
             );
+            console.log(filtered[0])
 
-            if (filtered[0].userId == 'non_user') {
+            if (filtered[0].userId === 'non_user') {
                 db.collection('user')
                     .doc('non_user')
                     .get()
@@ -415,6 +414,7 @@ export default function PaymentConfirmationTable() {
                         doc.data()!.orders.forEach((showing: any) => {
                             if (filtered[0].phone === showing.phone) {
                                 setUserSelected(showing);
+                                console.log(showing,"showingggg")
                                 setUserOrderSelected(doc.data()!.orders);
                             }
                         });
@@ -474,7 +474,7 @@ export default function PaymentConfirmationTable() {
                 ).format(timestamp);
 
                 //sent to confirmed orders
-             
+
                 db.collection('orders')
                     .doc('confirmed')
                     .update({
@@ -589,16 +589,17 @@ export default function PaymentConfirmationTable() {
             selectedOrder.confirmed = '완료';
             selectedOrder['payed_By'] = user;
             const timestamp = Date.now(); // This would be the timestamp you want to format
-            selectedOrder[
-                'payConfirmed_Time'
-            ] = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }).format(timestamp);
+            selectedOrder['payConfirmed_Time'] = new Intl.DateTimeFormat(
+                'en-US',
+                {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                }
+            ).format(timestamp);
 
             //sent to confirmed orders
             db.collection('orders')
@@ -964,22 +965,38 @@ export default function PaymentConfirmationTable() {
                 />
             </Paper>
             {onOff ? (
-                <Button
-                    onClick={() => {
-                        finished(auth.currentUser?.displayName!);
-                    }}
-                    style={{
-                        width: '65%',
-                        padding: '10px',
-                        margin: 'auto',
-                        border: 'solid 2px',
-                        borderRadius: '10rem',
-                        color: 'black',
-                        fontFamily: 'TmoneyRoundWindExtraBold',
-                    }}
-                >
-                    송금하기
-                </Button>
+                <div>
+                    <div style={{ fontWeight: 600, color: 'black' }}>
+                        <div style={{ padding: '10px' }}>
+                            은행: { <>{userSelected.bank_type}</>}
+                        </div>
+                        <div style={{ padding: '10px' }}>
+                            계좌번호:{' '}
+                            { <>{userSelected.accountNumber}</>}
+                        </div>
+                        <div style={{ padding: '10px' }}>
+                            받는이: { <>{userSelected.name}</>}
+                        </div>
+                    </div>
+                    <div style={{paddingBottom:"20px"}}>
+                    <Button
+                        onClick={() => {
+                            finished(auth.currentUser?.displayName!);
+                        }}
+                        style={{
+                            width: '65%',
+                            padding: '10px',
+                            margin: 'auto',
+                            border: 'solid 2px',
+                            borderRadius: '10rem',
+                            color: 'black',
+                            fontFamily: 'TmoneyRoundWindExtraBold',
+                        }}
+                    >
+                        송금하기
+                    </Button>
+                    </div>
+                </div>
             ) : (
                 <></>
             )}

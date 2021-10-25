@@ -281,7 +281,21 @@ export default function FinalizeOrderTable() {
         return formatedNumber;
     };
     const calculate = () => {
+        console.log(userOrderSelected[0].userId, "selected");
+        if (userOrderSelected[0].userId === "방문(QR)"){
+            var action =
+            Number(bagNum) * Number(currency.calculate_offline.bags) +
+            Number(bookNum) * Number(currency.calculate_offline.books) +
+            Number(clotheNum) * Number(currency.calculate_offline.clothes) +
+            Number(fashionNum) * Number(currency.calculate_offline.fashion) +
+            Number(shoeNum) * Number(currency.calculate_offline.shoes) +
+            Number(steelNum) * Number(currency.calculate_offline.steel) +
+            Number(non_SteelNum) * Number(currency.calculate_offline.non_steel);
+            setCalculated(action);
+        }
+        else{
 
+        
         var action =
             Number(bagNum) * Number(currency.calculate.bags) +
             Number(bookNum) * Number(currency.calculate.books) +
@@ -290,8 +304,8 @@ export default function FinalizeOrderTable() {
             Number(shoeNum) * Number(currency.calculate.shoes) +
             Number(steelNum) * Number(currency.calculate.steel) +
             Number(non_SteelNum) * Number(currency.calculate.non_steel);
-
-        setCalculated(action);
+            setCalculated(action);
+        }
     };
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -1473,7 +1487,7 @@ export default function FinalizeOrderTable() {
                                                 계산하기
                                             </Button>
                                         </div>
-                                        {calculated !== 0 ? (
+                                        {(calculated !== 0) ? (
                                             <div
                                                 style={{
                                                     display: 'flex',

@@ -41,6 +41,8 @@ interface Data {
     name: string;
     address: string;
     phone: string;
+    bank_type: string;
+    accountNumber: string;
 }
 
 function createData(
@@ -48,12 +50,14 @@ function createData(
     userId: string,
     averageWeights: number,
     phone: string,
-    address: string
+    address: string,
+    bank_type: string,
+    accountNumber: string
 ): Data {
-    return { name, userId, averageWeights, phone, address };
+    return { name, userId, averageWeights, phone, address, bank_type, accountNumber };
 }
 
-const rows = [createData('2021-08-25', '03:20', 3, '01010101', '2131')];
+const rows = [createData('2021-08-25', '03:20', 3, '01010101', '2131', "123", "123")];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -107,6 +111,8 @@ const headCells: HeadCell[] = [
     { id: 'name', numeric: false, disablePadding: false, label: '이메일' },
     { id: 'phone', numeric: true, disablePadding: false, label: '전화번호' },
     { id: 'address', numeric: true, disablePadding: false, label: '주소' },
+    { id: 'bank_type', numeric: true, disablePadding: false, label: '은행' },
+    { id: 'accountNumber', numeric: true, disablePadding: false, label: '계좌' },
 ];
 
 interface EnhancedTableProps {
@@ -305,7 +311,7 @@ export default function CustomerTable() {
 
     //newData
     const [orderHistory, setOrderHistory] = React.useState([
-        createData('2021-08-25', '03:20', 3, '01010101', '2131'),
+        createData('2021-08-25', '03:20', 3, '01010101', '2131', '123', '123'),
     ]);
     const [orderUser, setOrderUser] = React.useState<any>();
     const [selectedOrder, setSelectedOrder] = React.useState<any>();
@@ -644,6 +650,28 @@ export default function CustomerTable() {
                                                 align="right"
                                             >
                                                 {row.address}
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    minWidth: '200px',
+                                                    textAlign: 'center',
+                                                    fontFamily:
+                                                        'TmoneyRoundWindExtraBold',
+                                                }}
+                                                align="right"
+                                            >
+                                                {row.bank_type}
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    minWidth: '200px',
+                                                    textAlign: 'center',
+                                                    fontFamily:
+                                                        'TmoneyRoundWindExtraBold',
+                                                }}
+                                                align="right"
+                                            >
+                                                {row.accountNumber}
                                             </TableCell>
                                         </TableRow>
                                     );

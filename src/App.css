@@ -772,6 +772,29 @@ EDIT ON
   position: relative;
   font-family: 'TmoneyRoundWindExtraBold';
 }
+.notification{
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border: solid 1px;
+  
+  border-radius: 50%;
+  font-size: 11px;
+}
+.notification2{
+  position: absolute;
+  right: -5px;
+  top: 20px;
+  width: 20px;
+  height: 20px;
+  background-color: yellow;
+  border: solid 1px;
+  border-radius: 50%;
+  font-size: 11px;
+}
 
 .loader-inner {
   vertical-align: top;

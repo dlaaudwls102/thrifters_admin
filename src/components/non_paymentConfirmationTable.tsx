@@ -321,7 +321,7 @@ export default function Non_PaymentConfirmationTable() {
                                     showModal();
                                 }}
                             >
-                                송금완료
+                            계좌확인
                             </div>
                         </Tooltip>
                     </>
@@ -361,12 +361,14 @@ export default function Non_PaymentConfirmationTable() {
                             setUserSelected(showing);
                             setUserOrderSelected(doc.data()!.orders);
                             setSelected(newSelected);
+                            console.log(newSelected, "selected")
                         }
                     });
                 });
         }
         if (selected.length >= 1) {
             setSelected(newSelected);
+            console.log(newSelected, "selected")
         }
     };
 
@@ -615,6 +617,7 @@ export default function Non_PaymentConfirmationTable() {
                             selected[0]
                     ),
                 });
+                console.log(selected[0], "이거 없어지나?")
             console.log(
                 '[' +
                     Date.now() +

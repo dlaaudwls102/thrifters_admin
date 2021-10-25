@@ -293,13 +293,13 @@ export default function Non_FinalizeOrderTable() {
     const calculate = () => {
 
         var action =
-            Number(bagNum) * Number(currency.calculate.bags) +
-            Number(bookNum) * Number(currency.calculate.books) +
-            Number(clotheNum) * Number(currency.calculate.clothes) +
-            Number(fashionNum) * Number(currency.calculate.fashion) +
-            Number(shoeNum) * Number(currency.calculate.shoes) +
-            Number(steelNum) * Number(currency.calculate.steel) +
-            Number(non_SteelNum) * Number(currency.calculate.non_steel);
+            Number(bagNum) * Number(currency.bags) +
+            Number(bookNum) * Number(currency.books) +
+            Number(clotheNum) * Number(currency.clothes) +
+            Number(fashionNum) * Number(currency.fashion) +
+            Number(shoeNum) * Number(currency.shoes) +
+            Number(steelNum) * Number(currency.steel) +
+            Number(non_SteelNum) * Number(currency.non_steel);
     
         setCalculated(action);
     };
@@ -818,7 +818,7 @@ export default function Non_FinalizeOrderTable() {
             .doc('currency')
             .get()
             .then((doc) => {
-                setCurrency(doc.data()!);
+                setCurrency(doc.data()!.calculate_offline);
             });
         // setChange(true);
     }, [...selected]);
@@ -1377,13 +1377,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {clotheNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .clothes
+                                                            currency.clothes
                                                         }
                                                         원 ={' '}
                                                         {clotheNum *
-                                                            currency.calculate
-                                                                .clothes}
+                                                            currency.clothes}
                                                         원{' '}
                                                     </div>
                                                 </div>
@@ -1411,13 +1409,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {bookNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .books
+                                                            currency.books
                                                         }
                                                         원 ={' '}
                                                         {bookNum *
-                                                            currency.calculate
-                                                                .books}
+                                                            currency.books}
                                                         원
                                                     </div>
                                                 </div>
@@ -1445,13 +1441,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {bagNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .bags
+                                                            currency.bags
                                                         }
                                                         원 ={' '}
                                                         {bagNum *
-                                                            currency.calculate
-                                                                .bags}
+                                                            currency.bags}
                                                         원
                                                     </div>
                                                 </div>
@@ -1479,13 +1473,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {shoeNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .shoes
+                                                            currency.shoes
                                                         }
                                                         원 ={' '}
                                                         {shoeNum *
-                                                            currency.calculate
-                                                                .shoes}
+                                                            currency.shoes}
                                                         원
                                                     </div>
                                                 </div>
@@ -1513,13 +1505,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {fashionNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .fashion
+                                                            currency.fashion
                                                         }
                                                         원 ={' '}
                                                         {fashionNum *
-                                                            currency.calculate
-                                                                .fashion}
+                                                            currency.fashion}
                                                         원
                                                     </div>
                                                 </div>
@@ -1547,13 +1537,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {steelNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .steel
+                                                            currency.steel
                                                         }
                                                         원 ={' '}
                                                         {steelNum *
-                                                            currency.calculate
-                                                                .steel}
+                                                            currency.steel}
                                                         원
                                                     </div>
                                                 </div>
@@ -1581,13 +1569,11 @@ export default function Non_FinalizeOrderTable() {
                                                     >
                                                         {non_SteelNum} KG x{' '}
                                                         {
-                                                            currency.calculate
-                                                                .non_steel
+                                                            currency.non_steel
                                                         }
                                                         원 ={' '}
                                                         {non_SteelNum *
-                                                            currency.calculate
-                                                                .non_steel}
+                                                            currency.non_steel}
                                                         원
                                                     </div>
                                                 </div>

@@ -125,6 +125,7 @@ function RequestOnSite() {
             minute === undefined ||
             accountNumber === undefined
         ) {
+            console.log(name,address,tel,dDay,hour,minute,accountNumber, "problem")
             alert('모든 입력란을 작성하시고 눌러주세요.');
         } else {
             const year = dDay.toString().slice(0, 4);
@@ -602,6 +603,7 @@ function RequestOnSite() {
                         });
                     setDDay(event.target.value);
                 }
+                setDDay(event.target.value);
             // } else if (0 < check && check <= 5 && uid === '') {
                 // setDDay(event.target.value);
             // }
@@ -879,8 +881,8 @@ function RequestOnSite() {
                 <TextField
                     style={{ top: '8px', marginBottom: '25px' }}
                     id="date"
-                    label="희망일자 (월 - 금)"
-                    placeholder="평일만 설정해 주세요 (기능 개발중에 있습니다)"
+                    label="방문일자"
+                    // placeholder="평일만 설정해 주세요 (기능 개발중에 있습니다)"
                     type="date"
                     value={dDay}
                     disabled={done}
@@ -908,7 +910,7 @@ function RequestOnSite() {
                                 color: 'rgba(0, 0, 0, 0.54)',
                             }}
                         >
-                            희망시간 (9시 - 13시)
+                            방문시간
                         </div>
                         <div
                             style={{
