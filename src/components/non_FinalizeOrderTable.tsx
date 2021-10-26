@@ -689,7 +689,7 @@ export default function Non_FinalizeOrderTable() {
             '[' +
                 Date.now() +
                 ']' +
-                'DONE Deleting adding new altered data to order -> user (비회원)'
+                'DONE Deleting and adding new altered data to order -> user (비회원)'
         );
 
         //finding user's info's order and deleting, and updating it with confirmed order

@@ -281,8 +281,7 @@ export default function FinalizeOrderTable() {
         return formatedNumber;
     };
     const calculate = () => {
-        console.log(userOrderSelected[0].userId, "selected");
-        if (userOrderSelected[0].userId === "방문(QR)"){
+        if (userOrderSelected[0].way === "중산점 방문(QR)"){
             var action =
             Number(bagNum) * Number(currency.calculate_offline.bags) +
             Number(bookNum) * Number(currency.calculate_offline.books) +
@@ -1487,7 +1486,295 @@ export default function FinalizeOrderTable() {
                                                 계산하기
                                             </Button>
                                         </div>
-                                        {(calculated !== 0) ? (
+                                        {((calculated !== 0) && ( userOrderSelected[0].way === "중산점 방문(QR)") )? (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    border: 'solid 4px black',
+                                                    color: 'black',
+                                                    marginTop: '20px',
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        fontSize: '25px',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                        background: '#07381B',
+                                                        color: 'white',
+                                                    }}
+                                                >
+                                                    금일 계산
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        의류:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {clotheNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .clothes
+                                                        }
+                                                        원 ={' '}
+                                                        {clotheNum *
+                                                            currency.calculate_offline
+                                                                .clothes}
+                                                        원{' '}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        서적:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {bookNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .books
+                                                        }
+                                                        원 ={' '}
+                                                        {bookNum *
+                                                            currency.calculate_offline
+                                                                .books}
+                                                        원
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        가방:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {bagNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .bags
+                                                        }
+                                                        원 ={' '}
+                                                        {bagNum *
+                                                            currency.calculate_offline
+                                                                .bags}
+                                                        원
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        신발:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {shoeNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .shoes
+                                                        }
+                                                        원 ={' '}
+                                                        {shoeNum *
+                                                            currency.calculate_offline
+                                                                .shoes}
+                                                        원
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        패션:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {fashionNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .fashion
+                                                        }
+                                                        원 ={' '}
+                                                        {fashionNum *
+                                                            currency.calculate_offline
+                                                                .fashion}
+                                                        원
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        고철:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {steelNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .steel
+                                                        }
+                                                        원 ={' '}
+                                                        {steelNum *
+                                                            currency.calculate_offline
+                                                                .steel}
+                                                        원
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{ width: '30%' }}
+                                                    >
+                                                        비철:{' '}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            width: '70%',
+                                                            textAlign: 'left',
+                                                            fontSize: '16px',
+                                                        }}
+                                                    >
+                                                        {non_SteelNum} KG x{' '}
+                                                        {
+                                                            currency.calculate_offline
+                                                                .non_steel
+                                                        }
+                                                        원 ={' '}
+                                                        {non_SteelNum *
+                                                            currency.calculate_offline
+                                                                .non_steel}
+                                                        원
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent:
+                                                            'center',
+                                                        padding: '10px',
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{
+                                                            textAlign: 'right',
+                                                            width: '100%',
+                                                            borderTop:
+                                                                'solid 3px',
+                                                            paddingTop: '20px',
+                                                        }}
+                                                    >
+                                                        총 금액:{' '}
+                                                        {formatNumber(
+                                                            calculated
+                                                        )}
+                                                        원
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <></>
+                                        )}
+                                         {((calculated !== 0) && ( userOrderSelected[0].way !== "중산점 방문(QR)") )? (
                                             <div
                                                 style={{
                                                     display: 'flex',

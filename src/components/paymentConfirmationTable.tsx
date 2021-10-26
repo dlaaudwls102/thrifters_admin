@@ -404,7 +404,7 @@ export default function PaymentConfirmationTable() {
                     order.date + ', ' + order.time + ', ' + order.name ==
                     selected[0]
             );
-            console.log(filtered[0])
+
 
             if (filtered[0].userId === 'non_user') {
                 db.collection('user')
@@ -414,7 +414,7 @@ export default function PaymentConfirmationTable() {
                         doc.data()!.orders.forEach((showing: any) => {
                             if (filtered[0].phone === showing.phone) {
                                 setUserSelected(showing);
-                                console.log(showing,"showingggg")
+
                                 setUserOrderSelected(doc.data()!.orders);
                             }
                         });
@@ -585,7 +585,6 @@ export default function PaymentConfirmationTable() {
     const finished = async (user: string) => {
         var confirmPayment = window.confirm('송금완료 하셨습니까?');
         if (confirmPayment) {
-            console.log(selectedOrder);
             selectedOrder.confirmed = '완료';
             selectedOrder['payed_By'] = user;
             const timestamp = Date.now(); // This would be the timestamp you want to format

@@ -125,7 +125,6 @@ function RequestOnSite() {
             minute === undefined ||
             accountNumber === undefined
         ) {
-            console.log(name,address,tel,dDay,hour,minute,accountNumber, "problem")
             alert('모든 입력란을 작성하시고 눌러주세요.');
         } else {
             const year = dDay.toString().slice(0, 4);

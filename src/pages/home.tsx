@@ -68,29 +68,29 @@ const HomePage: React.FunctionComponent<IPageProps> = (props) => {
                     request!.forEach((data: any) => {
                       if (data.name) count += 1;
                   });
-                  console.log(count, "count request");
+          
                   setNumberOfRequest(count);
                     var calculated = doc!
                         .data()!
                         .orders.filter(
-                            (order: any) => order.rating === 0
+                            (order: any) => order.confirmed === '확인'
                         );
                     var count2 : any = 0;
                     calculated!.forEach((data: any) => {
                       if (data.name) count2 += 1;
                   });
-                  console.log(count2, "count calculated");
+ 
                   setNumberOfCalculated(count2);
                     var paid = doc!
                         .data()!
                         .orders.filter(
-                            (order: any) => order.payed_By === undefined
+                            (order: any) => order.confirmed === '방문'
                         );
                     var count3 : any = 0;
                     paid!.forEach((data: any) => {
                       if (data.name) count3 += 1;
                   });
-                  console.log(count3, "count paid");
+   
                   setNumberOfPaid(count3);
 
                 }
@@ -106,25 +106,24 @@ const HomePage: React.FunctionComponent<IPageProps> = (props) => {
                   var calculated = doc!
                       .data()!
                       .orders.filter(
-                          (order: any) => order.weight === 0
+                          (order: any) => order.confirmed === '확인'
                       );
                   var count2 : any = 0;
                   calculated!.forEach((data: any) => {
                     if (data.name) count2 += 1;
                 });
-                console.log(count2, "count calculated_Offline");
+        
                 setNumberOfCalculated_Offline(count2);
                   var paid = doc!
                       .data()!
                       .orders.filter(
-                          (order: any) => order.weight !== 0
+                          (order: any) => order.confirmed === '방문'
                       );
                   var count3 : any = 0;
                   paid!.forEach((data: any) => {
                     if (data.name) count3 += 1;
                 });
-                console.log(paid)
-                console.log(count3, "count paid_Offline");
+
                 setNumberOfPaid_Offline(count3);
 
               }

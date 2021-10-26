@@ -602,19 +602,6 @@ export default function OrderTable() {
                         ),
                     });
                 console.log(
-                    totalHistory!.filter(
-                        (order) =>
-                            order.date +
-                                ', ' +
-                                order.time +
-                                ', ' +
-                                order.name !==
-                            selected[0]
-                    ),
-                    orderHistory,
-                    'selectedzzz'
-                );
-                console.log(
                     '[' +
                         Date.now() +
                         ']' +

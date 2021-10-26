@@ -340,7 +340,6 @@ export default function Non_PaymentConfirmationTable() {
     const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected: string[] = [];
-
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected.slice(1), name);
         } else if (selectedIndex === 0) {
@@ -361,14 +360,12 @@ export default function Non_PaymentConfirmationTable() {
                             setUserSelected(showing);
                             setUserOrderSelected(doc.data()!.orders);
                             setSelected(newSelected);
-                            console.log(newSelected, "selected")
                         }
                     });
                 });
         }
         if (selected.length >= 1) {
             setSelected(newSelected);
-            console.log(newSelected, "selected")
         }
     };
 
@@ -607,7 +604,7 @@ export default function Non_PaymentConfirmationTable() {
             db.collection('orders')
                 .doc('non_user')
                 .update({
-                    orders: orderHistory!.filter(
+                    orders: totalHistory!.filter(
                         (order) =>
                             order.date +
                                 ', ' +
@@ -617,7 +614,6 @@ export default function Non_PaymentConfirmationTable() {
                             selected[0]
                     ),
                 });
-                console.log(selected[0], "이거 없어지나?")
             console.log(
                 '[' +
                     Date.now() +
