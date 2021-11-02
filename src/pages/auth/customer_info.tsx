@@ -23,65 +23,6 @@ const CustomerInfoPage: React.FunctionComponent<IPageProps> = (props:any) => {
     }
 
     const history = useHistory();
-
-    // const saveEdit = async () => {
-    //     if(name !== undefined && address !== undefined && phone != undefined){
-
-    //         auth.currentUser?.updateProfile({
-    //             displayName: Nname,
-               
-    //         }).then(function() {
-    //             console.log("Display name updated");
-    //         }).catch(function(error) {
-    //             console.error(error)
-    //         });
-
-            
-    //         db.collection('user').doc(auth.currentUser?.email!).update({
-                
-    //                 userId: auth.currentUser?.email,
-    //                 name: name,
-    //                 address: address,
-    //                 phone: phone,  
-                
-    //         });
-    //         alert("수정이 완료되었습니다.")
-    //         await delay(2000);
-    //         history.push('/');
-    //         }
-    //     else{
-    //         alert("작성완료후 눌러주세요.")
-
-    //     }
-    // }
-
-//     const handleChange = (prop : string) => (event: any) => {
-
-
-//   if (prop == "name_"){
-//             setName(event.target.value)
-//         }
-//         else  if (prop == "Nname_"){
-//             setNName(event.target.value)
-//         }
-//         else  if (prop == "address_"){
-//             setAddress(event.target.value)
-//         }
-//         else  if (prop == "phone_"){
-           
-//             const onlyNums = event.target.value.replace(/[^0-9]/g, '');
-//             if (onlyNums.length < 11) {
-//                 setPhone(onlyNums)
-//             } 
-//             else if (onlyNums.length === 11) {
-//                 const number = onlyNums.replace(
-//                     /(\d{3})(\d{4})(\d{4})/,
-//                     '($1) $2-$3'
-//                 );
-//                 setPhone(number)
-//             }
-//         }
-//     }
     
     useEffect(() => {
  

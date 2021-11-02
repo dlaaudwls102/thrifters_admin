@@ -20,6 +20,7 @@ import LecturePage from "../pages/auth/Videhome_video";
 import ProcessInfoPage from "../pages/auth/Videhome_process_info";
 import RequestOnSitePage from "../pages/auth/Videhome_requestOnSite";
 import CustomerNeedsPage from "../pages/auth/Videhome_needs";
+import OfflineNeedPage from "../pages/auth/Videhome_Offline_need";
 
 
 const routes: IRoute[] = [
@@ -161,6 +162,13 @@ const routes: IRoute[] = [
         exact: true,
         component: ForgotPasswordPage,
         name: 'Forgot Password Page',
+        protected: false
+    },
+    {
+        path: '/offline_need',
+        exact: true,
+        component: OfflineNeedPage,
+        name: 'Offline Need',
         protected: false
     },
     {

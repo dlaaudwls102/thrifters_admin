@@ -489,13 +489,13 @@ export default function NeedsTable() {
             }).format(timeStamp);
             date = date.slice(-4) + '/' + date.slice(0, 5);
             const hour = new Intl.DateTimeFormat('en-US', {
-                        year: undefined,
-                        month: undefined,
-                        day: undefined,
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: undefined,
-                    }).format(timeStamp);
+                year: undefined,
+                month: undefined,
+                day: undefined,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: undefined,
+            }).format(timeStamp);
             var confirmDelete = window.confirm('찾기를 실패 하시겠습니까?');
             if (confirmDelete) {
                 const filtered: any = orderHistory!.filter(
@@ -523,9 +523,9 @@ export default function NeedsTable() {
                     date: date,
                     time: hour.slice(0, 5),
                     read: false,
-                    title: filtered[0]["product"],
+                    title: filtered[0]['product'],
                     info: '찾기실패',
-                    reason:reason
+                    reason: reason,
                 };
                 //sent to confirmed orders
 
@@ -542,11 +542,13 @@ export default function NeedsTable() {
                                 selected[0]
                         ),
                     });
-                    db.collection("user").doc(filtered[0]["uid"]).update({
+                db.collection('user')
+                    .doc(filtered[0]['uid'])
+                    .update({
                         message: firebase.firestore.FieldValue.arrayUnion(
                             messages
                         ),
-                    })
+                    });
                 console.log(
                     '[' +
                         Date.now() +
@@ -554,12 +556,12 @@ export default function NeedsTable() {
                         'DONE deleting Data from admin user orders (회원)'
                 );
                 db.collection('needs')
-                .doc('user')
-                .update({
-                    needs: firebase.firestore.FieldValue.arrayUnion(
-                        filtered[0]
-                    ),
-                });
+                    .doc('user')
+                    .update({
+                        needs: firebase.firestore.FieldValue.arrayUnion(
+                            filtered[0]
+                        ),
+                    });
 
                 setSelected([]);
                 await delay(500);
@@ -571,90 +573,170 @@ export default function NeedsTable() {
     };
 
     const finished = async (user: string) => {
-        var confirmDelete = window.confirm('고객님이 필요하신것을 해결 하셨습니까?');
+        var confirmDelete = window.confirm(
+            '고객님이 필요하신것을 해결 하셨습니까?'
+        );
         if (confirmDelete) {
-            const timestamp = Date.now(); // This would be the timestamp you want to format
-            const filtered: any = orderHistory!.filter(
-                (order) =>
-                    order.date + ', ' + order.product + ', ' + order.name ==
-                    selected[0]
-            );
-            filtered[0]['confirmed'] = '찾기완료';
-            filtered[0]['fulfilledNeed_By'] = auth.currentUser?.displayName!;
-            filtered[0]['fulfilledNeed_Time'] = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }).format(timestamp);
-            const timeStamp = Date.now();
-            var date = new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: undefined,
-                minute: undefined,
-                second: undefined,
-            }).format(timeStamp);
-            date = date.slice(-4) + '/' + date.slice(0, 5);
-            const hour = new Intl.DateTimeFormat('en-US', {
-                        year: undefined,
-                        month: undefined,
-                        day: undefined,
+            if (cound.way === undefined) {
+                const timestamp = Date.now(); // This would be the timestamp you want to format
+                const filtered: any = orderHistory!.filter(
+                    (order) =>
+                        order.date + ', ' + order.product + ', ' + order.name ==
+                        selected[0]
+                );
+                filtered[0]['confirmed'] = '찾기완료';
+                filtered[0][
+                    'fulfilledNeed_By'
+                ] = auth.currentUser?.displayName!;
+                filtered[0]['fulfilledNeed_Time'] = new Intl.DateTimeFormat(
+                    'en-US',
+                    {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
                         hour: '2-digit',
                         minute: '2-digit',
-                        second: undefined,
-                    }).format(timeStamp);
-            const messages = {
-                date: date,
-                time: hour.slice(0, 5),
-                read: false,
-                title: filtered[0]["product"],
-                info: '찾기완료',
-            };
-            db.collection("user").doc(filtered[0]["uid"]).update({
-                message: firebase.firestore.FieldValue.arrayUnion(
-                    messages
-                ),
-            })
-            db.collection('needs')
-                .doc('user')
-                .update({
-                    needs: totalHistory!.filter(
-                        (order) =>
-                            order.date +
-                                ', ' +
-                                order.product +
-                                ', ' +
-                                order.name !==
-                            selected[0]
-                    ),
-                });
-            db.collection('needs')
-                .doc('user')
-                .update({
-                    needs: firebase.firestore.FieldValue.arrayUnion(
-                        filtered[0]
-                    ),
-                });
-            console.log(
-                '[' +
-                    Date.now() +
-                    ']' +
-                    'DONE Deleting adding new altered data to order -> user'
-            );
-
-            //finding user's info's order and deleting, and updating it with confirmed order
-
-            if (userSelected.userId !== 'non_user') {
+                        second: '2-digit',
+                    }
+                ).format(timestamp);
+                const timeStamp = Date.now();
+                var date = new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: undefined,
+                    minute: undefined,
+                    second: undefined,
+                }).format(timeStamp);
+                date = date.slice(-4) + '/' + date.slice(0, 5);
+                const hour = new Intl.DateTimeFormat('en-US', {
+                    year: undefined,
+                    month: undefined,
+                    day: undefined,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: undefined,
+                }).format(timeStamp);
+                const messages = {
+                    date: date,
+                    time: hour.slice(0, 5),
+                    read: false,
+                    title: filtered[0]['product'],
+                    info: '찾기완료',
+                };
+                db.collection('user')
+                    .doc(filtered[0]['uid'])
+                    .update({
+                        message: firebase.firestore.FieldValue.arrayUnion(
+                            messages
+                        ),
+                    });
+                db.collection('needs')
+                    .doc('user')
+                    .update({
+                        needs: totalHistory!.filter(
+                            (order) =>
+                                order.date +
+                                    ', ' +
+                                    order.product +
+                                    ', ' +
+                                    order.name !==
+                                selected[0]
+                        ),
+                    });
+                db.collection('needs')
+                    .doc('user')
+                    .update({
+                        needs: firebase.firestore.FieldValue.arrayUnion(
+                            filtered[0]
+                        ),
+                    });
+                console.log(
+                    '[' +
+                        Date.now() +
+                        ']' +
+                        'DONE Deleting adding new altered data to order -> user'
+                );
                 alert('필요해요 신청 확인 완료되었습니다.');
                 setSelected([]);
                 await delay(500);
                 history.push('/');
             }
-        } 
+            else{
+                const timestamp = Date.now(); // This would be the timestamp you want to format
+                const filtered: any = orderHistory!.filter(
+                    (order) =>
+                        order.date + ', ' + order.product + ', ' + order.name ==
+                        selected[0]
+                );
+                filtered[0]['confirmed'] = '찾기완료';
+                filtered[0][
+                    'fulfilledNeed_By'
+                ] = auth.currentUser?.displayName!;
+                filtered[0]['fulfilledNeed_Time'] = new Intl.DateTimeFormat(
+                    'en-US',
+                    {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                    }
+                ).format(timestamp);
+                const timeStamp = Date.now();
+                var date = new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: undefined,
+                    minute: undefined,
+                    second: undefined,
+                }).format(timeStamp);
+                date = date.slice(-4) + '/' + date.slice(0, 5);
+                const hour = new Intl.DateTimeFormat('en-US', {
+                    year: undefined,
+                    month: undefined,
+                    day: undefined,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: undefined,
+                }).format(timeStamp);
+                db.collection('needs')
+                    .doc('user')
+                    .update({
+                        needs: totalHistory!.filter(
+                            (order) =>
+                                order.date +
+                                    ', ' +
+                                    order.product +
+                                    ', ' +
+                                    order.name !==
+                                selected[0]
+                        ),
+                    });
+                db.collection('needs')
+                    .doc('user')
+                    .update({
+                        needs: firebase.firestore.FieldValue.arrayUnion(
+                            filtered[0]
+                        ),
+                    });
+                console.log(
+                    '[' +
+                        Date.now() +
+                        ']' +
+                        'DONE Deleting adding new altered data to order -> user'
+                );
+                alert('필요해요(방문) 신청 확인 완료되었습니다.');
+                setSelected([]);
+                await delay(500);
+                history.push('/');
+            }
+
+            //finding user's info's order and deleting, and updating it with confirmed order
+            
+        }
     };
     useEffect(() => {
         //처음 돌면서 현재 오더 안에 서 모든 document 를 OrderHistory 및 USER 에 PUSH
@@ -856,21 +938,87 @@ export default function NeedsTable() {
                     id="pot"
                     style={{ margin: 'auto', padding: '0px 0 ', width: '90%' }}
                 >
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>시간: {cound.date}</div>
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>성함: {cound.name}</div>
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>용품: {cound.product}</div>
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>용도: {cound.usage}</div>
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>색갈: {cound.color}</div>
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>가격대: {cound.price_range}</div>
-                    <div style={{ textAlign: 'left', padding:"10px", color:"black" }}>기타: {cound.etc}</div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        시간: {cound.date}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        성함: {cound.name}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        용품: {cound.product}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        용도: {cound.usage}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        색갈: {cound.color}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        가격대: {cound.price_range}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        기타: {cound.etc}
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'left',
+                            padding: '10px',
+                            color: 'black',
+                        }}
+                    >
+                        신청방법:{' '}
+                        {cound.way !== undefined ? cound.way : '온라인 신청'}
+                    </div>
                     <Button
                         className="buttons"
                         style={{
                             fontFamily: 'TmoneyRoundWindExtraBold',
                             padding: '10px',
                             width: '100%',
-                            margin:"auto",
-                            marginBottom:"20px"
+                            margin: 'auto',
+                            marginBottom: '20px',
                         }}
                         variant="outlined"
                         onClick={() => {

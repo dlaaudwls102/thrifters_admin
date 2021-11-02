@@ -29,7 +29,9 @@ type Anchor = 'top' | 'left' | 'bottom' | 'right';
 const TopNav = () => {
     const [page, setPage] = useState<Number | null>(0);
     const [numberOfOrders, setNumberOfOrders] = useState<any | null>(0);
-    const [numberOfOrders_Offline, setNumberOfOrders_Offline] = useState<any | null>(0);
+    const [numberOfOrders_Offline, setNumberOfOrders_Offline] = useState<
+        any | null
+    >(0);
     const [state, setState] = React.useState({
         top: false,
         left: false,
@@ -40,7 +42,7 @@ const TopNav = () => {
     const history = useHistory();
 
     useEffect(() => {
-        var count = 0
+        var count = 0;
         db.collection('orders')
             .doc('user')
             .get()
@@ -50,7 +52,7 @@ const TopNav = () => {
                     setNumberOfOrders(doc!.data()!.orders.length);
                 }
             });
-            db.collection('orders')
+        db.collection('orders')
             .doc('non_user')
             .get()
             .then((doc) => {
@@ -234,7 +236,7 @@ const TopNav = () => {
                             <div
                                 style={{ paddingBottom: '10px', color: 'red' }}
                             >
-                                {numberOfOrders+numberOfOrders_Offline}
+                                {numberOfOrders + numberOfOrders_Offline}
                             </div>
                             <div>신청건수</div>
                         </div>
@@ -379,7 +381,7 @@ const TopNav = () => {
                                 )}
                             >
                                 <ListItemIcon>
-                                    <EmojiPeopleOutlinedIcon/>
+                                    <EmojiPeopleOutlinedIcon />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={'필요신청 확인'}
@@ -416,6 +418,25 @@ const TopNav = () => {
                         직원
                     </div>
                     <div style={{ padding: ' 0 10px 10px 20px' }}>
+                        <div style={{ padding: '5px' }}>
+                            <ListItem
+                                button
+                                key={'구해줘요 비회원 신청'}
+                                onClick={onClickHeaderBtn.bind(
+                                    this,
+                                    1,
+                                    '/offline_need'
+                                )}
+                            >
+                                <ListItemIcon>
+                                    <EmojiPeopleOutlinedIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={'방문필요 신청'}
+                                    style={{ fontFamily: 'ONE-Mobile-POP' }}
+                                />
+                            </ListItem>
+                        </div>
                         <div style={{ padding: '5px' }}>
                             <ListItem
                                 button
