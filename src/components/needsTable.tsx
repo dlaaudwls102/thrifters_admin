@@ -21,9 +21,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { auth, db } from '../config/firebase';
 import {
     Button,
-    FormControl,
-    InputAdornment,
-    TextField,
     TablePagination,
 } from '@material-ui/core';
 import firebase from 'firebase/app';

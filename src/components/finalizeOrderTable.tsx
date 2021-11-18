@@ -281,7 +281,7 @@ export default function FinalizeOrderTable() {
         return formatedNumber;
     };
     const calculate = () => {
-        if (userOrderSelected[0].way === "중산점 방문(QR)"){
+        if (userOrderSelected[0].way === "중산점 방문(QR)" || userOrderSelected[0].way === "중신잠"  || userOrderSelected[0].way === "중산점"){
             var action =
             Number(bagNum) * Number(currency.calculate_offline.bags) +
             Number(bookNum) * Number(currency.calculate_offline.books) +
@@ -474,7 +474,7 @@ export default function FinalizeOrderTable() {
                     selected[0]
             );
 
-            if (filtered[0].userId == 'non_user') {
+            if (filtered[0].userId === 'non_user') {
                 db.collection('user')
                     .doc('non_user')
                     .get()
@@ -494,6 +494,15 @@ export default function FinalizeOrderTable() {
                         setUserSelected(doc.data()!);
                         setUserOrderSelected(doc.data()!.orders);
                     });
+                // if(filtered[0].way !== "자택"){
+                //     db.collection('infos')
+                //     .doc('currency')
+                //     .get()
+                //     .then((doc) => {
+                //         setCurrency(doc.data()!.calculate_offline);
+                //     });
+                //     console.log(currency)
+                // }
             }
         }
 
@@ -1486,7 +1495,7 @@ export default function FinalizeOrderTable() {
                                                 계산하기
                                             </Button>
                                         </div>
-                                        {((calculated !== 0) && ( userOrderSelected[0].way === "중산점 방문(QR)") )? (
+                                        {((calculated !== 0) && ( userOrderSelected[0].way === "중산점 방문(QR)" || userOrderSelected[0].way === "중신잠" || userOrderSelected[0].way === "중산점" ) )? (
                                             <div
                                                 style={{
                                                     display: 'flex',
@@ -1774,7 +1783,7 @@ export default function FinalizeOrderTable() {
                                         ) : (
                                             <></>
                                         )}
-                                         {((calculated !== 0) && ( userOrderSelected[0].way !== "중산점 방문(QR)") )? (
+                                         {((calculated !== 0) && ( userOrderSelected[0].way === "자택") )? (
                                             <div
                                                 style={{
                                                     display: 'flex',
