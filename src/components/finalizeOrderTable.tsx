@@ -832,7 +832,7 @@ export default function FinalizeOrderTable() {
                     info: '방문완료',
                     weight: Number(calculated),
                     additional: Number(additional),
-                    total: Number(additional) + Number(calculated) * 200,
+                    total: Number(additional) + Number(calculated),
                     order: found_time[0],
                 };
                 db.collection('user')
