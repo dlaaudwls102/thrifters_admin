@@ -1783,7 +1783,7 @@ export default function FinalizeOrderTable() {
                                         ) : (
                                             <></>
                                         )}
-                                         {((calculated !== 0) && ( userOrderSelected[0].way === "자택") )? (
+                                         {((calculated !== 0) && ( userOrderSelected[0].way === "자택"|| userOrderSelected[0].way === "비대면 (문앞)") )? (
                                             <div
                                                 style={{
                                                     display: 'flex',
